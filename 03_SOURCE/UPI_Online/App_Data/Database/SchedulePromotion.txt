@@ -1,0 +1,21 @@
+CREATE TABLE [dbo].[SchedulePromotion](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[UpiCode] [varchar](255) NOT NULL,
+	[Title] [nvarchar](255) NOT NULL,
+	[Content] [ntext] NULL,
+	[StartDate] [datetime] NULL,
+	[AdministratorId] [int] NULL,
+	[IsApprove] [bit] NULL,
+	[PhoneNumbers] [nvarchar](max) NULL
+) ON [PRIMARY]
+
+create proc SP_SchedulePromotion
+(@phoneList nvarchar(MAX))
+as
+begin
+SELECT a.FullName as CustomerName,a.UpiCode, a.Phone, b.FullName,s.PositionName
+  FROM [UPI].[dbo].[Customer] as a 
+  LEFT JOIN [UPI].[dbo].[CustomerSupervisor] as b on a.Id=b.CustomerId
+  left join [UPI].[dbo].SupervisorPosition as s on b.PositionId=s.Id
+  where a.Phone in(@phoneList)
+ end

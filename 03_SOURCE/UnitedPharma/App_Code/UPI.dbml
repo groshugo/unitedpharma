@@ -1,0 +1,354 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="UPI" Class="UPIDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=THANH-PC\SQLEXPRESS;Initial Catalog=UPI;Integrated Security=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="UPIConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Administrator" Member="Administrators">
+    <Type Name="Administrator">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Fullname" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Phone" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="AllowApprove" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="Administrator_AssignFunction" Member="AssignFunctions" ThisKey="Id" OtherKey="AdministratorId" Type="AssignFunction" />
+      <Association Name="Administrator_Promotion" Member="Promotions" ThisKey="Id" OtherKey="AdministratorId" Type="Promotion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SupervisorPosition" Member="SupervisorPositions">
+    <Type Name="SupervisorPosition">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PositionName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Association Name="SupervisorPosition_CustomerSupervisor" Member="CustomerSupervisors" ThisKey="Id" OtherKey="PositionId" Type="CustomerSupervisor" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Area" Member="Areas">
+    <Type Name="Area">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="AreaName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="RegionId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Area_Local" Member="Locals" ThisKey="Id" OtherKey="AreaId" Type="Local" />
+      <Association Name="Area_SalesArea" Member="SalesAreas" ThisKey="Id" OtherKey="AreaId" Type="SalesArea" />
+      <Association Name="Region_Area" Member="Region" ThisKey="RegionId" OtherKey="Id" Type="Region" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AssignFunction" Member="AssignFunctions">
+    <Type Name="AssignFunction">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FunctionId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="AdministratorId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Administrator_AssignFunction" Member="Administrator" ThisKey="AdministratorId" OtherKey="Id" Type="Administrator" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="Function_AssignFunction" Member="Function" ThisKey="FunctionId" OtherKey="Id" Type="Function" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Channel" Member="Channels">
+    <Type Name="Channel">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="ChannelName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="ParentChannelId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Channel_Customer" Member="Customers" ThisKey="Id" OtherKey="ChannelId" Type="Customer" />
+      <Association Name="Channel_CustomerLog" Member="CustomerLogs" ThisKey="Id" OtherKey="ChannelId" Type="CustomerLog" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Customer" Member="Customers">
+    <Type Name="Customer">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Address" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Street" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Ward" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Phone" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="CustomerTypeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ChannelId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DistrictId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LocalId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UpdateDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Status" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsEnable" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="Customer_CustomerLog" Member="CustomerLogs" ThisKey="Id" OtherKey="CustomerId" Type="CustomerLog" />
+      <Association Name="Customer_CustomerSupervisor" Member="CustomerSupervisors" ThisKey="Id" OtherKey="CustomerId" Type="CustomerSupervisor" />
+      <Association Name="Customer_SupervisorManageCustomer" Member="SupervisorManageCustomers" ThisKey="Id" OtherKey="CustomerId" Type="SupervisorManageCustomer" />
+      <Association Name="Channel_Customer" Member="Channel" ThisKey="ChannelId" OtherKey="Id" Type="Channel" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="CustomerType_Customer" Member="CustomerType" ThisKey="CustomerTypeId" OtherKey="Id" Type="CustomerType" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="District_Customer" Member="District" ThisKey="DistrictId" OtherKey="Id" Type="District" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="Local_Customer" Member="Local" ThisKey="LocalId" OtherKey="Id" Type="Local" IsForeignKey="true" DeleteRule="SET NULL" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CustomerLog" Member="CustomerLogs">
+    <Type Name="CustomerLog">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="FullName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Address" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Street" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Ward" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Phone" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Password" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CustomerTypeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ChannelId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DistrictId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LocalId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UpdateDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Status" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsApprove" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ApproveBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ChangeBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Channel_CustomerLog" Member="Channel" ThisKey="ChannelId" OtherKey="Id" Type="Channel" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="Customer_CustomerLog" Member="Customer" ThisKey="CustomerId" OtherKey="Id" Type="Customer" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="CustomerType_CustomerLog" Member="CustomerType" ThisKey="CustomerTypeId" OtherKey="Id" Type="CustomerType" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="District_CustomerLog" Member="District" ThisKey="DistrictId" OtherKey="Id" Type="District" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="Local_CustomerLog" Member="Local" ThisKey="LocalId" OtherKey="Id" Type="Local" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="Salesmen_CustomerLog" Member="Salesmen" ThisKey="ChangeBy" OtherKey="Id" Type="Salesmen" IsForeignKey="true" DeleteRule="SET NULL" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CustomerSupervisor" Member="CustomerSupervisors">
+    <Type Name="CustomerSupervisor">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Address" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Street" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Ward" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Phone" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DistrictId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PositionId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="CustomerSupervisor_SupervisorManageCustomer" Member="SupervisorManageCustomers" ThisKey="Id" OtherKey="SupervisorId" Type="SupervisorManageCustomer" />
+      <Association Name="Customer_CustomerSupervisor" Member="Customer" ThisKey="CustomerId" OtherKey="Id" Type="Customer" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="SupervisorPosition_CustomerSupervisor" Member="SupervisorPosition" ThisKey="PositionId" OtherKey="Id" Type="SupervisorPosition" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="District_CustomerSupervisor" Member="District" ThisKey="DistrictId" OtherKey="Id" Type="District" IsForeignKey="true" DeleteRule="SET NULL" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CustomerType" Member="CustomerTypes">
+    <Type Name="CustomerType">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="TypeName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Association Name="CustomerType_Customer" Member="Customers" ThisKey="Id" OtherKey="CustomerTypeId" Type="Customer" />
+      <Association Name="CustomerType_CustomerLog" Member="CustomerLogs" ThisKey="Id" OtherKey="CustomerTypeId" Type="CustomerLog" />
+    </Type>
+  </Table>
+  <Table Name="dbo.District" Member="Districts">
+    <Type Name="District">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DistrictName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="ProvinceId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="District_Customer" Member="Customers" ThisKey="Id" OtherKey="DistrictId" Type="Customer" />
+      <Association Name="District_CustomerLog" Member="CustomerLogs" ThisKey="Id" OtherKey="DistrictId" Type="CustomerLog" />
+      <Association Name="District_CustomerSupervisor" Member="CustomerSupervisors" ThisKey="Id" OtherKey="DistrictId" Type="CustomerSupervisor" />
+      <Association Name="Province_District" Member="Province" ThisKey="ProvinceId" OtherKey="Id" Type="Province" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.[Function]" Member="Functions">
+    <Type Name="Function">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FunctionName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="ParentFunctionId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Action" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="Function_AssignFunction" Member="AssignFunctions" ThisKey="Id" OtherKey="FunctionId" Type="AssignFunction" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Groups" Member="Groups">
+    <Type Name="Group">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="GroupName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Association Name="Group_Region" Member="Regions" ThisKey="Id" OtherKey="GroupId" Type="Region" />
+      <Association Name="Group_SalesGroup" Member="SalesGroups" ThisKey="Id" OtherKey="GroupId" Type="SalesGroup" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Local" Member="Locals">
+    <Type Name="Local">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="LocalName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="AreaId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Local_Customer" Member="Customers" ThisKey="Id" OtherKey="LocalId" Type="Customer" />
+      <Association Name="Local_CustomerLog" Member="CustomerLogs" ThisKey="Id" OtherKey="LocalId" Type="CustomerLog" />
+      <Association Name="Local_SalesLocal" Member="SalesLocals" ThisKey="Id" OtherKey="LocalId" Type="SalesLocal" />
+      <Association Name="Area_Local" Member="Area" ThisKey="AreaId" OtherKey="Id" Type="Area" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Province" Member="Provinces">
+    <Type Name="Province">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ProvinceName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="SectionId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Province_District" Member="Districts" ThisKey="Id" OtherKey="ProvinceId" Type="District" />
+      <Association Name="Section_Province" Member="Section" ThisKey="SectionId" OtherKey="Id" Type="Section" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Region" Member="Regions">
+    <Type Name="Region">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="RegionName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="GroupId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Region_Area" Member="Areas" ThisKey="Id" OtherKey="RegionId" Type="Area" />
+      <Association Name="Region_SalesRegion" Member="SalesRegions" ThisKey="Id" OtherKey="RegionId" Type="SalesRegion" />
+      <Association Name="Group_Region" Member="Group" ThisKey="GroupId" OtherKey="Id" Type="Group" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Role" Member="Roles">
+    <Type Name="Role">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RoleName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Association Name="Role_Salesmen" Member="Salesmens" ThisKey="Id" OtherKey="RoleId" Type="Salesmen" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SalesArea" Member="SalesAreas">
+    <Type Name="SalesArea">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SalesmenId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="AreaId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Area_SalesArea" Member="Area" ThisKey="AreaId" OtherKey="Id" Type="Area" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Salesmen_SalesArea" Member="Salesmen" ThisKey="SalesmenId" OtherKey="Id" Type="Salesmen" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SalesGroup" Member="SalesGroups">
+    <Type Name="SalesGroup">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SalesmenId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="GroupId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Group_SalesGroup" Member="Group" ThisKey="GroupId" OtherKey="Id" Type="Group" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Salesmen_SalesGroup" Member="Salesmen" ThisKey="SalesmenId" OtherKey="Id" Type="Salesmen" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SalesLocal" Member="SalesLocals">
+    <Type Name="SalesLocal">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SalesmenId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LocalId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Local_SalesLocal" Member="Local" ThisKey="LocalId" OtherKey="Id" Type="Local" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Salesmen_SalesLocal" Member="Salesmen" ThisKey="SalesmenId" OtherKey="Id" Type="Salesmen" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Salesmen" Member="Salesmens">
+    <Type Name="Salesmen">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Phone" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="RoleId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SmsQuota" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SmsUsed" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExpiredDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Salesmen_CustomerLog" Member="CustomerLogs" ThisKey="Id" OtherKey="ChangeBy" Type="CustomerLog" />
+      <Association Name="Salesmen_SalesArea" Member="SalesAreas" ThisKey="Id" OtherKey="SalesmenId" Type="SalesArea" />
+      <Association Name="Salesmen_SalesGroup" Member="SalesGroups" ThisKey="Id" OtherKey="SalesmenId" Type="SalesGroup" />
+      <Association Name="Salesmen_SalesLocal" Member="SalesLocals" ThisKey="Id" OtherKey="SalesmenId" Type="SalesLocal" />
+      <Association Name="Salesmen_SalesRegion" Member="SalesRegions" ThisKey="Id" OtherKey="SalesmenId" Type="SalesRegion" />
+      <Association Name="Role_Salesmen" Member="Role" ThisKey="RoleId" OtherKey="Id" Type="Role" IsForeignKey="true" DeleteRule="SET NULL" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SalesRegion" Member="SalesRegions">
+    <Type Name="SalesRegion">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SalesmenId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RegionId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Region_SalesRegion" Member="Region" ThisKey="RegionId" OtherKey="Id" Type="Region" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Salesmen_SalesRegion" Member="Salesmen" ThisKey="SalesmenId" OtherKey="Id" Type="Salesmen" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Section" Member="Sections">
+    <Type Name="Section">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SectionName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Association Name="Section_Province" Member="Provinces" ThisKey="Id" OtherKey="SectionId" Type="Province" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SmsType" Member="SmsTypes">
+    <Type Name="SmsType">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Syntax" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="SmsType_SmsObj" Member="SmsObjs" ThisKey="Id" OtherKey="SmsTypeId" Type="SmsObj" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SupervisorManageCustomer" Member="SupervisorManageCustomers">
+    <Type Name="SupervisorManageCustomer">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SupervisorId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Customer_SupervisorManageCustomer" Member="Customer" ThisKey="CustomerId" OtherKey="Id" Type="Customer" IsForeignKey="true" DeleteRule="CASCADE" />
+      <Association Name="CustomerSupervisor_SupervisorManageCustomer" Member="CustomerSupervisor" ThisKey="SupervisorId" OtherKey="Id" Type="CustomerSupervisor" IsForeignKey="true" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SchedulePromotion" Member="SchedulePromotions">
+    <Type Name="SchedulePromotion">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="SMSContent" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="WebContent" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="StartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AdministratorId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsApprove" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="PhoneNumbers" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="SMSIdList" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Dashboard" Member="Dashboards">
+    <Type Name="Dashboard">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Content" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UpdateDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="SenderPhoneNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="ReceiverPhoneNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsRead" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Promotion" Member="Promotions">
+    <Type Name="Promotion">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Content" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="StartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AdministratorId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Administrator_Promotion" Member="Administrator" ThisKey="AdministratorId" OtherKey="Id" Type="Administrator" IsForeignKey="true" DeleteRule="SET NULL" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SmsObj" Member="SmsObjs">
+    <Type Name="SmsObj">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SMSCode" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="SenderNumber" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ReceiverNumber" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Subject" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Content" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="IsSendSuccess" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsRead" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="SmsTypeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PromotionId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SenderType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ReceiverType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ParentSmsId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="SmsType_SmsObj" Member="SmsType" ThisKey="SmsTypeId" OtherKey="Id" Type="SmsType" IsForeignKey="true" DeleteRule="SET NULL" />
+    </Type>
+  </Table>
+  <Function Name="dbo.SP_SchedulePromotion" Method="SP_SchedulePromotion">
+    <Parameter Name="phoneList" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SP_SchedulePromotionResult">
+      <Column Name="CustomerName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Phone" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="PositionName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+</Database>

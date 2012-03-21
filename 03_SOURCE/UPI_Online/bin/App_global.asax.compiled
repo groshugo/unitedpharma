@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preserve resultType="8" virtualPath="/UnitedPharma/global.asax" hash="2395f60c" filehash="fffff31b3cf37ed8" flags="150000" assembly="App_global.asax" type="ASP.global_asax">
+    <filedeps>
+        <filedep name="/UnitedPharma/global.asax" />
+    </filedeps>
+</preserve>
