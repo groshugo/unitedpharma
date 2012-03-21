@@ -1,0 +1,129 @@
+﻿body
+{
+    font-family: Verdana Tahoma Arial;
+    background: #97A6AB url(../images/bgFill.jpg) repeat-x;
+}
+*
+{
+    margin: 0;
+}
+.mainform
+{
+    background: transparent url(../images/bg.jpg) no-repeat; /*display:inline-block;*/
+}
+.form
+{
+    margin: auto;
+    width: 606px;
+    padding-top: 100px;
+}
+.form h3
+{
+    background: transparent url(../images/bgFill.jpg) repeat-x;
+    line-height: 30px;
+    color: #fff;
+    padding-left: 20px;
+}
+table
+{
+    border: none;
+}
+#light_bg
+{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    background: #000;
+    opacity: 0.7;
+    display: none;
+}
+#close, #close_cust_1, #close_cust_2
+{
+    background:url(../images/close.gif) no-repeat 0 0 transparent;
+    color: #ACAAAA;
+    cursor:pointer;
+    position:absolute;
+    top:5px;
+    right:5px;
+    height:23px;
+    width: 23px;
+}
+#login_box , #login_cust_1, #login_cust_2
+{
+    background:url(../images/bg_f5_50.png);
+    border: 3px solid #83BBDF;
+    border-radius: 5px 5px 5px 5px;    
+    display:none;    
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -235px;
+    margin-top: -235px;  
+    width:470px;
+}
+#login_box h2, login_cust_1 h2, #login_cust_2 h2 {
+    margin-bottom: 20px;
+}
+.input_block {
+    margin-bottom: 15px;
+    position: relative;
+}
+.input_block label {
+    color: #666666;
+    font-weight: bold;
+}
+.login_form input.text {
+    font-size: 24px;
+    margin-bottom: 5px;
+    width: 408px;
+}
+.login_form input.text[type="password"] {
+    float: left;
+}
+.group:after {
+    clear: both;
+    content: " ";
+    display: block;
+    font-size: 0;
+    height: 0;
+    visibility: hidden;
+}
+input#submit_button, input#btnCheckCustPhone, input#btnVerifyPassword {
+    background: url("../images/btn_log_in.png") repeat scroll 0 0 transparent;
+    border: medium none;
+    height: 33px;
+    margin-top: 15px;
+    width: 73px;
+    cursor:pointer;
+}
+.float_left {
+    float: left;
+}
+
+.login_form_inside
+{    
+    width: 420px;
+    position:relative;
+    padding:25px;
+}
+.login_form_mask
+{
+    background: url("../images/loading.gif") no-repeat scroll center center #83BBDF;
+    width: 470px;
+    position:absolute;
+    top:0;
+    left:0;
+    opacity: 0.7;    
+    height:100%;
+    z-index:10;
+}
+img
+{
+    border:none;
+}
+#admin
+{
+    cursor:pointer;
+}

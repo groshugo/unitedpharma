@@ -1,0 +1,302 @@
+﻿*
+{
+    margin: 0;
+    padding: 0;
+}
+body
+{    
+    background-color: #aec7ff;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5em;
+}
+a
+{
+    color: #004594;
+    text-decoration: none;
+}
+a:hover
+{
+    color: #01438f;
+}
+#maincontainer
+{
+    width: 1100px;
+    margin: 0 auto;
+}
+.ucHeader
+{
+    height: 85px;
+    margin: 0;
+    padding: 0;
+    color: #004594;
+}
+.ucHeaderLeft
+{
+    float: left;
+    height: 85px;
+}
+.ucHeaderRight
+{
+    float: right;
+    height: 85px;
+    font-size: 13px;
+}
+.clear
+{
+    clear: both;
+}
+.nav_div
+{
+    background: url(../Images/nav_bg.png) repeat-x top left;
+    color: #fff;
+    font-size: 13px;
+    height: 38px;
+    line-height: 38px;
+    padding-left: 5px;
+    margin-bottom: 15px;
+}
+.nav_menu
+{
+    height: 38px;
+    list-style-type: none;
+    color: #fff;
+}
+.nav_menu li
+{
+    float: left;
+    margin-left: 20px;
+}
+.nav_menu li a
+{
+    color: #AEC7FF;
+    font-size: 16px;
+    text-decoration: none;
+}
+.nav_menu li a:hover
+{
+    color: yellow;
+    font-size: 16px;
+    text-decoration: none;
+}
+.current
+{
+    color: yellow !important;
+}
+#leftcol
+{
+    height: 500px;
+    width: 252px; 
+    border: 1px solid #688CAF;  
+}
+.leftcol_header
+{
+    background: url(../Images/leftcol_bg.png) repeat-x top left #c4d9f1;
+    height:30px;
+    border-bottom: 1px solid #688CAF;
+}
+.leftcol_header_text
+{
+    height:30px;    
+    color:#00156E;
+    font: 14px/18px "Segoe UI",Arial,sans-serif;
+    line-height:30px;
+    float:left;
+    margin-left:5px;
+}
+#rightcol
+{    
+    padding-left: 7px;
+}
+
+.innertube
+{
+    margin: 5px;
+    margin-top: 0;
+}
+/************************ Rad Loading Panel ***************************/
+.RadAjax .raDiv, .RadAjax .raColor
+{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.RadAjax .raDiv
+{
+    position: relative;
+    z-index: 2;
+    background-color: transparent;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.RadAjax .raColor
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background-image: none;
+}
+
+.RadAjax .raTransp
+{
+    zoom: 1;
+}
+
+.RadAjax .raTop
+{
+    background-position: center top;
+}
+
+.RadAjax .raTopLeft
+{
+    background-position: left top;
+}
+
+.RadAjax .raTopRight
+{
+    background-position: right top;
+}
+
+.RadAjax .raLeft
+{
+    background-position: left center;
+}
+
+.RadAjax .raRight
+{
+    background-position: right center;
+}
+
+.RadAjax .raBottom
+{
+    background-position: center bottom;
+}
+
+.RadAjax .raBottomLeft
+{
+    background-position: left bottom;
+}
+
+.RadAjax .raBottomRight
+{
+    background-position: right bottom;
+}
+
+.RadAjax div.raNone
+{
+    background-image: none;
+}
+
+* html .RadAjaxUpdatedElement select
+{
+    visibility: hidden !important;
+}
+
+.RadAjax_Vista .raDiv
+{
+    background-image: url('../images/loading.gif');
+}
+
+.RadAjax_Vista .raColor
+{
+    background-color: Gray;
+}
+
+.RadAjax_Vista .raTransp
+{
+    opacity: 0.4;
+    -moz-opacity: 0.4;
+    filter: alpha(opacity=40);
+}
+
+/************ SMS style *****************/
+.sms_left
+{
+    margin-left: 5px;
+    float: left;
+}
+.sms_right
+{
+    width: 830px;
+    float: right;    
+    background-color: #fff;
+    min-height:380px;
+    border-top: none;
+    margin:0; 
+    position:relative;
+}
+.sms_right_full
+{
+    width: 1078px;  
+    background-color: #fff;
+    min-height:380px;
+    border-top: none;
+    margin:0;
+    padding:10px;
+}
+.sms_header
+{    
+    height:35px;
+    line-height:25px;
+    font-size:14px;
+}
+.sms_header h3
+{
+    color:#AEC7FF;
+    padding-left:5px;
+}
+.sms_detail_container
+{
+    background-color: #dde7f5;
+    color: #00156E;
+    font-size:12px;
+    border: 1px solid #688CAF;
+    margin:5px 5px 20px 0;
+    padding: 5px;
+    line-height:18px;
+    position:relative;
+}
+.sms_detail_content
+{
+    border:1px solid gray;
+    background-color:#fff;
+    margin-top: 5px;
+    padding:5px;
+}
+
+ul.newtask
+{
+    list-style:none;
+    margin:0;
+    padding:0 5px 5px 0;
+}
+ul.newtask li
+{
+    display:list-item;
+    padding-left:5px;
+}
+ul.newtask li a
+{
+    text-decoration:none;
+}
+ul.newtask li span
+{
+    color:#c00000;
+    font-weight:bold;
+}
+.leftcol_sale_dashboard
+{
+    border: 1px solid #688CAF;
+    margin: 0 0 5px 0;
+}
+.sale_dashboard_item
+{
+    font-size: 12px;
+    line-height: 22px;
+    padding-left: 15px;
+    background: url(../Images/bullet_blue.png) no-repeat left 3px transparent;
+}
