@@ -188,7 +188,18 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
                 DateTime ExpiredDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtExpiredDate")).SelectedDate.Value.Date);
                 int role = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlRoles")).SelectedValue);
                 int SmsQuota = Convert.ToInt32(((RadNumericTextBox)gdItem.FindControl("txtSmsQuota")).Text);
-                salesRepo.Add((string)values["UpiCode"], (string)values["FullName"], (string)values["Phone"], role, SmsQuota, ExpiredDate);
+
+                string groupVal = ((RadComboBox) gdItem.FindControl("ddlGroupAddNew")).SelectedValue;
+                int groupId = Convert.ToInt32(string.IsNullOrEmpty(groupVal) ? "0": groupVal);
+                string regionVal = ((RadComboBox)gdItem.FindControl("ddlRegionAddNew")).SelectedValue;
+                int regionId = Convert.ToInt32(string.IsNullOrEmpty(regionVal) ? "0" : regionVal);
+                string areaVal = ((RadComboBox)gdItem.FindControl("ddlAreaAddNew")).SelectedValue;
+                int areaId = Convert.ToInt32(string.IsNullOrEmpty(areaVal) ? "0" : areaVal);
+                string localVal = ((RadComboBox)gdItem.FindControl("ddlLocalAddNew")).SelectedValue;
+                int localId = Convert.ToInt32(string.IsNullOrEmpty(localVal) ? "0" : localVal);
+
+                salesRepo.Add((string)values["UpiCode"], (string)values["FullName"], (string)values["Phone"], role, SmsQuota, ExpiredDate, 
+                    groupId, regionId, areaId, localId);
             }
             else
                 ShowErrorMessage("Phone number is not valid");
@@ -233,8 +244,114 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
                 ddlRoles.DataBind();
                 ddlRoles.SelectedValue = roleId.ToString();
             }
+
+            // Get group
+            var group = groupRepo.GetAll();
+            if (group != null && group.Count > 0)
+            {
+                var ddlGroupAddNew = ((RadComboBox)edititem.FindControl("ddlGroupAddNew"));
+                if(ddlGroupAddNew != null)
+                {
+                    var newGroup = new Group {Id = 0, GroupName = "Select a group"};
+                    group.Insert(0, newGroup);
+                    ddlGroupAddNew.DataSource = group;
+                    ddlGroupAddNew.DataTextField = "GroupName";
+                    ddlGroupAddNew.DataValueField = "Id";
+                    ddlGroupAddNew.DataBind();
+                }
+            }
         }
     }
+
+    protected void ddlGroupAddNew_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        GridEditableItem editedItem = (o as RadComboBox).NamingContainer as GridEditableItem;
+
+        var regionCombo = ((RadComboBox)editedItem.FindControl("ddlRegionAddNew"));
+        if(regionCombo != null && e.Value != "0")
+        {
+            var region = regionRepo.GetRegionByGroupId(int.Parse(e.Value));
+            if (region != null)
+            {
+                regionCombo.DataSource = region;
+                regionCombo.DataTextField = "RegionName";
+                regionCombo.DataValueField = "Id";
+                regionCombo.DataBind();
+
+                RadComboBoxItem item = new RadComboBoxItem("Select a region", "0");
+                regionCombo.Items.Insert(0, item);
+            }
+        }
+
+        var areaCombo = ((RadComboBox)editedItem.FindControl("ddlAreaAddNew"));
+        if(areaCombo != null)
+        {
+            areaCombo.Items.Clear();
+            //ResetComboBox(areaCombo);
+        }
+
+        var localCombo = ((RadComboBox)editedItem.FindControl("ddlLocalAddNew"));
+        if (localCombo != null)
+        {
+            localCombo.Items.Clear();
+            //ResetComboBox(localCombo);
+        }
+    }
+
+    protected void ddlRegionAddNew_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        GridEditableItem editedItem = (o as RadComboBox).NamingContainer as GridEditableItem;
+
+        var areaCombo = ((RadComboBox)editedItem.FindControl("ddlAreaAddNew"));
+        if (areaCombo != null && e.Value != "0")
+        {
+            var area = areaRepo.GetAreaByRegionId(int.Parse(e.Value));
+            if (area != null)
+            {
+                areaCombo.DataSource = area;
+                areaCombo.DataTextField = "AreaName";
+                areaCombo.DataValueField = "Id";
+                areaCombo.DataBind();
+
+                RadComboBoxItem item = new RadComboBoxItem("Select a area", "0");
+                areaCombo.Items.Insert(0, item);
+            }
+        }
+
+        var localCombo = ((RadComboBox)editedItem.FindControl("ddlLocalAddNew"));
+        if (localCombo != null)
+        {
+            localCombo.Items.Clear();
+        }
+    }
+
+    protected void ddlAreaAddNew_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        GridEditableItem editedItem = (o as RadComboBox).NamingContainer as GridEditableItem;
+
+        var localCombo = ((RadComboBox)editedItem.FindControl("ddlLocalAddNew"));
+        if (localCombo != null && e.Value != "0")
+        {
+            var local = localRepo.GetLocalByAreaId(int.Parse(e.Value));
+            if (local != null)
+            {
+                localCombo.DataSource = local;
+                localCombo.DataTextField = "LocalName";
+                localCombo.DataValueField = "Id";
+                localCombo.DataBind();
+
+                RadComboBoxItem item = new RadComboBoxItem("Select a local", "0");
+                localCombo.Items.Insert(0, item);
+            }
+        }
+    }
+
+    private void ResetComboBox(RadComboBox radComboBox)
+    {
+        radComboBox.DataSource = null;
+        radComboBox.DataBind();
+    }
+
     protected void ddlGroup_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
         ddlRegion.Enabled = true;
