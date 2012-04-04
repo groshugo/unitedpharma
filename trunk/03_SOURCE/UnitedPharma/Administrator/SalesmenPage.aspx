@@ -107,6 +107,29 @@
                         </telerik:RadDatePicker>
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>
+                <telerik:GridTemplateColumn HeaderText="Group">
+                    <EditItemTemplate>
+                        <telerik:RadComboBox ID="ddlGroupAddNew" runat="server" AutoPostBack="true" 
+                        OnSelectedIndexChanged="ddlGroupAddNew_SelectedIndexChanged"></telerik:RadComboBox>
+                    </EditItemTemplate>                    
+                </telerik:GridTemplateColumn>
+                <telerik:GridTemplateColumn HeaderText="Region" Visible="false">
+                    <EditItemTemplate>
+                        <telerik:RadComboBox ID="ddlRegionAddNew" runat="server" AutoPostBack="true" 
+                        OnSelectedIndexChanged="ddlRegionAddNew_SelectedIndexChanged"></telerik:RadComboBox>
+                    </EditItemTemplate>                    
+                </telerik:GridTemplateColumn>
+                <telerik:GridTemplateColumn HeaderText="Area" Visible="false">
+                    <EditItemTemplate>
+                        <telerik:RadComboBox ID="ddlAreaAddNew" runat="server" AutoPostBack="true"
+                        OnSelectedIndexChanged="ddlAreaAddNew_SelectedIndexChanged"></telerik:RadComboBox>
+                    </EditItemTemplate>                    
+                </telerik:GridTemplateColumn> 
+                <telerik:GridTemplateColumn HeaderText="Local" Visible="false">
+                    <EditItemTemplate>
+                        <telerik:RadComboBox ID="ddlLocalAddNew" runat="server" AutoPostBack="true"></telerik:RadComboBox>
+                    </EditItemTemplate>                    
+                </telerik:GridTemplateColumn>
                 <telerik:GridButtonColumn ConfirmText="Delete this saleman?" ConfirmDialogType="RadWindow"
                     ConfirmTitle="Delete" ButtonType="ImageButton" CommandName="Delete" />
             </Columns>
