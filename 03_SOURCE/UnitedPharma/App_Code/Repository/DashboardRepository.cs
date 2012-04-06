@@ -34,7 +34,7 @@ public class DashboardRepository
         return (from e in db.Dashboards where e.ReceiverPhoneNumber == ReceiverPhoneNumber && e.IsDeleted == false && e.IsRead==false select e).Count();
     }
 
-    public bool Add(string Title, string Content, string ReceiverPhoneNumber,string SenderPhoneNumber)
+    public bool Add(string Title, string Content, string ReceiverPhoneNumber,string SenderPhoneNumber, string filePath)
     {
         try
         {
@@ -47,6 +47,7 @@ public class DashboardRepository
             o.IsRead = false;
             o.ReceiverPhoneNumber = ReceiverPhoneNumber;
             o.SenderPhoneNumber = SenderPhoneNumber;
+            o.AttachedFileName = filePath;
             db.Dashboards.InsertOnSubmit(o);
             db.SubmitChanges();
             return true;
