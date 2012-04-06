@@ -36,14 +36,19 @@
                 else if (window.frameElement.radWindow) oWindow = window.frameElement.radWindow;
                 return oWindow;
             }
-            function returnToParent() {               
+            function returnToParent() {
                 var oWnd = GetRadWindow();
                 oWnd.close("1");
             }
             function ClosePopup() {
                 var oWnd = GetRadWindow();
                 oWnd.close();
-            }        
+            }
+
+
+            function OnClientFileUploadFail(sender, args) {
+                alert(args.get_message());
+            };
             -->
         </script>
     </telerik:RadCodeBlock>
@@ -61,7 +66,7 @@
                     <telerik:AjaxUpdatedControl ControlID="grdSalemen" LoadingPanelID="RadAjaxLoadingPanel1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
-        </AjaxSettings>        
+        </AjaxSettings>
     </telerik:RadAjaxManager>
     <telerik:RadAjaxLoadingPanel runat="server" Transparency="25" ID="RadAjaxLoadingPanel1"
         CssClass="RadAjax RadAjax_Vista">
@@ -70,7 +75,7 @@
         <div class="raColor raTransp">
         </div>
     </telerik:RadAjaxLoadingPanel>
-    <table cellpadding="5" cellspacing="0" style="margin:10px;">
+    <table cellpadding="5" cellspacing="0" style="margin: 10px;">
         <tr>
             <td valign="top">
                 Title:
@@ -82,9 +87,12 @@
                             <telerik:RadTextBox runat="server" ID="txtTitle" Width="300">
                             </telerik:RadTextBox>
                         </td>
-                        <td>Append Aministrator</td>
-                        <td><asp:CheckBox ID="chkAddAdmin" runat="server" AutoPostBack="true" 
-                                oncheckedchanged="chkAddAdmin_CheckedChanged" /></td>
+                        <td>
+                            Append Aministrator
+                        </td>
+                        <td>
+                            <asp:CheckBox ID="chkAddAdmin" runat="server" AutoPostBack="true" OnCheckedChanged="chkAddAdmin_CheckedChanged" />
+                        </td>
                     </tr>
                 </table>
             </td>
@@ -94,8 +102,18 @@
                 Content:
             </td>
             <td>
-                <telerik:RadTextBox runat="server" ID="txtContent" TextMode="MultiLine" Width="300">
-                </telerik:RadTextBox>
+                <table>
+                    <td>
+                        <telerik:RadTextBox runat="server" ID="txtContent" TextMode="MultiLine" Width="300">
+                        </telerik:RadTextBox>
+                    </td>
+                    <td>
+                        <telerik:RadAsyncUpload ID="dashboardAttachedFile" runat="server" AllowedFileExtensions="jpg,png,bmp,doc,docx,xls,xlsx,ppt,pptx,zip,rar"
+                            MultipleFileSelection="Disabled" MaxFileInputsCount="1" MaxFileSize="1024000"
+                            TargetFolder="~/Upload/Attachments" OnFileUploaded="RadAsyncUploadFileUploaded">
+                        </telerik:RadAsyncUpload>
+                    </td>
+                </table>
             </td>
         </tr>
         <tr>
@@ -122,15 +140,17 @@
             </td>
         </tr>
         <tr>
-            <td></td>
             <td>
-                <telerik:RadButton runat="server" Text="Create" OnClick="btnCreateDashboard_Click"></telerik:RadButton>
-                <button onclick="ClosePopup()">Cancel</button>
-                <asp:Label runat="server" Text="" ID="lblMessage"></asp:Label>            
+            </td>
+            <td>
+                <telerik:RadButton runat="server" Text="Create" OnClick="btnCreateDashboard_Click">
+                </telerik:RadButton>
+                <button onclick="ClosePopup()">
+                    Cancel</button>
+                <asp:Label runat="server" Text="" ID="lblMessage"></asp:Label>
             </td>
         </tr>
     </table>
-    
     <%--<div>
         <div style="margin-top: 4px; text-align: right; clear: both">
             <button title="Submit" id="close" onclick="returnToParent(); return false;">
