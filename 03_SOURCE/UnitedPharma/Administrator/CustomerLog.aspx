@@ -46,7 +46,7 @@
     <telerik:RadFormDecorator ID="RadFormDecorator1" DecoratedControls="All" runat="server" Skin="Office2007" />
     <div style="width:915px;">
         <telerik:RadGrid runat="server" ID="DetailLog" AutoGenerateColumns="false" Skin="Office2007" AllowMultiRowSelection="false" 
-            AllowPaging="false">
+            AllowPaging="false" OnDeleteCommand="RadGrid1_DeleteCommand" >
             <MasterTableView DataKeyNames="Id" ClientDataKeyNames="Id">
                 <Columns>
                     <telerik:GridClientSelectColumn UniqueName="CheckboxSelectColumn" FooterText="CheckBoxSelect footer" />
@@ -89,16 +89,52 @@
                     </telerik:GridTemplateColumn>
                         <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status">
                     </telerik:GridCheckBoxColumn>
-                <%--<telerik:GridBoundColumn DataField="SupervisorName" HeaderText="Supervisor Name" />
-                <telerik:GridBoundColumn DataField="PositionName" HeaderText="Position" />
-                <telerik:GridBoundColumn DataField="supervisorPhone" HeaderText="Supervisor Phone" />--%>
+                    <telerik:GridButtonColumn ConfirmText="Are you sure you want to delete this customer log?" ConfirmDialogType="RadWindow"
+                    ConfirmTitle="Delete" ButtonType="ImageButton" CommandName="Delete" />
                 </Columns>
             </MasterTableView>
             <ClientSettings>
                 <Selecting AllowRowSelect="true" />
             </ClientSettings>
         </telerik:RadGrid>
-        <div>
+
+        Original data:
+        <telerik:RadGrid ID="CustomerList" runat="server" Skin="Office2007" AllowPaging="true"
+        AutoGenerateColumns="false" OnNeedDataSource="CustomerList_NeedDataSource" PageSize="50">
+        <MasterTableView DataKeyNames="Id" ClientDataKeyNames="Id">
+            <Columns>
+                <telerik:GridBoundColumn DataField="UpiCode" HeaderText="UPI Code" />
+                <telerik:GridBoundColumn DataField="FullName" HeaderText="Full Name" />
+                <telerik:GridBoundColumn DataField="CustomerTypeName" HeaderText="CustomerType" />
+                <telerik:GridBoundColumn DataField="ChannelName" HeaderText="Channel" />
+                <telerik:GridBoundColumn DataField="Address" HeaderText="Address" />
+                <telerik:GridBoundColumn DataField="Street" HeaderText="Street" />
+                <telerik:GridBoundColumn DataField="Phone" HeaderText="Phone" />
+                <telerik:GridBoundColumn DataField="DistrictName" HeaderText="District" />
+                
+                <telerik:GridTemplateColumn HeaderText="CreateDate">
+                    <ItemTemplate>
+                        <asp:Label ID="lblCreateDate" runat="server" Text='<%# String.Format("{0:d}", Eval("CreateDate")) %>'></asp:Label>
+                    </ItemTemplate>
+                </telerik:GridTemplateColumn>
+                <telerik:GridTemplateColumn HeaderText="UpdateDate">
+                    <ItemTemplate>
+                        <asp:Label ID="lblUpdateDate" runat="server" Text='<%# String.Format("{0:d}", Eval("UpdateDate")) %>'></asp:Label>
+                    </ItemTemplate>
+                </telerik:GridTemplateColumn>                
+                <telerik:GridBoundColumn DataField="LocalName" HeaderText="Location" />
+                <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status">
+                </telerik:GridCheckBoxColumn>
+                <telerik:GridBoundColumn DataField="Ward" HeaderText="Ward" />
+            </Columns>
+        </MasterTableView>
+        <ClientSettings EnableRowHoverStyle="true">
+            <Selecting AllowRowSelect="True" />
+        </ClientSettings>
+        <PagerStyle Mode="NextPrevAndNumeric" />
+    </telerik:RadGrid>
+
+        <div style="padding-top: 5px;">
             <asp:Button ID="btn1" runat="server" Text="Approve" onclick="btn1_Click" OnClientClick="GetId();" SkinID="Office2007" Enabled="false" />
             <asp:Button ID="btnnotApprove" runat="server" Text="Not Approve" OnClick="btnnotApprove_Click" OnClientClick="GetId();" SkinID="Office2007" Enabled="false" />
             <button onclick="ClosePopup()">Close window</button>

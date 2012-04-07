@@ -32,6 +32,18 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
         }
     }
 
+    protected void btnFilter_Click(object sender, EventArgs e)
+    {
+        string upiCode = txtUpiCode.Text.Trim();
+        string fullname = txtFullName.Text.Trim();
+
+        if(!string.IsNullOrEmpty(upiCode) || !string.IsNullOrEmpty(fullname))
+        {
+            CustomerList.DataSource = CustomerRepo.FilterCustomers(upiCode, fullname);
+            CustomerList.DataBind();
+        }
+    }
+
     protected void CustomerList_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
         CustomerList.DataSource = CustomerRepo.GetAllViewCustomers();

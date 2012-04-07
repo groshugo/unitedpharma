@@ -121,7 +121,8 @@ public class CustomersRepository
 
     public Customer GetCustomerById(int id)
     {
-        return (from e in db.Customers where e.Id == id select e).SingleOrDefault();
+        return (from e in db.Customers 
+                where e.Id == id   select e).SingleOrDefault();
     }
 
     public Customer CheckLogin(string phone, string password)
@@ -461,5 +462,41 @@ public class CustomersRepository
         {
             return null;
         }
+    }
+
+    public List<vwCustomer> FilterCustomers(string upiCode, string fullname)
+    {
+        var viewAllProerties = (from c in db.Customers
+                                where c.IsEnable == true  
+                                        && (upiCode == string.Empty || c.UpiCode.Contains(upiCode))
+                                        && (fullname == string.Empty || c.FullName.Contains(fullname)) 
+                                select new vwCustomer
+                                {
+                                    Id = c.Id,
+                                    UpiCode = c.UpiCode,
+                                    FullName = c.FullName,
+                                    Address = c.Address,
+                                    Street = c.Street,
+                                    Ward = c.Ward,
+                                    Phone = c.Phone,
+                                    Password = c.Password,
+                                    CustomerTypeId = c.CustomerTypeId,
+                                    CustomerTypeName = c.CustomerType.TypeName,
+                                    ChannelId = c.ChannelId,
+                                    ChannelName = c.Channel.ChannelName,
+                                    DistrictId = c.DistrictId,
+                                    DistrictName = c.District.DistrictName,
+                                    LocalId = c.LocalId,
+                                    LocalName = c.Local.LocalName,
+                                    GroupId = c.Local.Area.Region.GroupId,
+                                    RegionId = c.Local.Area.RegionId,
+                                    AreaId = c.Local.AreaId,
+                                    CreateDate = c.CreateDate,
+                                    UpdateDate = c.UpdateDate,
+                                    Status = c.Status,
+                                    ProvinceId = c.District.ProvinceId,
+                                    SectionId = c.District.Province.SectionId
+                                }).ToList();
+        return viewAllProerties;
     }
 }

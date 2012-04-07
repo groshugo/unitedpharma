@@ -20,7 +20,7 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
         {
             Utility.SetCurrentMenu("mDashboard");
             LoadListSalesmen();
-            LoadGridDashboard(); 
+            LoadGridDashboard();
         }
     }
 

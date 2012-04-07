@@ -29,6 +29,10 @@
             function changePage(argument) {
                 tableView.page(argument);
             }
+
+            function openWinViewDashboard(dashboardId) {
+                var oWnd = radopen("ViewDashboardDetails.aspx?ID=" + dashboardId, "RadWindowViewDashboard");
+            }
         </script>
     </telerik:RadCodeBlock>
     <telerik:RadWindowManager ID="RadWindowManager1" ShowContentDuringLoad="false" VisibleStatusbar="false"
@@ -37,8 +41,13 @@
             <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" Height="605"
                 NavigateUrl="CreateDashboard.aspx">
             </telerik:RadWindow>
+
+            <telerik:RadWindow ID="RadWindowDashboardDetails" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" Height="605"
+                NavigateUrl="ViewDashboardDetails.aspx">
+                </telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>
+
     <h3>
         Dashboard Management
     </h3>
@@ -74,7 +83,7 @@
         </div>
     </div>
     <telerik:RadGrid runat="server" ID="RadGrid1" AutoGenerateColumns="false" AllowPaging="true" OnItemCreated="RadGrid1_ItemCreated"
-        OnNeedDataSource="RadGrid1_NeedDataSource" OnUpdateCommand="RadGrid1_UpdateCommand" PageSize="50"
+        OnNeedDataSource="RadGrid1_NeedDataSource" OnUpdateCommand="RadGrid1_UpdateCommand" PageSize="50" 
         OnDeleteCommand="RadGrid1_DeleteCommand" Skin="Office2007" OnCreateColumnEditor="RadGrid1_CreateColumnEditor">
         <MasterTableView DataKeyNames="ReceiverPhoneNumber" CommandItemDisplay="None" InsertItemPageIndexAction="ShowItemOnCurrentPage">
             <PagerTemplate>
@@ -108,6 +117,13 @@
                 <telerik:GridBoundColumn DataField="UpdateDate" HeaderText="Update Date" ReadOnly="true" />
                 <telerik:GridBoundColumn UniqueName="Content" HeaderText="Content" DataField="Content">
                 </telerik:GridBoundColumn>
+                <telerik:GridTemplateColumn HeaderText="">
+                    <ItemTemplate>
+                        <a href="javascript:openWinViewDashboard(<%# Eval("ID") %>);">View Details</a><%--
+                        <asp:LinkButton runat="server" ID="ViewDashboardDetails" Text="View Detail" 
+                            OnClientClick='openWinViewDashboard(<%# Eval("ID") %>); return false;'></asp:LinkButton>--%>
+                    </ItemTemplate>
+                </telerik:GridTemplateColumn>
                 <telerik:GridButtonColumn ConfirmText="Delete this dashboard?" ConfirmDialogType="RadWindow"
                     ConfirmTitle="Delete" ButtonType="ImageButton" CommandName="Delete" />
             </Columns>
@@ -118,4 +134,6 @@
         </MasterTableView>
         <PagerStyle Mode="NextPrevAndNumeric" />
     </telerik:RadGrid>    
+
+
 </asp:Content>

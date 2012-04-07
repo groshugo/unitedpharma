@@ -17,7 +17,9 @@ public partial class Administrator_CustomerLog : System.Web.UI.Page
             ObjLogin adm = (ObjLogin)Session["objLogin"];
             if (!IsPostBack)
             {
-                GetCustomerLogByPhone(int.Parse(Request.QueryString["Id"]));
+                int customerId = int.Parse(Request.QueryString["Id"]);
+
+                GetCustomerLogByPhone(customerId);
                 if (adm.AllowApprove == true)
                 {
                     btn1.Enabled = true;
@@ -32,6 +34,8 @@ public partial class Administrator_CustomerLog : System.Web.UI.Page
                     btnnotApprove.Enabled = false;
                     btnnotApprove.Text = "You don't have permission to approve";
                 }
+
+                hdfID.Value = customerId.ToString();
             }
         }
     }
@@ -46,14 +50,32 @@ public partial class Administrator_CustomerLog : System.Web.UI.Page
     protected void btnnotApprove_Click(object sender, EventArgs e)
     {
         Crepo.SetEnableOfCustomer(int.Parse(Request.QueryString["Id"]), true);
-        CLogRepo.DeleteCustomerLogById(int.Parse(Request.QueryString["Id"]));
+        //CLogRepo.DeleteCustomerLogById(int.Parse(Request.QueryString["Id"]));
         GetCustomerLogByPhone(int.Parse(Request.QueryString["Id"]));
     }
     protected void btn1_Click(object sender, EventArgs e)
     {
         Crepo.UpdateCustomerFromLog(int.Parse(hdfID.Value), int.Parse(Request.QueryString["Id"]));
-        CLogRepo.DeleteCustomerLogById(int.Parse(Request.QueryString["Id"]));
+        //CLogRepo.DeleteCustomerLogById(int.Parse(Request.QueryString["Id"]));
         GetCustomerLogByPhone(int.Parse(Request.QueryString["Id"]));
         Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('Approve success.');", true);
+    }
+    protected void CustomerList_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
+    {
+        var listCustomer = new List<vwCustomer>();
+        var customer = Crepo.GetCustomersByID(int.Parse(Request.QueryString["Id"]));
+        if (customer != null)
+        {
+            listCustomer.Add(customer);
+            CustomerList.DataSource = listCustomer;
+        }
+    }
+    protected void RadGrid1_DeleteCommand(object source, GridCommandEventArgs e)
+    {
+        if (hdfID == null) return;
+
+        var customerLogId = int.Parse(hdfID.Value);
+        CLogRepo.DeleteCustomerLogById(customerLogId);
+        GetCustomerLogByPhone(customerLogId);
     }
 }
