@@ -19,30 +19,30 @@
                 }
             }
             function viewLog() {
-                    if ($find("<%=gridCustomerLog.ClientID %>").get_masterTableView().get_selectedItems().length < 1) {
-                        alert("Select a customer to view log");
-                    }
-                    else {
-                        var RadGrid1 = $find("<%=gridCustomerLog.ClientID %>");
-                        var MasterTable = RadGrid1.get_masterTableView();
-                        var row = MasterTable.get_selectedItems()[0];
-                        var keyValues = row.getDataKeyValue("Id");
-                        var oWnd = radopen("CustomerLog.aspx?Id=" + keyValues, "RadWindow2");
-                        $("#<%= hdfID.ClientID %>").val(keyValues);
-                    }
+                if ($find("<%=gridCustomerLog.ClientID %>").get_masterTableView().get_selectedItems().length < 1) {
+                    alert("Select a customer to view log");
                 }
-                var tableView = null;
-                function pageLoad(sender, args) {
-                    tableView = $find("<%= gridCustomerLog.ClientID %>").get_masterTableView();
+                else {
+                    var RadGrid1 = $find("<%=gridCustomerLog.ClientID %>");
+                    var MasterTable = RadGrid1.get_masterTableView();
+                    var row = MasterTable.get_selectedItems()[0];
+                    var keyValues = row.getDataKeyValue("Id");
+                    var oWnd = radopen("CustomerLog.aspx?Id=" + keyValues, "RadWindow2");
+                    $("#<%= hdfID.ClientID %>").val(keyValues);
                 }
+            }
+            var tableView = null;
+            function pageLoad(sender, args) {
+                tableView = $find("<%= gridCustomerLog.ClientID %>").get_masterTableView();
+            }
 
-                function RadComboBox1_SelectedIndexChanged(sender, args) {
-                    tableView.set_pageSize(sender.get_value());
-                }
+            function RadComboBox1_SelectedIndexChanged(sender, args) {
+                tableView.set_pageSize(sender.get_value());
+            }
 
-                function changePage(argument) {
-                    tableView.page(argument);
-                }
+            function changePage(argument) {
+                tableView.page(argument);
+            }
             -->
         </script>
     </telerik:RadCodeBlock>
@@ -52,15 +52,40 @@
             <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" OnClientClose="OnClientClose"
                 Width="650px" Height="480px" NavigateUrl="ImportCustomers.aspx">
             </telerik:RadWindow>
-            <telerik:RadWindow ID="RadWindow2" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" Height="600"
-                NavigateUrl="CustomerLog.aspx">
+            <telerik:RadWindow ID="RadWindow2" runat="server" Behaviors="Close" OnClientClose="OnClientClose"
+                Width="850" Height="600" NavigateUrl="CustomerLog.aspx">
             </telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>
     <div>
-        <div style="float:left; padding:10px;"><h3>Customer Management</h3></div>
-        <div style="float:right;padding:10px;">
-            <button onclick="openWin(); return false;">Import customers</button>
+        <div style="float: left; padding: 10px;">
+            <h3>
+                Customer Management</h3>
+            <asp:Panel ID="PanelFilter" runat="server" DefaultButton="btnFilter">
+                <table>
+                    <tr>
+                        <td>
+                            UPI Code:
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtUpiCode" runat="server" Width="158px"></asp:TextBox>
+                        </td>
+                        <td>
+                            FullName:
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtFullName" runat="server" Width="158px"></asp:TextBox>
+                        </td>
+                        <td colspan="2">
+                            <asp:Button ID="btnFilter" runat="server" Text="Filter" OnClick="btnFilter_Click" />
+                        </td>
+                    </tr>
+                </table>
+            </asp:Panel>
+        </div>
+        <div style="float: right; padding: 10px;">
+            <button onclick="openWin(); return false;">
+                Import customers</button>
         </div>
     </div>
     <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="RadAjaxLoadingPanel1">
@@ -221,40 +246,45 @@
     </telerik:RadGrid>
     <br />
     <div>
-        <div style="float:left; padding:10px;"><h3>Edited Customers</h3></div>
-        <div style="float:right; padding:10px;">
-            <button onclick="viewLog(); return false;">View Log</button>
+        <div style="float: left; padding: 10px;">
+            <h3>
+                Edited Customers</h3>
+        </div>
+        <div style="float: right; padding: 10px;">
+            <button onclick="viewLog(); return false;">
+                View Log</button>
         </div>
     </div>
-    <telerik:RadGrid ID="gridCustomerLog" runat="server" Skin="Office2007" AllowPaging="true" OnItemCreated="gridCustomerLog_ItemCreated"
-        AutoGenerateColumns="false" OnNeedDataSource="gridCustomerLog_NeedDataSource" PageSize="50">
+    <telerik:RadGrid ID="gridCustomerLog" runat="server" Skin="Office2007" AllowPaging="true"
+        OnItemCreated="gridCustomerLog_ItemCreated" AutoGenerateColumns="false" OnNeedDataSource="gridCustomerLog_NeedDataSource"
+        PageSize="50">
         <MasterTableView DataKeyNames="Id" InsertItemPageIndexAction="ShowItemOnCurrentPage"
             EditMode="EditForms" ClientDataKeyNames="Id" CommandItemDisplay="Top">
             <CommandItemSettings ShowAddNewRecordButton="false" />
             <PagerTemplate>
-                    <asp:Panel ID="PagerPanel" Style="padding: 6px; height: 20px" runat="server">
-                        <div style="float: left">
-                            <span style="margin-right: 3px;">Page size:</span>
-                            <telerik:RadComboBox ID="RadComboBox1" DataSource="<%# new object[]{10, 20, 50, 200, 500, 1000} %>"
-                                Style="margin-right: 20px;" Width="70px" SelectedValue='<%# DataBinder.Eval(Container, "Paging.PageSize") %>'
-                                runat="server" OnClientSelectedIndexChanged="RadComboBox1_SelectedIndexChanged">
-                            </telerik:RadComboBox>
-                        </div>
-                        <div style="margin: 0px; float: right;">
-                            Displaying page
-                            <%# (int)DataBinder.Eval(Container, "Paging.CurrentPageIndex") + 1 %>
-                            of
-                            <%# DataBinder.Eval(Container, "Paging.PageCount")%>
-                            , items
-                            <%# (int)DataBinder.Eval(Container, "Paging.FirstIndexInPage") + 1 %>
-                            to
-                            <%# (int)DataBinder.Eval(Container, "Paging.LastIndexInPage") + 1 %>
-                            of
-                            <%# DataBinder.Eval(Container, "Paging.DataSourceCount")%>
-                        </div>
-                        <asp:Panel runat="server" ID="NumericPagerPlaceHolder" />
-                    </asp:Panel>
-                </PagerTemplate>
+                <asp:Panel ID="PagerPanel" Style="padding: 6px; height: 20px" runat="server">
+                    <div style="float: left">
+                        <span style="margin-right: 3px;">Page size:</span>
+                        <telerik:RadComboBox ID="RadComboBox1" DataSource="<%# new object[]{10, 20, 50, 200, 500, 1000} %>"
+                            Style="margin-right: 20px;" Width="70px" SelectedValue='<%# DataBinder.Eval(Container, "Paging.PageSize") %>'
+                            runat="server" OnClientSelectedIndexChanged="RadComboBox1_SelectedIndexChanged">
+                        </telerik:RadComboBox>
+                    </div>
+                    <div style="margin: 0px; float: right;">
+                        Displaying page
+                        <%# (int)DataBinder.Eval(Container, "Paging.CurrentPageIndex") + 1 %>
+                        of
+                        <%# DataBinder.Eval(Container, "Paging.PageCount")%>
+                        , items
+                        <%# (int)DataBinder.Eval(Container, "Paging.FirstIndexInPage") + 1 %>
+                        to
+                        <%# (int)DataBinder.Eval(Container, "Paging.LastIndexInPage") + 1 %>
+                        of
+                        <%# DataBinder.Eval(Container, "Paging.DataSourceCount")%>
+                    </div>
+                    <asp:Panel runat="server" ID="NumericPagerPlaceHolder" />
+                </asp:Panel>
+            </PagerTemplate>
             <Columns>
                 <telerik:GridClientSelectColumn UniqueName="ClientSelectColumn" />
                 <telerik:GridBoundColumn DataField="UpiCode" HeaderText="UPI Code" />
@@ -349,7 +379,8 @@
                         </telerik:RadComboBox>
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>
-                <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status" Visible="false">
+                <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status"
+                    Visible="false">
                 </telerik:GridCheckBoxColumn>
                 <telerik:GridBoundColumn DataField="SupervisorName" HeaderText="Supervisor Name" />
                 <telerik:GridBoundColumn DataField="PositionName" HeaderText="Position" />
