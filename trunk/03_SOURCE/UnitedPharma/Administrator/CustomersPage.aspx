@@ -227,6 +227,12 @@
                 <telerik:GridBoundColumn DataField="LocalName" HeaderText="Local" ReadOnly="true" />
                 <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status">
                 </telerik:GridCheckBoxColumn>
+                <telerik:GridTemplateColumn HeaderText="Note Of Salesmen">
+                    <EditItemTemplate>
+                        <asp:TextBox runat="server" ID="txtNoteOfSalesmen" TextMode="MultiLine" Rows="4"
+                            Columns="50" ></asp:TextBox>
+                    </EditItemTemplate>
+                </telerik:GridTemplateColumn>
                 <telerik:GridTemplateColumn HeaderText="View detail">
                     <ItemTemplate>
                         <asp:HyperLink ID="CustomerDetail" runat="server" Text="View detail" NavigateUrl='<%# String.Format("CustomerDetail.aspx?ID={0}",Eval("Id")) %>'></asp:HyperLink>

@@ -53,6 +53,11 @@
                 <td class="title">Enable</td>
                 <td><asp:CheckBox ID="chkEnable" runat="server" Enabled="false" /></td>
             </tr>
+            <tr>
+                <td class="title">Note of Salesmen</td>
+                <td><asp:Literal ID="litNoteOfSalesmen" runat="server" /></td>
+                <td class="title" colspan="2"></td>
+            </tr>
         </table>
         <div style="padding-top:15px; width:100%">
             <div style="float:left; width:44%">

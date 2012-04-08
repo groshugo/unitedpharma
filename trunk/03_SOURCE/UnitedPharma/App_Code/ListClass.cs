@@ -64,6 +64,7 @@ public class vwCustomer
     public DateTime? UpdateDate { get; set; }
     public bool? Status { get; set; }
     public bool? IsEnable { get; set; }
+    public string NoteOfSalesmen { get; set; }
     
     public vwCustomer()
 	{		
@@ -109,6 +110,7 @@ public class vwCustomerLog
     public int? ApproveBy { get; set; }
     public int? ChangeBy { get; set; }
     public int? CustomerId { get; set; }
+    public string NoteOfSalesmen { get; set; }
 
     public vwCustomerLog()
     {

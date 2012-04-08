@@ -45,7 +45,8 @@ public class CustomersLogRepository
             IsApprove=a.IsApprove,
             ApproveBy=a.ApproveBy,
             ChangeBy=a.ChangeBy,
-            CustomerId=a.CustomerId
+            CustomerId=a.CustomerId,
+            NoteOfSalesmen = a.NoteOfSalesmen
                 }).OrderByDescending(i => i.Id).ToList();
     }
     public CustomerLog GetLogByPhoneNumber(string phone)
@@ -63,7 +64,8 @@ public class CustomersLogRepository
                 select a).ToList();
     }
     public bool InsertCustomer(string UPICode, string FullName, string Address, string Street, string Ward, string Phone, string Password, int CustomerTypeId,
-        int ChannelId, int DistrictId, int LocalId, DateTime CreateDate, DateTime UpdateDate, bool Status, int CustomerId, bool IsApprove, int APPROVED_BY, int changeBy)
+        int ChannelId, int DistrictId, int LocalId, DateTime CreateDate, DateTime UpdateDate, bool Status, int CustomerId, bool IsApprove, int APPROVED_BY, int changeBy,
+        string noteOfSalesmen)
     {
         try
         {
@@ -86,43 +88,10 @@ public class CustomersLogRepository
             o.IsApprove = IsApprove;
             o.ApproveBy = APPROVED_BY;
             o.ChangeBy = changeBy;
+            o.NoteOfSalesmen = noteOfSalesmen;
             db.CustomerLogs.InsertOnSubmit(o);
             db.SubmitChanges();
             return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public bool UpdateCustomer(int id, string UPICode, string FullName, string Address, string Street, string Ward, string Phone, string Password, int CustomerTypeId,
-        int ChannelId, int DistrictId, int LocalId, DateTime CreateDate, DateTime UpdateDate, bool Status)
-    {
-        try
-        {
-            var o = (from e in db.Customers where e.Id == id select e).SingleOrDefault();
-            if (o != null)
-            {
-                o.UpiCode = UPICode;
-                o.FullName = FullName;
-                o.Address = Address;
-                o.Street = Street;
-                o.Ward = Ward;
-                o.Phone = Phone;
-                o.Password = Password;
-                o.CustomerTypeId = CustomerTypeId;
-                o.ChannelId = ChannelId;
-                o.DistrictId = DistrictId;
-                o.LocalId = LocalId;
-                o.CreateDate = CreateDate;
-                o.UpdateDate = UpdateDate;
-                o.Status = Status;               
-                db.SubmitChanges();
-                return true;
-            }
-            else
-                return false;
         }
         catch
         {
@@ -149,9 +118,9 @@ public class CustomersLogRepository
         else
             return false;
     }
-    public bool DeleteCustomerLogById(int CustomerId)
+    public bool DeleteCustomerLogById(int customerLogId)
     {
-        var e = from o in db.CustomerLogs where o.CustomerId == CustomerId select o;
+        var e = from o in db.CustomerLogs where o.Id == customerLogId select o;
         if (e != null)
         {
             try

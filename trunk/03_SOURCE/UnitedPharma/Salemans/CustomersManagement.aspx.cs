@@ -85,7 +85,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
     protected void RadGrid2_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
         ObjLogin sale = (ObjLogin)Session["objLogin"];
-        RadGrid2.DataSource = LoadSaleManager(sale.Id,1,"","",0, string.Empty);
+        RadGrid2.DataSource = LoadSaleManager(sale.Id, 1, "", "", 0, string.Empty);
     }
     protected void RadGrid2_UpdateCommand(object source, GridCommandEventArgs e)
     {
@@ -100,18 +100,24 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         {
             try
             {
-                    RadComboBox ddlDistricts = gdItem["DistrictColumn"].FindControl("ddlDistricts") as RadComboBox;
-                    if (int.Parse(ddlDistricts.SelectedValue) > 0)
-                    {
-                        int district = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistricts")).SelectedValue);
-                        TextBox txtFullName = (TextBox)gdItem["FullNameColumn"].FindControl("txtFullName") as TextBox;
+                RadComboBox ddlDistricts = gdItem["DistrictColumn"].FindControl("ddlDistricts") as RadComboBox;
+                if (int.Parse(ddlDistricts.SelectedValue) > 0)
+                {
+                    int district = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistricts")).SelectedValue);
+                    TextBox txtFullName = (TextBox)gdItem["FullNameColumn"].FindControl("txtFullName") as TextBox;
 
-                        CLRepo.InsertCustomer(_customer.UpiCode, txtFullName.Text, (string)values["Address"], (string)values["Street"],
-                            (string)values["Ward"], _customer.Phone, _customer.Password, int.Parse(_customer.CustomerTypeId.ToString()), int.Parse(_customer.ChannelId.ToString()),
-                            district, int.Parse(_customer.LocalId.ToString()), Convert.ToDateTime(_customer.CreateDate), Convert.ToDateTime(_customer.UpdateDate), Convert.ToBoolean(_customer.Status), CustomerId, false, 0, sale.Id);
-                        CRepo.SetEnableOfCustomer(CustomerId, false);
-                        Response.Redirect("CustomersManagement.aspx");
-                    }
+                    int customerTypeId = int.Parse(((RadComboBox)gdItem.FindControl("dropdownCustomerType")).SelectedValue);
+                    bool customerStatus = ((CheckBox)gdItem.FindControl("chkStatusEdit")).Checked;
+
+                    string noteOfSalesmen = ((TextBox)gdItem.FindControl("txtNoteOfSalesmen")).Text;
+
+                    CLRepo.InsertCustomer(_customer.UpiCode, txtFullName.Text, (string)values["Address"], (string)values["Street"],
+                        (string)values["Ward"], _customer.Phone, _customer.Password, customerTypeId, int.Parse(_customer.ChannelId.ToString()),
+                        district, int.Parse(_customer.LocalId.ToString()), Convert.ToDateTime(_customer.CreateDate), Convert.ToDateTime(_customer.UpdateDate),
+                        customerStatus, CustomerId, false, 0, sale.Id, noteOfSalesmen);
+                    CRepo.SetEnableOfCustomer(CustomerId, false);
+                    Response.Redirect("CustomersManagement.aspx");
+                }
             }
             catch (System.Exception ex)
             {
@@ -120,7 +126,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         }
     }
 
-    private DataTable LoadSaleManager(int salemenId, int IsEnable,string FullName,string PhoneNumber,int LocalId, string upiCode)
+    private DataTable LoadSaleManager(int salemenId, int IsEnable, string FullName, string PhoneNumber, int LocalId, string upiCode)
     {
         AreasRepository Arepo = new AreasRepository();
         RegionsRepository RRepo = new RegionsRepository();
@@ -138,8 +144,8 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         //sql += " left join Section sec on pro.SectionId = sec.Id";
         sql += " where c.IsEnable= " + IsEnable;
         if (FullName != "")
-            sql += " and c.FullName like '%"+FullName+"%'";
-        if(PhoneNumber!="")
+            sql += " and c.FullName like '%" + FullName + "%'";
+        if (PhoneNumber != "")
             sql += " and c.Phone ='" + PhoneNumber + "'";
         if (LocalId > 0)
             sql += " and c.LocalId=" + LocalId;
@@ -148,7 +154,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
             sql += " and c.Localid in (" + strLocalIdList + ")";
         }
 
-        if(!string.IsNullOrEmpty(upiCode))
+        if (!string.IsNullOrEmpty(upiCode))
         {
             sql += string.Format(" and c.UpiCode like '%{0}%'", upiCode);
         }
@@ -168,7 +174,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         sql += "from Customer c left join CustomerType t on c.CustomerTypeId=t.Id";
         sql += " left join Channel ch on c.ChannelId=ch.Id left join District d on c.DistrictId=d.Id";
         sql += " left join Local l on c.LocalId=l.Id left join CustomerSupervisor s on c.Id=s.CustomerId left join SupervisorPosition p on s.PositionId=p.Id ";
-        sql += "where c.Id in (select CustomerId from CustomerLog where IsApprove=0 and changeBy="+salemenId+" group by CustomerId)";
+        sql += "where c.Id in (select CustomerId from CustomerLog where IsApprove=0 and changeBy=" + salemenId + " group by CustomerId)";
         return U.GetList(sql);
     }
     private string GetGroupBySalemenId(int salemenId)
@@ -228,7 +234,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
             return result.Substring(0, result.Length - 1);
     }
 
-    private string SalesRegionList(string strGroupIdList,int salemenId)
+    private string SalesRegionList(string strGroupIdList, int salemenId)
     {
         string SqlRegion = "select Id from Region where GroupId in (" + strGroupIdList + ") group by Id";
         dt = U.GetList(SqlRegion);
@@ -295,6 +301,8 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
 
             using (UPIDataContext db = new UPIDataContext())
             {
+                var rowData = (DataRowView) e.Item.DataItem;
+
                 string sectionIndex = String.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfSection")).Value) ? "0" : ((HiddenField)edititem.FindControl("hdfSection")).Value;
                 string provinceIndex = String.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfProvince")).Value) ? "0" : ((HiddenField)edititem.FindControl("hdfProvince")).Value;
                 string districtIndex = String.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfDistrict")).Value) ? "0" : ((HiddenField)edititem.FindControl("hdfDistrict")).Value;
@@ -332,6 +340,11 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
 
                 HiddenField hdfCt = ((HiddenField)edititem.FindControl("hdfCustomerTypeId"));
                 if (hdfCt != null) comboCustomerType.SelectedValue = hdfCt.Value;
+
+                // Note of Salesmen
+                string noteOfSalesmen = rowData["NoteOfSalesmen"].ToString();
+                var txtNoteOfSalesmen = ((TextBox)edititem.FindControl("txtNoteOfSalesmen"));
+                txtNoteOfSalesmen.Text = noteOfSalesmen;
             }
 
         }
