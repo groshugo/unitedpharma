@@ -9,20 +9,20 @@
         <script type="text/javascript">
             <!--
             function openWin(id) {
-                var oWnd = radopen("ViewDetailDashboard.aspx?Id="+id, "RadWindow1");
+                var oWnd = radopen("ViewDetailDashboard.aspx?Id=" + id, "RadWindow1");
             }
             -->
         </script>
     </telerik:RadCodeBlock>
-    <div style="float: left;width:70%; padding:10px">
-        <h3 style="color:#000;">
+    <div style="float: left; width: 70%; padding: 10px">
+        <h3 style="color: #000;">
             View all Dashboards
         </h3>
     </div>
-    <div style="float: right;width:20%; text-align:right; padding:10px">
-        <telerik:radbutton runat="server" id="btnBack" text="Back" skin="Office2007"
-            tooltip="Back" onclick="btnBack_Click" style="margin-left: 5px;">
-        </telerik:radbutton>
+    <div style="float: right; width: 20%; text-align: right; padding: 10px">
+        <telerik:RadButton runat="server" ID="btnBack" Text="Back" Skin="Office2007" ToolTip="Back"
+            OnClick="btnBack_Click" Style="margin-left: 5px;">
+        </telerik:RadButton>
     </div>
     <telerik:RadWindowManager ID="RadWindowManager1" ShowContentDuringLoad="false" VisibleStatusbar="false"
         ReloadOnShow="true" runat="server" Skin="Office2007" EnableShadow="true">
@@ -53,20 +53,29 @@
         </div>
         <div class="raColor raTransp">
         </div>
-    </telerik:RadAjaxLoadingPanel>    
-    <telerik:RadGrid runat="server" ID="RadGrid1" AutoGenerateColumns="false" AllowPaging="true" OnItemDataBound="RadGrid1_ItemDataBound"
-        OnNeedDataSource="RadGrid1_NeedDataSource" OnDeleteCommand="RadGrid1_DeleteCommand" Skin="Office2007">
-        <MasterTableView DataKeyNames="Id" InsertItemPageIndexAction="ShowItemOnCurrentPage" CommandItemDisplay="Top">
+    </telerik:RadAjaxLoadingPanel>
+    <telerik:RadGrid runat="server" ID="RadGrid1" AutoGenerateColumns="false" AllowPaging="true"
+        OnItemDataBound="RadGrid1_ItemDataBound" OnNeedDataSource="RadGrid1_NeedDataSource"
+        OnDeleteCommand="RadGrid1_DeleteCommand" Skin="Office2007">
+        <MasterTableView DataKeyNames="Id" InsertItemPageIndexAction="ShowItemOnCurrentPage"
+            CommandItemDisplay="Top">
             <CommandItemSettings ShowAddNewRecordButton="false" />
-            <Columns>                
+            <Columns>
                 <telerik:GridBoundColumn DataField="Title" HeaderText="Title" />
                 <telerik:GridTemplateColumn HeaderText="Subject">
                     <ItemTemplate>
-                        <a href="javascript:void(0);" onclick="openWin(<%# Eval("Id")%>);return false;"><%# Eval("Content")%></a>
+                        <a href="javascript:void(0);" onclick="openWin(<%# Eval("Id")%>);return false;">
+                            <%# Eval("Content")%></a>
                     </ItemTemplate>
                 </telerik:GridTemplateColumn>
                 <telerik:GridBoundColumn DataField="IsRead" SortExpression="IsRead" HeaderText="IsRead"
-                        Visible="false" UniqueName="IsReadCol" />
+                    Visible="false" UniqueName="IsReadCol" />
+                <telerik:GridTemplateColumn HeaderText="View Attachment">
+                    <ItemTemplate>
+                        <a href="/Upload/Attachments/<%# Eval("AttachedFileName")%>" target="blank">
+                            <%# Eval("AttachedFileName") != null && !string.IsNullOrEmpty(Eval("AttachedFileName").ToString()) ? Eval("AttachedFileName") : string.Empty %></a>
+                    </ItemTemplate>
+                </telerik:GridTemplateColumn>
                 <telerik:GridBoundColumn DataField="CreateDate" HeaderText="Create Date" ReadOnly="true" />
                 <telerik:GridButtonColumn ConfirmText="Delete this dashboard?" ConfirmDialogType="RadWindow"
                     ConfirmTitle="Delete" ButtonType="ImageButton" CommandName="Delete" />

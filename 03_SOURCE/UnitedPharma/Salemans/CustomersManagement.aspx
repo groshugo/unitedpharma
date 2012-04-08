@@ -94,7 +94,10 @@
                     <td class="divControl"><telerik:RadTextBox ID="txtFullname" runat="server" Width="156px"></telerik:RadTextBox></td>
                     <td class="divLabel">Phone</td>
                     <td class="divControl"><telerik:RadTextBox ID="txtPhoneNumber" runat="server" Width="156px"></telerik:RadTextBox></td>
-                    <td colspan="4">
+
+                    <td class="divLabel">UPI Code</td>
+                    <td class="divControl"><telerik:RadTextBox ID="txtUpiCode" runat="server" Width="156px"></telerik:RadTextBox></td>
+                    <td colspan="2">
                         <telerik:RadButton ID="btnFilter" runat="server" SkinID="Office2007" Text="Filter" OnClick="btnFilter_Click"></telerik:RadButton>
                         <telerik:RadButton ID="btnClear" runat="server" SkinID="Office2007" Text="Clear" OnClick="btnClear_Click"></telerik:RadButton>
                     </td>
