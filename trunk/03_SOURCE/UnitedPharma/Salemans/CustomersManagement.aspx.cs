@@ -85,7 +85,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
     protected void RadGrid2_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
         ObjLogin sale = (ObjLogin)Session["objLogin"];
-        RadGrid2.DataSource = LoadSaleManager(sale.Id,1,"","",0);
+        RadGrid2.DataSource = LoadSaleManager(sale.Id,1,"","",0, string.Empty);
     }
     protected void RadGrid2_UpdateCommand(object source, GridCommandEventArgs e)
     {
@@ -120,7 +120,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         }
     }
 
-    private DataTable LoadSaleManager(int salemenId, int IsEnable,string FullName,string PhoneNumber,int LocalId)
+    private DataTable LoadSaleManager(int salemenId, int IsEnable,string FullName,string PhoneNumber,int LocalId, string upiCode)
     {
         AreasRepository Arepo = new AreasRepository();
         RegionsRepository RRepo = new RegionsRepository();
@@ -147,6 +147,12 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         {
             sql += " and c.Localid in (" + strLocalIdList + ")";
         }
+
+        if(!string.IsNullOrEmpty(upiCode))
+        {
+            sql += string.Format(" and c.UpiCode like '%{0}%'", upiCode);
+        }
+
         return U.GetList(sql);
     }
     private DataTable LoadEditedCustomer(int salemenId)
@@ -396,8 +402,9 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
             if (checkvalid.phoneFormat(txtPhoneNumber.Text.Trim()))
                 phone = txtPhoneNumber.Text.Trim();
         }
-        int LocalId = (ddlLocal.Enabled) ? int.Parse(ddlLocal.SelectedValue.ToString()) : 0;
-        RadGrid2.DataSource = LoadSaleManager(sale.Id, 1, txtFullname.Text.Trim(), phone, LocalId);
+        int LocalId = (ddlLocal.Enabled) ? int.Parse(ddlLocal.SelectedValue) : 0;
+
+        RadGrid2.DataSource = LoadSaleManager(sale.Id, 1, txtFullname.Text.Trim(), phone, LocalId, txtUpiCode.Text.Trim());
         RadGrid2.DataBind();
     }
     protected void btnClear_Click(object sender, EventArgs e)
