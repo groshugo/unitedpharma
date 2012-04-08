@@ -44,9 +44,6 @@ public partial class UPIDataContext : System.Data.Linq.DataContext
   partial void InsertChannel(Channel instance);
   partial void UpdateChannel(Channel instance);
   partial void DeleteChannel(Channel instance);
-  partial void InsertCustomer(Customer instance);
-  partial void UpdateCustomer(Customer instance);
-  partial void DeleteCustomer(Customer instance);
   partial void InsertCustomerLog(CustomerLog instance);
   partial void UpdateCustomerLog(CustomerLog instance);
   partial void DeleteCustomerLog(CustomerLog instance);
@@ -113,10 +110,13 @@ public partial class UPIDataContext : System.Data.Linq.DataContext
   partial void InsertDashboard(Dashboard instance);
   partial void UpdateDashboard(Dashboard instance);
   partial void DeleteDashboard(Dashboard instance);
+  partial void InsertCustomer(Customer instance);
+  partial void UpdateCustomer(Customer instance);
+  partial void DeleteCustomer(Customer instance);
   #endregion
 	
 	public UPIDataContext() : 
-			base(global::System.Configuration.ConfigurationManager.ConnectionStrings["UPIConnectionString"].ConnectionString, mappingSource)
+			base(global::System.Configuration.ConfigurationManager.ConnectionStrings["UPIConnectionString1"].ConnectionString, mappingSource)
 	{
 		OnCreated();
 	}
@@ -182,14 +182,6 @@ public partial class UPIDataContext : System.Data.Linq.DataContext
 		get
 		{
 			return this.GetTable<Channel>();
-		}
-	}
-	
-	public System.Data.Linq.Table<Customer> Customers
-	{
-		get
-		{
-			return this.GetTable<Customer>();
 		}
 	}
 	
@@ -366,6 +358,14 @@ public partial class UPIDataContext : System.Data.Linq.DataContext
 		get
 		{
 			return this.GetTable<Dashboard>();
+		}
+	}
+	
+	public System.Data.Linq.Table<Customer> Customers
+	{
+		get
+		{
+			return this.GetTable<Customer>();
 		}
 	}
 	
@@ -1190,9 +1190,9 @@ public partial class Channel : INotifyPropertyChanging, INotifyPropertyChanged
 	
 	private System.Nullable<int> _ParentChannelId;
 	
-	private EntitySet<Customer> _Customers;
-	
 	private EntitySet<CustomerLog> _CustomerLogs;
+	
+	private EntitySet<Customer> _Customers;
 	
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1210,8 +1210,8 @@ public partial class Channel : INotifyPropertyChanging, INotifyPropertyChanged
 	
 	public Channel()
 	{
-		this._Customers = new EntitySet<Customer>(new Action<Customer>(this.attach_Customers), new Action<Customer>(this.detach_Customers));
 		this._CustomerLogs = new EntitySet<CustomerLog>(new Action<CustomerLog>(this.attach_CustomerLogs), new Action<CustomerLog>(this.detach_CustomerLogs));
+		this._Customers = new EntitySet<Customer>(new Action<Customer>(this.attach_Customers), new Action<Customer>(this.detach_Customers));
 		OnCreated();
 	}
 	
@@ -1295,19 +1295,6 @@ public partial class Channel : INotifyPropertyChanging, INotifyPropertyChanged
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Channel_Customer", Storage="_Customers", ThisKey="Id", OtherKey="ChannelId")]
-	public EntitySet<Customer> Customers
-	{
-		get
-		{
-			return this._Customers;
-		}
-		set
-		{
-			this._Customers.Assign(value);
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Channel_CustomerLog", Storage="_CustomerLogs", ThisKey="Id", OtherKey="ChannelId")]
 	public EntitySet<CustomerLog> CustomerLogs
 	{
@@ -1321,6 +1308,19 @@ public partial class Channel : INotifyPropertyChanging, INotifyPropertyChanged
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Channel_Customer", Storage="_Customers", ThisKey="Id", OtherKey="ChannelId")]
+	public EntitySet<Customer> Customers
+	{
+		get
+		{
+			return this._Customers;
+		}
+		set
+		{
+			this._Customers.Assign(value);
+		}
+	}
+	
 	public event PropertyChangingEventHandler PropertyChanging;
 	
 	public event PropertyChangedEventHandler PropertyChanged;
@@ -1339,6 +1339,18 @@ public partial class Channel : INotifyPropertyChanging, INotifyPropertyChanged
 		{
 			this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
+	}
+	
+	private void attach_CustomerLogs(CustomerLog entity)
+	{
+		this.SendPropertyChanging();
+		entity.Channel = this;
+	}
+	
+	private void detach_CustomerLogs(CustomerLog entity)
+	{
+		this.SendPropertyChanging();
+		entity.Channel = null;
 	}
 	
 	private void attach_Customers(Customer entity)
@@ -1351,688 +1363,6 @@ public partial class Channel : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		this.SendPropertyChanging();
 		entity.Channel = null;
-	}
-	
-	private void attach_CustomerLogs(CustomerLog entity)
-	{
-		this.SendPropertyChanging();
-		entity.Channel = this;
-	}
-	
-	private void detach_CustomerLogs(CustomerLog entity)
-	{
-		this.SendPropertyChanging();
-		entity.Channel = null;
-	}
-}
-
-[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Customer")]
-public partial class Customer : INotifyPropertyChanging, INotifyPropertyChanged
-{
-	
-	private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-	
-	private int _Id;
-	
-	private string _UpiCode;
-	
-	private string _FullName;
-	
-	private string _Address;
-	
-	private string _Street;
-	
-	private string _Ward;
-	
-	private string _Phone;
-	
-	private string _Password;
-	
-	private System.Nullable<int> _CustomerTypeId;
-	
-	private System.Nullable<int> _ChannelId;
-	
-	private System.Nullable<int> _DistrictId;
-	
-	private System.Nullable<int> _LocalId;
-	
-	private System.Nullable<System.DateTime> _CreateDate;
-	
-	private System.Nullable<System.DateTime> _UpdateDate;
-	
-	private System.Nullable<bool> _Status;
-	
-	private System.Nullable<bool> _IsEnable;
-	
-	private EntitySet<CustomerLog> _CustomerLogs;
-	
-	private EntitySet<CustomerSupervisor> _CustomerSupervisors;
-	
-	private EntitySet<SupervisorManageCustomer> _SupervisorManageCustomers;
-	
-	private EntityRef<Channel> _Channel;
-	
-	private EntityRef<CustomerType> _CustomerType;
-	
-	private EntityRef<District> _District;
-	
-	private EntityRef<Local> _Local;
-	
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnUpiCodeChanging(string value);
-    partial void OnUpiCodeChanged();
-    partial void OnFullNameChanging(string value);
-    partial void OnFullNameChanged();
-    partial void OnAddressChanging(string value);
-    partial void OnAddressChanged();
-    partial void OnStreetChanging(string value);
-    partial void OnStreetChanged();
-    partial void OnWardChanging(string value);
-    partial void OnWardChanged();
-    partial void OnPhoneChanging(string value);
-    partial void OnPhoneChanged();
-    partial void OnPasswordChanging(string value);
-    partial void OnPasswordChanged();
-    partial void OnCustomerTypeIdChanging(System.Nullable<int> value);
-    partial void OnCustomerTypeIdChanged();
-    partial void OnChannelIdChanging(System.Nullable<int> value);
-    partial void OnChannelIdChanged();
-    partial void OnDistrictIdChanging(System.Nullable<int> value);
-    partial void OnDistrictIdChanged();
-    partial void OnLocalIdChanging(System.Nullable<int> value);
-    partial void OnLocalIdChanged();
-    partial void OnCreateDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnCreateDateChanged();
-    partial void OnUpdateDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnUpdateDateChanged();
-    partial void OnStatusChanging(System.Nullable<bool> value);
-    partial void OnStatusChanged();
-    partial void OnIsEnableChanging(System.Nullable<bool> value);
-    partial void OnIsEnableChanged();
-    #endregion
-	
-	public Customer()
-	{
-		this._CustomerLogs = new EntitySet<CustomerLog>(new Action<CustomerLog>(this.attach_CustomerLogs), new Action<CustomerLog>(this.detach_CustomerLogs));
-		this._CustomerSupervisors = new EntitySet<CustomerSupervisor>(new Action<CustomerSupervisor>(this.attach_CustomerSupervisors), new Action<CustomerSupervisor>(this.detach_CustomerSupervisors));
-		this._SupervisorManageCustomers = new EntitySet<SupervisorManageCustomer>(new Action<SupervisorManageCustomer>(this.attach_SupervisorManageCustomers), new Action<SupervisorManageCustomer>(this.detach_SupervisorManageCustomers));
-		this._Channel = default(EntityRef<Channel>);
-		this._CustomerType = default(EntityRef<CustomerType>);
-		this._District = default(EntityRef<District>);
-		this._Local = default(EntityRef<Local>);
-		OnCreated();
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-	public int Id
-	{
-		get
-		{
-			return this._Id;
-		}
-		set
-		{
-			if ((this._Id != value))
-			{
-				this.OnIdChanging(value);
-				this.SendPropertyChanging();
-				this._Id = value;
-				this.SendPropertyChanged("Id");
-				this.OnIdChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpiCode", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
-	public string UpiCode
-	{
-		get
-		{
-			return this._UpiCode;
-		}
-		set
-		{
-			if ((this._UpiCode != value))
-			{
-				this.OnUpiCodeChanging(value);
-				this.SendPropertyChanging();
-				this._UpiCode = value;
-				this.SendPropertyChanged("UpiCode");
-				this.OnUpiCodeChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-	public string FullName
-	{
-		get
-		{
-			return this._FullName;
-		}
-		set
-		{
-			if ((this._FullName != value))
-			{
-				this.OnFullNameChanging(value);
-				this.SendPropertyChanging();
-				this._FullName = value;
-				this.SendPropertyChanged("FullName");
-				this.OnFullNameChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Address", DbType="NVarChar(255)")]
-	public string Address
-	{
-		get
-		{
-			return this._Address;
-		}
-		set
-		{
-			if ((this._Address != value))
-			{
-				this.OnAddressChanging(value);
-				this.SendPropertyChanging();
-				this._Address = value;
-				this.SendPropertyChanged("Address");
-				this.OnAddressChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Street", DbType="NVarChar(255)")]
-	public string Street
-	{
-		get
-		{
-			return this._Street;
-		}
-		set
-		{
-			if ((this._Street != value))
-			{
-				this.OnStreetChanging(value);
-				this.SendPropertyChanging();
-				this._Street = value;
-				this.SendPropertyChanged("Street");
-				this.OnStreetChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Ward", DbType="NVarChar(255)")]
-	public string Ward
-	{
-		get
-		{
-			return this._Ward;
-		}
-		set
-		{
-			if ((this._Ward != value))
-			{
-				this.OnWardChanging(value);
-				this.SendPropertyChanging();
-				this._Ward = value;
-				this.SendPropertyChanged("Ward");
-				this.OnWardChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Phone", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
-	public string Phone
-	{
-		get
-		{
-			return this._Phone;
-		}
-		set
-		{
-			if ((this._Phone != value))
-			{
-				this.OnPhoneChanging(value);
-				this.SendPropertyChanging();
-				this._Phone = value;
-				this.SendPropertyChanged("Phone");
-				this.OnPhoneChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
-	public string Password
-	{
-		get
-		{
-			return this._Password;
-		}
-		set
-		{
-			if ((this._Password != value))
-			{
-				this.OnPasswordChanging(value);
-				this.SendPropertyChanging();
-				this._Password = value;
-				this.SendPropertyChanged("Password");
-				this.OnPasswordChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CustomerTypeId", DbType="Int")]
-	public System.Nullable<int> CustomerTypeId
-	{
-		get
-		{
-			return this._CustomerTypeId;
-		}
-		set
-		{
-			if ((this._CustomerTypeId != value))
-			{
-				if (this._CustomerType.HasLoadedOrAssignedValue)
-				{
-					throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-				}
-				this.OnCustomerTypeIdChanging(value);
-				this.SendPropertyChanging();
-				this._CustomerTypeId = value;
-				this.SendPropertyChanged("CustomerTypeId");
-				this.OnCustomerTypeIdChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChannelId", DbType="Int")]
-	public System.Nullable<int> ChannelId
-	{
-		get
-		{
-			return this._ChannelId;
-		}
-		set
-		{
-			if ((this._ChannelId != value))
-			{
-				if (this._Channel.HasLoadedOrAssignedValue)
-				{
-					throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-				}
-				this.OnChannelIdChanging(value);
-				this.SendPropertyChanging();
-				this._ChannelId = value;
-				this.SendPropertyChanged("ChannelId");
-				this.OnChannelIdChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DistrictId", DbType="Int")]
-	public System.Nullable<int> DistrictId
-	{
-		get
-		{
-			return this._DistrictId;
-		}
-		set
-		{
-			if ((this._DistrictId != value))
-			{
-				if (this._District.HasLoadedOrAssignedValue)
-				{
-					throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-				}
-				this.OnDistrictIdChanging(value);
-				this.SendPropertyChanging();
-				this._DistrictId = value;
-				this.SendPropertyChanged("DistrictId");
-				this.OnDistrictIdChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocalId", DbType="Int")]
-	public System.Nullable<int> LocalId
-	{
-		get
-		{
-			return this._LocalId;
-		}
-		set
-		{
-			if ((this._LocalId != value))
-			{
-				if (this._Local.HasLoadedOrAssignedValue)
-				{
-					throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-				}
-				this.OnLocalIdChanging(value);
-				this.SendPropertyChanging();
-				this._LocalId = value;
-				this.SendPropertyChanged("LocalId");
-				this.OnLocalIdChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreateDate", DbType="DateTime")]
-	public System.Nullable<System.DateTime> CreateDate
-	{
-		get
-		{
-			return this._CreateDate;
-		}
-		set
-		{
-			if ((this._CreateDate != value))
-			{
-				this.OnCreateDateChanging(value);
-				this.SendPropertyChanging();
-				this._CreateDate = value;
-				this.SendPropertyChanged("CreateDate");
-				this.OnCreateDateChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateDate", DbType="DateTime")]
-	public System.Nullable<System.DateTime> UpdateDate
-	{
-		get
-		{
-			return this._UpdateDate;
-		}
-		set
-		{
-			if ((this._UpdateDate != value))
-			{
-				this.OnUpdateDateChanging(value);
-				this.SendPropertyChanging();
-				this._UpdateDate = value;
-				this.SendPropertyChanged("UpdateDate");
-				this.OnUpdateDateChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="Bit")]
-	public System.Nullable<bool> Status
-	{
-		get
-		{
-			return this._Status;
-		}
-		set
-		{
-			if ((this._Status != value))
-			{
-				this.OnStatusChanging(value);
-				this.SendPropertyChanging();
-				this._Status = value;
-				this.SendPropertyChanged("Status");
-				this.OnStatusChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsEnable", DbType="Bit")]
-	public System.Nullable<bool> IsEnable
-	{
-		get
-		{
-			return this._IsEnable;
-		}
-		set
-		{
-			if ((this._IsEnable != value))
-			{
-				this.OnIsEnableChanging(value);
-				this.SendPropertyChanging();
-				this._IsEnable = value;
-				this.SendPropertyChanged("IsEnable");
-				this.OnIsEnableChanged();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_CustomerLog", Storage="_CustomerLogs", ThisKey="Id", OtherKey="CustomerId")]
-	public EntitySet<CustomerLog> CustomerLogs
-	{
-		get
-		{
-			return this._CustomerLogs;
-		}
-		set
-		{
-			this._CustomerLogs.Assign(value);
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_CustomerSupervisor", Storage="_CustomerSupervisors", ThisKey="Id", OtherKey="CustomerId")]
-	public EntitySet<CustomerSupervisor> CustomerSupervisors
-	{
-		get
-		{
-			return this._CustomerSupervisors;
-		}
-		set
-		{
-			this._CustomerSupervisors.Assign(value);
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_SupervisorManageCustomer", Storage="_SupervisorManageCustomers", ThisKey="Id", OtherKey="CustomerId")]
-	public EntitySet<SupervisorManageCustomer> SupervisorManageCustomers
-	{
-		get
-		{
-			return this._SupervisorManageCustomers;
-		}
-		set
-		{
-			this._SupervisorManageCustomers.Assign(value);
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Channel_Customer", Storage="_Channel", ThisKey="ChannelId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
-	public Channel Channel
-	{
-		get
-		{
-			return this._Channel.Entity;
-		}
-		set
-		{
-			Channel previousValue = this._Channel.Entity;
-			if (((previousValue != value) 
-						|| (this._Channel.HasLoadedOrAssignedValue == false)))
-			{
-				this.SendPropertyChanging();
-				if ((previousValue != null))
-				{
-					this._Channel.Entity = null;
-					previousValue.Customers.Remove(this);
-				}
-				this._Channel.Entity = value;
-				if ((value != null))
-				{
-					value.Customers.Add(this);
-					this._ChannelId = value.Id;
-				}
-				else
-				{
-					this._ChannelId = default(Nullable<int>);
-				}
-				this.SendPropertyChanged("Channel");
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CustomerType_Customer", Storage="_CustomerType", ThisKey="CustomerTypeId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
-	public CustomerType CustomerType
-	{
-		get
-		{
-			return this._CustomerType.Entity;
-		}
-		set
-		{
-			CustomerType previousValue = this._CustomerType.Entity;
-			if (((previousValue != value) 
-						|| (this._CustomerType.HasLoadedOrAssignedValue == false)))
-			{
-				this.SendPropertyChanging();
-				if ((previousValue != null))
-				{
-					this._CustomerType.Entity = null;
-					previousValue.Customers.Remove(this);
-				}
-				this._CustomerType.Entity = value;
-				if ((value != null))
-				{
-					value.Customers.Add(this);
-					this._CustomerTypeId = value.Id;
-				}
-				else
-				{
-					this._CustomerTypeId = default(Nullable<int>);
-				}
-				this.SendPropertyChanged("CustomerType");
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="District_Customer", Storage="_District", ThisKey="DistrictId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
-	public District District
-	{
-		get
-		{
-			return this._District.Entity;
-		}
-		set
-		{
-			District previousValue = this._District.Entity;
-			if (((previousValue != value) 
-						|| (this._District.HasLoadedOrAssignedValue == false)))
-			{
-				this.SendPropertyChanging();
-				if ((previousValue != null))
-				{
-					this._District.Entity = null;
-					previousValue.Customers.Remove(this);
-				}
-				this._District.Entity = value;
-				if ((value != null))
-				{
-					value.Customers.Add(this);
-					this._DistrictId = value.Id;
-				}
-				else
-				{
-					this._DistrictId = default(Nullable<int>);
-				}
-				this.SendPropertyChanged("District");
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Local_Customer", Storage="_Local", ThisKey="LocalId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
-	public Local Local
-	{
-		get
-		{
-			return this._Local.Entity;
-		}
-		set
-		{
-			Local previousValue = this._Local.Entity;
-			if (((previousValue != value) 
-						|| (this._Local.HasLoadedOrAssignedValue == false)))
-			{
-				this.SendPropertyChanging();
-				if ((previousValue != null))
-				{
-					this._Local.Entity = null;
-					previousValue.Customers.Remove(this);
-				}
-				this._Local.Entity = value;
-				if ((value != null))
-				{
-					value.Customers.Add(this);
-					this._LocalId = value.Id;
-				}
-				else
-				{
-					this._LocalId = default(Nullable<int>);
-				}
-				this.SendPropertyChanged("Local");
-			}
-		}
-	}
-	
-	public event PropertyChangingEventHandler PropertyChanging;
-	
-	public event PropertyChangedEventHandler PropertyChanged;
-	
-	protected virtual void SendPropertyChanging()
-	{
-		if ((this.PropertyChanging != null))
-		{
-			this.PropertyChanging(this, emptyChangingEventArgs);
-		}
-	}
-	
-	protected virtual void SendPropertyChanged(String propertyName)
-	{
-		if ((this.PropertyChanged != null))
-		{
-			this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
-	}
-	
-	private void attach_CustomerLogs(CustomerLog entity)
-	{
-		this.SendPropertyChanging();
-		entity.Customer = this;
-	}
-	
-	private void detach_CustomerLogs(CustomerLog entity)
-	{
-		this.SendPropertyChanging();
-		entity.Customer = null;
-	}
-	
-	private void attach_CustomerSupervisors(CustomerSupervisor entity)
-	{
-		this.SendPropertyChanging();
-		entity.Customer = this;
-	}
-	
-	private void detach_CustomerSupervisors(CustomerSupervisor entity)
-	{
-		this.SendPropertyChanging();
-		entity.Customer = null;
-	}
-	
-	private void attach_SupervisorManageCustomers(SupervisorManageCustomer entity)
-	{
-		this.SendPropertyChanging();
-		entity.Customer = this;
-	}
-	
-	private void detach_SupervisorManageCustomers(SupervisorManageCustomer entity)
-	{
-		this.SendPropertyChanging();
-		entity.Customer = null;
 	}
 }
 
@@ -2082,8 +1412,6 @@ public partial class CustomerLog : INotifyPropertyChanging, INotifyPropertyChang
 	
 	private EntityRef<Channel> _Channel;
 	
-	private EntityRef<Customer> _Customer;
-	
 	private EntityRef<CustomerType> _CustomerType;
 	
 	private EntityRef<District> _District;
@@ -2091,6 +1419,8 @@ public partial class CustomerLog : INotifyPropertyChanging, INotifyPropertyChang
 	private EntityRef<Local> _Local;
 	
 	private EntityRef<Salesmen> _Salesmen;
+	
+	private EntityRef<Customer> _Customer;
 	
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -2139,11 +1469,11 @@ public partial class CustomerLog : INotifyPropertyChanging, INotifyPropertyChang
 	public CustomerLog()
 	{
 		this._Channel = default(EntityRef<Channel>);
-		this._Customer = default(EntityRef<Customer>);
 		this._CustomerType = default(EntityRef<CustomerType>);
 		this._District = default(EntityRef<District>);
 		this._Local = default(EntityRef<Local>);
 		this._Salesmen = default(EntityRef<Salesmen>);
+		this._Customer = default(EntityRef<Customer>);
 		OnCreated();
 	}
 	
@@ -2585,40 +1915,6 @@ public partial class CustomerLog : INotifyPropertyChanging, INotifyPropertyChang
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_CustomerLog", Storage="_Customer", ThisKey="CustomerId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
-	public Customer Customer
-	{
-		get
-		{
-			return this._Customer.Entity;
-		}
-		set
-		{
-			Customer previousValue = this._Customer.Entity;
-			if (((previousValue != value) 
-						|| (this._Customer.HasLoadedOrAssignedValue == false)))
-			{
-				this.SendPropertyChanging();
-				if ((previousValue != null))
-				{
-					this._Customer.Entity = null;
-					previousValue.CustomerLogs.Remove(this);
-				}
-				this._Customer.Entity = value;
-				if ((value != null))
-				{
-					value.CustomerLogs.Add(this);
-					this._CustomerId = value.Id;
-				}
-				else
-				{
-					this._CustomerId = default(Nullable<int>);
-				}
-				this.SendPropertyChanged("Customer");
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CustomerType_CustomerLog", Storage="_CustomerType", ThisKey="CustomerTypeId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
 	public CustomerType CustomerType
 	{
@@ -2755,6 +2051,40 @@ public partial class CustomerLog : INotifyPropertyChanging, INotifyPropertyChang
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_CustomerLog", Storage="_Customer", ThisKey="CustomerId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
+	public Customer Customer
+	{
+		get
+		{
+			return this._Customer.Entity;
+		}
+		set
+		{
+			Customer previousValue = this._Customer.Entity;
+			if (((previousValue != value) 
+						|| (this._Customer.HasLoadedOrAssignedValue == false)))
+			{
+				this.SendPropertyChanging();
+				if ((previousValue != null))
+				{
+					this._Customer.Entity = null;
+					previousValue.CustomerLogs.Remove(this);
+				}
+				this._Customer.Entity = value;
+				if ((value != null))
+				{
+					value.CustomerLogs.Add(this);
+					this._CustomerId = value.Id;
+				}
+				else
+				{
+					this._CustomerId = default(Nullable<int>);
+				}
+				this.SendPropertyChanged("Customer");
+			}
+		}
+	}
+	
 	public event PropertyChangingEventHandler PropertyChanging;
 	
 	public event PropertyChangedEventHandler PropertyChanged;
@@ -2802,11 +2132,11 @@ public partial class CustomerSupervisor : INotifyPropertyChanging, INotifyProper
 	
 	private EntitySet<SupervisorManageCustomer> _SupervisorManageCustomers;
 	
-	private EntityRef<Customer> _Customer;
-	
 	private EntityRef<SupervisorPosition> _SupervisorPosition;
 	
 	private EntityRef<District> _District;
+	
+	private EntityRef<Customer> _Customer;
 	
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -2835,9 +2165,9 @@ public partial class CustomerSupervisor : INotifyPropertyChanging, INotifyProper
 	public CustomerSupervisor()
 	{
 		this._SupervisorManageCustomers = new EntitySet<SupervisorManageCustomer>(new Action<SupervisorManageCustomer>(this.attach_SupervisorManageCustomers), new Action<SupervisorManageCustomer>(this.detach_SupervisorManageCustomers));
-		this._Customer = default(EntityRef<Customer>);
 		this._SupervisorPosition = default(EntityRef<SupervisorPosition>);
 		this._District = default(EntityRef<District>);
+		this._Customer = default(EntityRef<Customer>);
 		OnCreated();
 	}
 	
@@ -3046,40 +2376,6 @@ public partial class CustomerSupervisor : INotifyPropertyChanging, INotifyProper
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_CustomerSupervisor", Storage="_Customer", ThisKey="CustomerId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
-	public Customer Customer
-	{
-		get
-		{
-			return this._Customer.Entity;
-		}
-		set
-		{
-			Customer previousValue = this._Customer.Entity;
-			if (((previousValue != value) 
-						|| (this._Customer.HasLoadedOrAssignedValue == false)))
-			{
-				this.SendPropertyChanging();
-				if ((previousValue != null))
-				{
-					this._Customer.Entity = null;
-					previousValue.CustomerSupervisors.Remove(this);
-				}
-				this._Customer.Entity = value;
-				if ((value != null))
-				{
-					value.CustomerSupervisors.Add(this);
-					this._CustomerId = value.Id;
-				}
-				else
-				{
-					this._CustomerId = default(Nullable<int>);
-				}
-				this.SendPropertyChanged("Customer");
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SupervisorPosition_CustomerSupervisor", Storage="_SupervisorPosition", ThisKey="PositionId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
 	public SupervisorPosition SupervisorPosition
 	{
@@ -3148,6 +2444,40 @@ public partial class CustomerSupervisor : INotifyPropertyChanging, INotifyProper
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_CustomerSupervisor", Storage="_Customer", ThisKey="CustomerId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
+	public Customer Customer
+	{
+		get
+		{
+			return this._Customer.Entity;
+		}
+		set
+		{
+			Customer previousValue = this._Customer.Entity;
+			if (((previousValue != value) 
+						|| (this._Customer.HasLoadedOrAssignedValue == false)))
+			{
+				this.SendPropertyChanging();
+				if ((previousValue != null))
+				{
+					this._Customer.Entity = null;
+					previousValue.CustomerSupervisors.Remove(this);
+				}
+				this._Customer.Entity = value;
+				if ((value != null))
+				{
+					value.CustomerSupervisors.Add(this);
+					this._CustomerId = value.Id;
+				}
+				else
+				{
+					this._CustomerId = default(Nullable<int>);
+				}
+				this.SendPropertyChanged("Customer");
+			}
+		}
+	}
+	
 	public event PropertyChangingEventHandler PropertyChanging;
 	
 	public event PropertyChangedEventHandler PropertyChanged;
@@ -3193,9 +2523,9 @@ public partial class CustomerType : INotifyPropertyChanging, INotifyPropertyChan
 	
 	private string _TypeName;
 	
-	private EntitySet<Customer> _Customers;
-	
 	private EntitySet<CustomerLog> _CustomerLogs;
+	
+	private EntitySet<Customer> _Customers;
 	
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -3211,8 +2541,8 @@ public partial class CustomerType : INotifyPropertyChanging, INotifyPropertyChan
 	
 	public CustomerType()
 	{
-		this._Customers = new EntitySet<Customer>(new Action<Customer>(this.attach_Customers), new Action<Customer>(this.detach_Customers));
 		this._CustomerLogs = new EntitySet<CustomerLog>(new Action<CustomerLog>(this.attach_CustomerLogs), new Action<CustomerLog>(this.detach_CustomerLogs));
+		this._Customers = new EntitySet<Customer>(new Action<Customer>(this.attach_Customers), new Action<Customer>(this.detach_Customers));
 		OnCreated();
 	}
 	
@@ -3276,19 +2606,6 @@ public partial class CustomerType : INotifyPropertyChanging, INotifyPropertyChan
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CustomerType_Customer", Storage="_Customers", ThisKey="Id", OtherKey="CustomerTypeId")]
-	public EntitySet<Customer> Customers
-	{
-		get
-		{
-			return this._Customers;
-		}
-		set
-		{
-			this._Customers.Assign(value);
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CustomerType_CustomerLog", Storage="_CustomerLogs", ThisKey="Id", OtherKey="CustomerTypeId")]
 	public EntitySet<CustomerLog> CustomerLogs
 	{
@@ -3299,6 +2616,19 @@ public partial class CustomerType : INotifyPropertyChanging, INotifyPropertyChan
 		set
 		{
 			this._CustomerLogs.Assign(value);
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CustomerType_Customer", Storage="_Customers", ThisKey="Id", OtherKey="CustomerTypeId")]
+	public EntitySet<Customer> Customers
+	{
+		get
+		{
+			return this._Customers;
+		}
+		set
+		{
+			this._Customers.Assign(value);
 		}
 	}
 	
@@ -3322,18 +2652,6 @@ public partial class CustomerType : INotifyPropertyChanging, INotifyPropertyChan
 		}
 	}
 	
-	private void attach_Customers(Customer entity)
-	{
-		this.SendPropertyChanging();
-		entity.CustomerType = this;
-	}
-	
-	private void detach_Customers(Customer entity)
-	{
-		this.SendPropertyChanging();
-		entity.CustomerType = null;
-	}
-	
 	private void attach_CustomerLogs(CustomerLog entity)
 	{
 		this.SendPropertyChanging();
@@ -3341,6 +2659,18 @@ public partial class CustomerType : INotifyPropertyChanging, INotifyPropertyChan
 	}
 	
 	private void detach_CustomerLogs(CustomerLog entity)
+	{
+		this.SendPropertyChanging();
+		entity.CustomerType = null;
+	}
+	
+	private void attach_Customers(Customer entity)
+	{
+		this.SendPropertyChanging();
+		entity.CustomerType = this;
+	}
+	
+	private void detach_Customers(Customer entity)
 	{
 		this.SendPropertyChanging();
 		entity.CustomerType = null;
@@ -3359,11 +2689,11 @@ public partial class District : INotifyPropertyChanging, INotifyPropertyChanged
 	
 	private int _ProvinceId;
 	
-	private EntitySet<Customer> _Customers;
-	
 	private EntitySet<CustomerLog> _CustomerLogs;
 	
 	private EntitySet<CustomerSupervisor> _CustomerSupervisors;
+	
+	private EntitySet<Customer> _Customers;
 	
 	private EntityRef<Province> _Province;
 	
@@ -3381,9 +2711,9 @@ public partial class District : INotifyPropertyChanging, INotifyPropertyChanged
 	
 	public District()
 	{
-		this._Customers = new EntitySet<Customer>(new Action<Customer>(this.attach_Customers), new Action<Customer>(this.detach_Customers));
 		this._CustomerLogs = new EntitySet<CustomerLog>(new Action<CustomerLog>(this.attach_CustomerLogs), new Action<CustomerLog>(this.detach_CustomerLogs));
 		this._CustomerSupervisors = new EntitySet<CustomerSupervisor>(new Action<CustomerSupervisor>(this.attach_CustomerSupervisors), new Action<CustomerSupervisor>(this.detach_CustomerSupervisors));
+		this._Customers = new EntitySet<Customer>(new Action<Customer>(this.attach_Customers), new Action<Customer>(this.detach_Customers));
 		this._Province = default(EntityRef<Province>);
 		OnCreated();
 	}
@@ -3452,19 +2782,6 @@ public partial class District : INotifyPropertyChanging, INotifyPropertyChanged
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="District_Customer", Storage="_Customers", ThisKey="Id", OtherKey="DistrictId")]
-	public EntitySet<Customer> Customers
-	{
-		get
-		{
-			return this._Customers;
-		}
-		set
-		{
-			this._Customers.Assign(value);
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="District_CustomerLog", Storage="_CustomerLogs", ThisKey="Id", OtherKey="DistrictId")]
 	public EntitySet<CustomerLog> CustomerLogs
 	{
@@ -3488,6 +2805,19 @@ public partial class District : INotifyPropertyChanging, INotifyPropertyChanged
 		set
 		{
 			this._CustomerSupervisors.Assign(value);
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="District_Customer", Storage="_Customers", ThisKey="Id", OtherKey="DistrictId")]
+	public EntitySet<Customer> Customers
+	{
+		get
+		{
+			return this._Customers;
+		}
+		set
+		{
+			this._Customers.Assign(value);
 		}
 	}
 	
@@ -3545,18 +2875,6 @@ public partial class District : INotifyPropertyChanging, INotifyPropertyChanged
 		}
 	}
 	
-	private void attach_Customers(Customer entity)
-	{
-		this.SendPropertyChanging();
-		entity.District = this;
-	}
-	
-	private void detach_Customers(Customer entity)
-	{
-		this.SendPropertyChanging();
-		entity.District = null;
-	}
-	
 	private void attach_CustomerLogs(CustomerLog entity)
 	{
 		this.SendPropertyChanging();
@@ -3576,6 +2894,18 @@ public partial class District : INotifyPropertyChanging, INotifyPropertyChanged
 	}
 	
 	private void detach_CustomerSupervisors(CustomerSupervisor entity)
+	{
+		this.SendPropertyChanging();
+		entity.District = null;
+	}
+	
+	private void attach_Customers(Customer entity)
+	{
+		this.SendPropertyChanging();
+		entity.District = this;
+	}
+	
+	private void detach_Customers(Customer entity)
 	{
 		this.SendPropertyChanging();
 		entity.District = null;
@@ -3950,11 +3280,11 @@ public partial class Local : INotifyPropertyChanging, INotifyPropertyChanged
 	
 	private int _AreaId;
 	
-	private EntitySet<Customer> _Customers;
-	
 	private EntitySet<CustomerLog> _CustomerLogs;
 	
 	private EntitySet<SalesLocal> _SalesLocals;
+	
+	private EntitySet<Customer> _Customers;
 	
 	private EntityRef<Area> _Area;
 	
@@ -3976,9 +3306,9 @@ public partial class Local : INotifyPropertyChanging, INotifyPropertyChanged
 	
 	public Local()
 	{
-		this._Customers = new EntitySet<Customer>(new Action<Customer>(this.attach_Customers), new Action<Customer>(this.detach_Customers));
 		this._CustomerLogs = new EntitySet<CustomerLog>(new Action<CustomerLog>(this.attach_CustomerLogs), new Action<CustomerLog>(this.detach_CustomerLogs));
 		this._SalesLocals = new EntitySet<SalesLocal>(new Action<SalesLocal>(this.attach_SalesLocals), new Action<SalesLocal>(this.detach_SalesLocals));
+		this._Customers = new EntitySet<Customer>(new Action<Customer>(this.attach_Customers), new Action<Customer>(this.detach_Customers));
 		this._Area = default(EntityRef<Area>);
 		OnCreated();
 	}
@@ -4087,19 +3417,6 @@ public partial class Local : INotifyPropertyChanging, INotifyPropertyChanged
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Local_Customer", Storage="_Customers", ThisKey="Id", OtherKey="LocalId")]
-	public EntitySet<Customer> Customers
-	{
-		get
-		{
-			return this._Customers;
-		}
-		set
-		{
-			this._Customers.Assign(value);
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Local_CustomerLog", Storage="_CustomerLogs", ThisKey="Id", OtherKey="LocalId")]
 	public EntitySet<CustomerLog> CustomerLogs
 	{
@@ -4123,6 +3440,19 @@ public partial class Local : INotifyPropertyChanging, INotifyPropertyChanged
 		set
 		{
 			this._SalesLocals.Assign(value);
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Local_Customer", Storage="_Customers", ThisKey="Id", OtherKey="LocalId")]
+	public EntitySet<Customer> Customers
+	{
+		get
+		{
+			return this._Customers;
+		}
+		set
+		{
+			this._Customers.Assign(value);
 		}
 	}
 	
@@ -4180,18 +3510,6 @@ public partial class Local : INotifyPropertyChanging, INotifyPropertyChanged
 		}
 	}
 	
-	private void attach_Customers(Customer entity)
-	{
-		this.SendPropertyChanging();
-		entity.Local = this;
-	}
-	
-	private void detach_Customers(Customer entity)
-	{
-		this.SendPropertyChanging();
-		entity.Local = null;
-	}
-	
 	private void attach_CustomerLogs(CustomerLog entity)
 	{
 		this.SendPropertyChanging();
@@ -4211,6 +3529,18 @@ public partial class Local : INotifyPropertyChanging, INotifyPropertyChanged
 	}
 	
 	private void detach_SalesLocals(SalesLocal entity)
+	{
+		this.SendPropertyChanging();
+		entity.Local = null;
+	}
+	
+	private void attach_Customers(Customer entity)
+	{
+		this.SendPropertyChanging();
+		entity.Local = this;
+	}
+	
+	private void detach_Customers(Customer entity)
 	{
 		this.SendPropertyChanging();
 		entity.Local = null;
@@ -6208,9 +5538,9 @@ public partial class SupervisorManageCustomer : INotifyPropertyChanging, INotify
 	
 	private System.Nullable<int> _SupervisorId;
 	
-	private EntityRef<Customer> _Customer;
-	
 	private EntityRef<CustomerSupervisor> _CustomerSupervisor;
+	
+	private EntityRef<Customer> _Customer;
 	
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -6226,8 +5556,8 @@ public partial class SupervisorManageCustomer : INotifyPropertyChanging, INotify
 	
 	public SupervisorManageCustomer()
 	{
-		this._Customer = default(EntityRef<Customer>);
 		this._CustomerSupervisor = default(EntityRef<CustomerSupervisor>);
+		this._Customer = default(EntityRef<Customer>);
 		OnCreated();
 	}
 	
@@ -6299,40 +5629,6 @@ public partial class SupervisorManageCustomer : INotifyPropertyChanging, INotify
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_SupervisorManageCustomer", Storage="_Customer", ThisKey="CustomerId", OtherKey="Id", IsForeignKey=true, DeleteRule="CASCADE")]
-	public Customer Customer
-	{
-		get
-		{
-			return this._Customer.Entity;
-		}
-		set
-		{
-			Customer previousValue = this._Customer.Entity;
-			if (((previousValue != value) 
-						|| (this._Customer.HasLoadedOrAssignedValue == false)))
-			{
-				this.SendPropertyChanging();
-				if ((previousValue != null))
-				{
-					this._Customer.Entity = null;
-					previousValue.SupervisorManageCustomers.Remove(this);
-				}
-				this._Customer.Entity = value;
-				if ((value != null))
-				{
-					value.SupervisorManageCustomers.Add(this);
-					this._CustomerId = value.Id;
-				}
-				else
-				{
-					this._CustomerId = default(Nullable<int>);
-				}
-				this.SendPropertyChanged("Customer");
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CustomerSupervisor_SupervisorManageCustomer", Storage="_CustomerSupervisor", ThisKey="SupervisorId", OtherKey="Id", IsForeignKey=true, DeleteRule="CASCADE")]
 	public CustomerSupervisor CustomerSupervisor
 	{
@@ -6363,6 +5659,40 @@ public partial class SupervisorManageCustomer : INotifyPropertyChanging, INotify
 					this._SupervisorId = default(Nullable<int>);
 				}
 				this.SendPropertyChanged("CustomerSupervisor");
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_SupervisorManageCustomer", Storage="_Customer", ThisKey="CustomerId", OtherKey="Id", IsForeignKey=true, DeleteRule="CASCADE")]
+	public Customer Customer
+	{
+		get
+		{
+			return this._Customer.Entity;
+		}
+		set
+		{
+			Customer previousValue = this._Customer.Entity;
+			if (((previousValue != value) 
+						|| (this._Customer.HasLoadedOrAssignedValue == false)))
+			{
+				this.SendPropertyChanging();
+				if ((previousValue != null))
+				{
+					this._Customer.Entity = null;
+					previousValue.SupervisorManageCustomers.Remove(this);
+				}
+				this._Customer.Entity = value;
+				if ((value != null))
+				{
+					value.SupervisorManageCustomers.Add(this);
+					this._CustomerId = value.Id;
+				}
+				else
+				{
+					this._CustomerId = default(Nullable<int>);
+				}
+				this.SendPropertyChanged("Customer");
 			}
 		}
 	}
@@ -7651,6 +6981,724 @@ public partial class Dashboard : INotifyPropertyChanging, INotifyPropertyChanged
 		{
 			this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
+	}
+}
+
+[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Customer")]
+public partial class Customer : INotifyPropertyChanging, INotifyPropertyChanged
+{
+	
+	private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+	
+	private int _Id;
+	
+	private string _UpiCode;
+	
+	private string _FullName;
+	
+	private string _Address;
+	
+	private string _Street;
+	
+	private string _Ward;
+	
+	private string _Phone;
+	
+	private string _Password;
+	
+	private System.Nullable<int> _CustomerTypeId;
+	
+	private System.Nullable<int> _ChannelId;
+	
+	private System.Nullable<int> _DistrictId;
+	
+	private System.Nullable<int> _LocalId;
+	
+	private System.Nullable<System.DateTime> _CreateDate;
+	
+	private System.Nullable<System.DateTime> _UpdateDate;
+	
+	private System.Nullable<bool> _Status;
+	
+	private System.Nullable<bool> _IsEnable;
+	
+	private System.Nullable<System.DateTime> _LastLoggedDate;
+	
+	private System.Nullable<int> _UsedSMS;
+	
+	private EntitySet<CustomerLog> _CustomerLogs;
+	
+	private EntitySet<CustomerSupervisor> _CustomerSupervisors;
+	
+	private EntitySet<SupervisorManageCustomer> _SupervisorManageCustomers;
+	
+	private EntityRef<Channel> _Channel;
+	
+	private EntityRef<CustomerType> _CustomerType;
+	
+	private EntityRef<District> _District;
+	
+	private EntityRef<Local> _Local;
+	
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnUpiCodeChanging(string value);
+    partial void OnUpiCodeChanged();
+    partial void OnFullNameChanging(string value);
+    partial void OnFullNameChanged();
+    partial void OnAddressChanging(string value);
+    partial void OnAddressChanged();
+    partial void OnStreetChanging(string value);
+    partial void OnStreetChanged();
+    partial void OnWardChanging(string value);
+    partial void OnWardChanged();
+    partial void OnPhoneChanging(string value);
+    partial void OnPhoneChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
+    partial void OnCustomerTypeIdChanging(System.Nullable<int> value);
+    partial void OnCustomerTypeIdChanged();
+    partial void OnChannelIdChanging(System.Nullable<int> value);
+    partial void OnChannelIdChanged();
+    partial void OnDistrictIdChanging(System.Nullable<int> value);
+    partial void OnDistrictIdChanged();
+    partial void OnLocalIdChanging(System.Nullable<int> value);
+    partial void OnLocalIdChanged();
+    partial void OnCreateDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreateDateChanged();
+    partial void OnUpdateDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdateDateChanged();
+    partial void OnStatusChanging(System.Nullable<bool> value);
+    partial void OnStatusChanged();
+    partial void OnIsEnableChanging(System.Nullable<bool> value);
+    partial void OnIsEnableChanged();
+    partial void OnLastLoggedDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnLastLoggedDateChanged();
+    partial void OnUsedSMSChanging(System.Nullable<int> value);
+    partial void OnUsedSMSChanged();
+    #endregion
+	
+	public Customer()
+	{
+		this._CustomerLogs = new EntitySet<CustomerLog>(new Action<CustomerLog>(this.attach_CustomerLogs), new Action<CustomerLog>(this.detach_CustomerLogs));
+		this._CustomerSupervisors = new EntitySet<CustomerSupervisor>(new Action<CustomerSupervisor>(this.attach_CustomerSupervisors), new Action<CustomerSupervisor>(this.detach_CustomerSupervisors));
+		this._SupervisorManageCustomers = new EntitySet<SupervisorManageCustomer>(new Action<SupervisorManageCustomer>(this.attach_SupervisorManageCustomers), new Action<SupervisorManageCustomer>(this.detach_SupervisorManageCustomers));
+		this._Channel = default(EntityRef<Channel>);
+		this._CustomerType = default(EntityRef<CustomerType>);
+		this._District = default(EntityRef<District>);
+		this._Local = default(EntityRef<Local>);
+		OnCreated();
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+	public int Id
+	{
+		get
+		{
+			return this._Id;
+		}
+		set
+		{
+			if ((this._Id != value))
+			{
+				this.OnIdChanging(value);
+				this.SendPropertyChanging();
+				this._Id = value;
+				this.SendPropertyChanged("Id");
+				this.OnIdChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpiCode", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+	public string UpiCode
+	{
+		get
+		{
+			return this._UpiCode;
+		}
+		set
+		{
+			if ((this._UpiCode != value))
+			{
+				this.OnUpiCodeChanging(value);
+				this.SendPropertyChanging();
+				this._UpiCode = value;
+				this.SendPropertyChanged("UpiCode");
+				this.OnUpiCodeChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+	public string FullName
+	{
+		get
+		{
+			return this._FullName;
+		}
+		set
+		{
+			if ((this._FullName != value))
+			{
+				this.OnFullNameChanging(value);
+				this.SendPropertyChanging();
+				this._FullName = value;
+				this.SendPropertyChanged("FullName");
+				this.OnFullNameChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Address", DbType="NVarChar(255)")]
+	public string Address
+	{
+		get
+		{
+			return this._Address;
+		}
+		set
+		{
+			if ((this._Address != value))
+			{
+				this.OnAddressChanging(value);
+				this.SendPropertyChanging();
+				this._Address = value;
+				this.SendPropertyChanged("Address");
+				this.OnAddressChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Street", DbType="NVarChar(255)")]
+	public string Street
+	{
+		get
+		{
+			return this._Street;
+		}
+		set
+		{
+			if ((this._Street != value))
+			{
+				this.OnStreetChanging(value);
+				this.SendPropertyChanging();
+				this._Street = value;
+				this.SendPropertyChanged("Street");
+				this.OnStreetChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Ward", DbType="NVarChar(255)")]
+	public string Ward
+	{
+		get
+		{
+			return this._Ward;
+		}
+		set
+		{
+			if ((this._Ward != value))
+			{
+				this.OnWardChanging(value);
+				this.SendPropertyChanging();
+				this._Ward = value;
+				this.SendPropertyChanged("Ward");
+				this.OnWardChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Phone", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+	public string Phone
+	{
+		get
+		{
+			return this._Phone;
+		}
+		set
+		{
+			if ((this._Phone != value))
+			{
+				this.OnPhoneChanging(value);
+				this.SendPropertyChanging();
+				this._Phone = value;
+				this.SendPropertyChanged("Phone");
+				this.OnPhoneChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+	public string Password
+	{
+		get
+		{
+			return this._Password;
+		}
+		set
+		{
+			if ((this._Password != value))
+			{
+				this.OnPasswordChanging(value);
+				this.SendPropertyChanging();
+				this._Password = value;
+				this.SendPropertyChanged("Password");
+				this.OnPasswordChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CustomerTypeId", DbType="Int")]
+	public System.Nullable<int> CustomerTypeId
+	{
+		get
+		{
+			return this._CustomerTypeId;
+		}
+		set
+		{
+			if ((this._CustomerTypeId != value))
+			{
+				if (this._CustomerType.HasLoadedOrAssignedValue)
+				{
+					throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+				}
+				this.OnCustomerTypeIdChanging(value);
+				this.SendPropertyChanging();
+				this._CustomerTypeId = value;
+				this.SendPropertyChanged("CustomerTypeId");
+				this.OnCustomerTypeIdChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChannelId", DbType="Int")]
+	public System.Nullable<int> ChannelId
+	{
+		get
+		{
+			return this._ChannelId;
+		}
+		set
+		{
+			if ((this._ChannelId != value))
+			{
+				if (this._Channel.HasLoadedOrAssignedValue)
+				{
+					throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+				}
+				this.OnChannelIdChanging(value);
+				this.SendPropertyChanging();
+				this._ChannelId = value;
+				this.SendPropertyChanged("ChannelId");
+				this.OnChannelIdChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DistrictId", DbType="Int")]
+	public System.Nullable<int> DistrictId
+	{
+		get
+		{
+			return this._DistrictId;
+		}
+		set
+		{
+			if ((this._DistrictId != value))
+			{
+				if (this._District.HasLoadedOrAssignedValue)
+				{
+					throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+				}
+				this.OnDistrictIdChanging(value);
+				this.SendPropertyChanging();
+				this._DistrictId = value;
+				this.SendPropertyChanged("DistrictId");
+				this.OnDistrictIdChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocalId", DbType="Int")]
+	public System.Nullable<int> LocalId
+	{
+		get
+		{
+			return this._LocalId;
+		}
+		set
+		{
+			if ((this._LocalId != value))
+			{
+				if (this._Local.HasLoadedOrAssignedValue)
+				{
+					throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+				}
+				this.OnLocalIdChanging(value);
+				this.SendPropertyChanging();
+				this._LocalId = value;
+				this.SendPropertyChanged("LocalId");
+				this.OnLocalIdChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreateDate", DbType="DateTime")]
+	public System.Nullable<System.DateTime> CreateDate
+	{
+		get
+		{
+			return this._CreateDate;
+		}
+		set
+		{
+			if ((this._CreateDate != value))
+			{
+				this.OnCreateDateChanging(value);
+				this.SendPropertyChanging();
+				this._CreateDate = value;
+				this.SendPropertyChanged("CreateDate");
+				this.OnCreateDateChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateDate", DbType="DateTime")]
+	public System.Nullable<System.DateTime> UpdateDate
+	{
+		get
+		{
+			return this._UpdateDate;
+		}
+		set
+		{
+			if ((this._UpdateDate != value))
+			{
+				this.OnUpdateDateChanging(value);
+				this.SendPropertyChanging();
+				this._UpdateDate = value;
+				this.SendPropertyChanged("UpdateDate");
+				this.OnUpdateDateChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="Bit")]
+	public System.Nullable<bool> Status
+	{
+		get
+		{
+			return this._Status;
+		}
+		set
+		{
+			if ((this._Status != value))
+			{
+				this.OnStatusChanging(value);
+				this.SendPropertyChanging();
+				this._Status = value;
+				this.SendPropertyChanged("Status");
+				this.OnStatusChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsEnable", DbType="Bit")]
+	public System.Nullable<bool> IsEnable
+	{
+		get
+		{
+			return this._IsEnable;
+		}
+		set
+		{
+			if ((this._IsEnable != value))
+			{
+				this.OnIsEnableChanging(value);
+				this.SendPropertyChanging();
+				this._IsEnable = value;
+				this.SendPropertyChanged("IsEnable");
+				this.OnIsEnableChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastLoggedDate", DbType="DateTime")]
+	public System.Nullable<System.DateTime> LastLoggedDate
+	{
+		get
+		{
+			return this._LastLoggedDate;
+		}
+		set
+		{
+			if ((this._LastLoggedDate != value))
+			{
+				this.OnLastLoggedDateChanging(value);
+				this.SendPropertyChanging();
+				this._LastLoggedDate = value;
+				this.SendPropertyChanged("LastLoggedDate");
+				this.OnLastLoggedDateChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UsedSMS", DbType="Int")]
+	public System.Nullable<int> UsedSMS
+	{
+		get
+		{
+			return this._UsedSMS;
+		}
+		set
+		{
+			if ((this._UsedSMS != value))
+			{
+				this.OnUsedSMSChanging(value);
+				this.SendPropertyChanging();
+				this._UsedSMS = value;
+				this.SendPropertyChanged("UsedSMS");
+				this.OnUsedSMSChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_CustomerLog", Storage="_CustomerLogs", ThisKey="Id", OtherKey="CustomerId")]
+	public EntitySet<CustomerLog> CustomerLogs
+	{
+		get
+		{
+			return this._CustomerLogs;
+		}
+		set
+		{
+			this._CustomerLogs.Assign(value);
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_CustomerSupervisor", Storage="_CustomerSupervisors", ThisKey="Id", OtherKey="CustomerId")]
+	public EntitySet<CustomerSupervisor> CustomerSupervisors
+	{
+		get
+		{
+			return this._CustomerSupervisors;
+		}
+		set
+		{
+			this._CustomerSupervisors.Assign(value);
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_SupervisorManageCustomer", Storage="_SupervisorManageCustomers", ThisKey="Id", OtherKey="CustomerId")]
+	public EntitySet<SupervisorManageCustomer> SupervisorManageCustomers
+	{
+		get
+		{
+			return this._SupervisorManageCustomers;
+		}
+		set
+		{
+			this._SupervisorManageCustomers.Assign(value);
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Channel_Customer", Storage="_Channel", ThisKey="ChannelId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
+	public Channel Channel
+	{
+		get
+		{
+			return this._Channel.Entity;
+		}
+		set
+		{
+			Channel previousValue = this._Channel.Entity;
+			if (((previousValue != value) 
+						|| (this._Channel.HasLoadedOrAssignedValue == false)))
+			{
+				this.SendPropertyChanging();
+				if ((previousValue != null))
+				{
+					this._Channel.Entity = null;
+					previousValue.Customers.Remove(this);
+				}
+				this._Channel.Entity = value;
+				if ((value != null))
+				{
+					value.Customers.Add(this);
+					this._ChannelId = value.Id;
+				}
+				else
+				{
+					this._ChannelId = default(Nullable<int>);
+				}
+				this.SendPropertyChanged("Channel");
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CustomerType_Customer", Storage="_CustomerType", ThisKey="CustomerTypeId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
+	public CustomerType CustomerType
+	{
+		get
+		{
+			return this._CustomerType.Entity;
+		}
+		set
+		{
+			CustomerType previousValue = this._CustomerType.Entity;
+			if (((previousValue != value) 
+						|| (this._CustomerType.HasLoadedOrAssignedValue == false)))
+			{
+				this.SendPropertyChanging();
+				if ((previousValue != null))
+				{
+					this._CustomerType.Entity = null;
+					previousValue.Customers.Remove(this);
+				}
+				this._CustomerType.Entity = value;
+				if ((value != null))
+				{
+					value.Customers.Add(this);
+					this._CustomerTypeId = value.Id;
+				}
+				else
+				{
+					this._CustomerTypeId = default(Nullable<int>);
+				}
+				this.SendPropertyChanged("CustomerType");
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="District_Customer", Storage="_District", ThisKey="DistrictId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
+	public District District
+	{
+		get
+		{
+			return this._District.Entity;
+		}
+		set
+		{
+			District previousValue = this._District.Entity;
+			if (((previousValue != value) 
+						|| (this._District.HasLoadedOrAssignedValue == false)))
+			{
+				this.SendPropertyChanging();
+				if ((previousValue != null))
+				{
+					this._District.Entity = null;
+					previousValue.Customers.Remove(this);
+				}
+				this._District.Entity = value;
+				if ((value != null))
+				{
+					value.Customers.Add(this);
+					this._DistrictId = value.Id;
+				}
+				else
+				{
+					this._DistrictId = default(Nullable<int>);
+				}
+				this.SendPropertyChanged("District");
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Local_Customer", Storage="_Local", ThisKey="LocalId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
+	public Local Local
+	{
+		get
+		{
+			return this._Local.Entity;
+		}
+		set
+		{
+			Local previousValue = this._Local.Entity;
+			if (((previousValue != value) 
+						|| (this._Local.HasLoadedOrAssignedValue == false)))
+			{
+				this.SendPropertyChanging();
+				if ((previousValue != null))
+				{
+					this._Local.Entity = null;
+					previousValue.Customers.Remove(this);
+				}
+				this._Local.Entity = value;
+				if ((value != null))
+				{
+					value.Customers.Add(this);
+					this._LocalId = value.Id;
+				}
+				else
+				{
+					this._LocalId = default(Nullable<int>);
+				}
+				this.SendPropertyChanged("Local");
+			}
+		}
+	}
+	
+	public event PropertyChangingEventHandler PropertyChanging;
+	
+	public event PropertyChangedEventHandler PropertyChanged;
+	
+	protected virtual void SendPropertyChanging()
+	{
+		if ((this.PropertyChanging != null))
+		{
+			this.PropertyChanging(this, emptyChangingEventArgs);
+		}
+	}
+	
+	protected virtual void SendPropertyChanged(String propertyName)
+	{
+		if ((this.PropertyChanged != null))
+		{
+			this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+		}
+	}
+	
+	private void attach_CustomerLogs(CustomerLog entity)
+	{
+		this.SendPropertyChanging();
+		entity.Customer = this;
+	}
+	
+	private void detach_CustomerLogs(CustomerLog entity)
+	{
+		this.SendPropertyChanging();
+		entity.Customer = null;
+	}
+	
+	private void attach_CustomerSupervisors(CustomerSupervisor entity)
+	{
+		this.SendPropertyChanging();
+		entity.Customer = this;
+	}
+	
+	private void detach_CustomerSupervisors(CustomerSupervisor entity)
+	{
+		this.SendPropertyChanging();
+		entity.Customer = null;
+	}
+	
+	private void attach_SupervisorManageCustomers(SupervisorManageCustomer entity)
+	{
+		this.SendPropertyChanging();
+		entity.Customer = this;
+	}
+	
+	private void detach_SupervisorManageCustomers(SupervisorManageCustomer entity)
+	{
+		this.SendPropertyChanging();
+		entity.Customer = null;
 	}
 }
 

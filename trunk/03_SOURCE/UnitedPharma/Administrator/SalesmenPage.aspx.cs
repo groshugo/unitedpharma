@@ -346,12 +346,6 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
         }
     }
 
-    private void ResetComboBox(RadComboBox radComboBox)
-    {
-        radComboBox.DataSource = null;
-        radComboBox.DataBind();
-    }
-
     protected void ddlGroup_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
         ddlRegion.Enabled = true;

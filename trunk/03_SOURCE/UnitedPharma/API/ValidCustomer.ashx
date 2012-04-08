@@ -13,7 +13,7 @@ public class ValidCustomer : IHttpHandler, System.Web.SessionState.IRequiresSess
         if (String.Equals(type, "1"))
         {
             var repo = new CustomersRepository();
-            if (repo.GetCustomerByPhone(phone))
+            if (repo.IsExistedCustomerByPhone(phone))
             {
                 string password = "12345"; //for test
                 //string password = Utility.CreateRandomPassword(5);
@@ -21,6 +21,24 @@ public class ValidCustomer : IHttpHandler, System.Web.SessionState.IRequiresSess
                 {                    
                     SmsHandler sh = new SmsHandler();
                     sh.SendSMS(phone, Constant.MSG_CUSTOMER_PASSWORD + password);
+                    
+                    // check login time 
+                    var customer = repo.GetCustomerByPhone(phone);
+                    int custId = customer.Id;
+                    
+                    var lastLoggedDate = customer.LastLoggedDate.HasValue ? customer.LastLoggedDate.Value : DateTime.Now;
+                    
+                    if(lastLoggedDate.Date.DayOfYear < DateTime.Now.DayOfYear)
+                    {
+                        // need to reset UsedSMS to Zero and update last logged date of Customer
+                        repo.ResetCustomerUsedSms(custId);
+                    }
+                    else
+                    {
+                        // update lastlogged date of customer
+                        repo.UpdateCustomerLastLoggedDate(custId);
+                    }
+
                     context.Response.Write(1);
                 }
                 else

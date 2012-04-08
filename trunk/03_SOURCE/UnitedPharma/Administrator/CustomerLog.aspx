@@ -135,8 +135,7 @@
     </telerik:RadGrid>
 
         <div style="padding-top: 5px;">
-            <asp:Button ID="btn1" runat="server" Text="Approve" onclick="btn1_Click" OnClientClick="GetId();" SkinID="Office2007" Enabled="false" />
-            <asp:Button ID="btnnotApprove" runat="server" Text="Not Approve" OnClick="btnnotApprove_Click" OnClientClick="GetId();" SkinID="Office2007" Enabled="false" />
+            <asp:Button ID="btn1" runat="server" Text="Approve" onclick="btn1_Click" OnClientClick="GetId();" SkinID="Office2007" Enabled="false" />            
             <button onclick="ClosePopup()">Close window</button>
         </div>
         <asp:HiddenField ID="hdfID" runat="server" Value="" />

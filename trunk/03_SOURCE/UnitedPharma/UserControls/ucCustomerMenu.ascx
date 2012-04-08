@@ -9,6 +9,7 @@
     <ul class="nav_menu">
         <li><a id="mSms" href="../Customers/Default.aspx">SMS List</a></li>
         <li><a id="mPromotion" href="../Customers/ShowPromotion.aspx">View Promotion</a></li>
+        <li><a id="mViewInfo" href="../Customers/ViewInfo.aspx">View Information</a></li>
         <%--<li><a id="mImport" href="#">Import/Log System</a></li>
         <li><a id="mPromotion" href="../Customers/PromotionManagement.aspx">Promotion</a></li>
         <li><a id="mDashboard" href="#">Dashboard</a></li>

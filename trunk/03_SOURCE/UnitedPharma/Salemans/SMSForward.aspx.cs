@@ -69,7 +69,7 @@ public partial class Salemans_SMSForward : System.Web.UI.Page
                 {
                     if (SRepo.GetSalemenByPhoneNumber(phone))
                         repo.InsertSMS(result.SMSCode, 0, adm.Phone, Constant.SalemenType, phone, Constant.SalemenType, DateTime.Now, txtTitle.Text, txtForwardContent.Text, true, false, false, (int)result.SmsTypeId, (int)result.PromotionId);
-                    else if (CRepo.GetCustomerByPhone(phone))
+                    else if (CRepo.IsExistedCustomerByPhone(phone))
                         repo.InsertSMS(result.SMSCode, 0, adm.Phone, Constant.SalemenType, phone, Constant.CustomerType, DateTime.Now, txtTitle.Text, txtForwardContent.Text, true, false, false, (int)result.SmsTypeId, (int)result.PromotionId);
                     else if (ARepo.GetAdminByPhoneNumber(phone))
                     {

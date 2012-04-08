@@ -288,20 +288,23 @@ public class CustomersRepository
             return false;
     }
 
-    public bool GetCustomerByPhone(string phone)
+    public bool IsExistedCustomerByPhone(string phone)
     {
         try
         {
-            var o = from e in db.Customers where e.Phone == phone select e;
-            if (o.Count() > 0)
-                return true;
-            else
-                return false;
+            var customer = GetCustomerByPhone(phone);
+            return customer != null;
         }
         catch
         {
             return false;
         }
+    }
+
+    public Customer GetCustomerByPhone(string phone)
+    {
+        var o = from e in db.Customers where e.Phone == phone select e;
+        return o.Count() > 0 ? o.SingleOrDefault() : null;
     }
 
     public bool UpdateCustomerFromLog(int Id,int customerId)
@@ -498,5 +501,75 @@ public class CustomersRepository
                                     SectionId = c.District.Province.SectionId
                                 }).ToList();
         return viewAllProerties;
+    }
+
+    private bool UpdateCustomerUsedSms(int id, int noUsed)
+    {
+        try
+        {
+            var o = (from e in db.Customers where e.Id == id select e).SingleOrDefault();
+            if (o != null)
+            {
+                o.UsedSMS = noUsed;
+                o.LastLoggedDate = DateTime.Now;
+                db.SubmitChanges();
+                return true;
+            }
+
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public bool ResetCustomerUsedSms(int id)
+    {
+        return UpdateCustomerUsedSms(id, 0);
+    }
+
+    public bool UpdateCustomerLastLoggedDate(int id)
+    {
+        try
+        {
+            var o = (from e in db.Customers where e.Id == id select e).SingleOrDefault();
+            if (o != null)
+            {
+                o.LastLoggedDate = DateTime.Now;
+                db.SubmitChanges();
+                return true;
+            }
+
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public bool IncreaseCustomerUsedSms(int id, int value)
+    {
+        try
+        {
+            var o = (from e in db.Customers where e.Id == id select e).SingleOrDefault();
+            if (o != null)
+            {
+                if(o.UsedSMS.HasValue)
+                    o.UsedSMS += value;
+                else
+                    o.UsedSMS = value;
+
+                db.SubmitChanges();
+                return true;
+            }
+
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

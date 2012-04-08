@@ -17,9 +17,22 @@ public partial class Customers_Default : System.Web.UI.Page
             ObjLogin cust = (ObjLogin)Session["objLogin"];
             if (cust != null)
             {
+                var listVwSMS = FRepo.GetInboxSMS(cust.Phone);
                 RadGrid1.EnableAjaxSkinRendering = true;
-                RadGrid1.DataSource = FRepo.GetInboxSMS(cust.Phone);
+                RadGrid1.DataSource = listVwSMS;
                 RadGrid1.DataBind();
+
+                // Count SMS per day, get OutSms to count
+                int usedSms = 0;
+                foreach (var vwSms in FRepo.GetOutboxSMS(cust.Phone))
+                {
+                    if (vwSms.Date.HasValue && vwSms.Date.Value.DayOfYear == DateTime.Now.DayOfYear)
+                    {
+                        usedSms += 1;
+                    }
+                }
+
+                litSmsStatus.Text = string.Format("Used : {0} SMS - Remaining : {1} SMS.<br />(You can send 5 SMS message per day)", usedSms, 5 - usedSms);
 
                 PromotionList();
             }
@@ -46,7 +59,7 @@ public partial class Customers_Default : System.Web.UI.Page
                 item.Font.Bold = true;
             }
         }
-    }     
+    }
 
     protected void btnFilter_Click(object sender, EventArgs e)
     {
@@ -69,7 +82,7 @@ public partial class Customers_Default : System.Web.UI.Page
     private void PromotionList()
     {
         ObjLogin cust = (ObjLogin)Session["objLogin"];
-        ddlPromotion.DataSource = ScheduleRepo.GetListPhonePromotion(cust.Phone,Constant.inbox);
+        ddlPromotion.DataSource = ScheduleRepo.GetListPhonePromotion(cust.Phone, Constant.inbox);
         ddlPromotion.DataTextField = "Title";
         ddlPromotion.DataValueField = "Id";
         ddlPromotion.DataBind();

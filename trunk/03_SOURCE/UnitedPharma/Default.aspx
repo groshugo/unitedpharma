@@ -14,8 +14,8 @@
                 $("#lblLoginTitle").html("Administrator"); 
                 $("#light_bg").fadeIn("slow");
                 $("#login_box").fadeIn("slow");
-                $("#input_login").val("");
-                $("#input_password").val("");
+                $("#input_login").val("0909313336");
+                $("#input_password").val("123");
                 $("body").css("overflow", "hidden");
                 $("#input_login").focus();
             });
@@ -24,8 +24,8 @@
                 $("#lblLoginTitle").html("Salemens");
                 $("#light_bg").fadeIn("slow");
                 $("#login_box").fadeIn("slow");
-                $("#input_login").val("");
-                $("#input_password").val("");
+                $("#input_login").val("0987435325");
+                $("#input_password").val("123");
                 $("body").css("overflow", "hidden");
                 $("#input_login").focus();
             });
@@ -34,7 +34,7 @@
                 $("#lbl_header_cust_1").html("Customers");
                 $("#light_bg").fadeIn("slow");
                 $("#login_cust_1").fadeIn("slow");
-                $("#txtCustPhone").val("");                
+                $("#txtCustPhone").val("0123456789");                
                 $("body").css("overflow", "hidden");
                 $("#txtCustPhone").focus();
             });
@@ -198,7 +198,7 @@
                         Phone number</label>
                 </div>
                 <div class="field">
-                    <input type="text" tabindex="1" name="login" id="input_login" class="text" />
+                    <input type="text" tabindex="1" name="login" id="input_login" class="text" value="0987435325" />
                 </div>
             </div>
             <div class="input_block">
@@ -231,7 +231,7 @@
                         Phone number</label>
                 </div>
                 <div class="field">
-                    <input type="text" tabindex="1" name="login" id="txtCustPhone" class="text" />
+                    <input type="text" tabindex="1" name="login" id="txtCustPhone" class="text" value="0909313336" />
                 </div>
             </div>
             <div class="group" id="Div4">

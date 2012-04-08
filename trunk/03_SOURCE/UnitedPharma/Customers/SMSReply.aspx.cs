@@ -60,6 +60,11 @@ public partial class Customers_SMSReply : System.Web.UI.Page
             rs = repo.GetSMSById(Convert.ToInt32(Request.QueryString["ID"]));
             var result = rs.FirstOrDefault();
             repo.InsertSMS(result.SMSCode, (int)result.Id, adm.Phone, Constant.CustomerType, txtPhoneNumber.Text, (int)result.SenderType, DateTime.Now, txtTitle.Text.Trim(), txtReplyContent.Text.Trim(), true, false, false, (int)result.SmsTypeId, (int)result.PromotionId);
+
+            // Update UsedSms field of Customer
+            var custRepo = new CustomersRepository();
+            custRepo.IncreaseCustomerUsedSms(adm.Id, 1);
+            
             Response.Redirect("Default.aspx");
         }
     }

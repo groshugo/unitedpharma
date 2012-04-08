@@ -24,15 +24,11 @@ public partial class Administrator_CustomerLog : System.Web.UI.Page
                 {
                     btn1.Enabled = true;
                     btn1.Text = "Approve";
-                    btnnotApprove.Enabled = true;
-                    btnnotApprove.Text = "Not Approve";
                 }
                 else
                 {
                     btn1.Enabled = false;
                     btn1.Text = "You don't have permission to approve";
-                    btnnotApprove.Enabled = false;
-                    btnnotApprove.Text = "You don't have permission to approve";
                 }
 
                 hdfID.Value = customerId.ToString();

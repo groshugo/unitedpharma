@@ -94,5 +94,6 @@
             </ClientSettings>
             <PagerStyle Mode="NextPrevAndNumeric" />
         </telerik:RadGrid>
+        <asp:Literal runat="server" ID="litSmsStatus"></asp:Literal>
     </div>
 </asp:Content>

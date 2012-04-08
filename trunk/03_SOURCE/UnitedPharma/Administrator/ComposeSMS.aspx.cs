@@ -91,7 +91,7 @@ public partial class Administrator_Compose : System.Web.UI.Page
             }
             else
             {
-                if (CRepo.GetCustomerByPhone(phone))
+                if (CRepo.IsExistedCustomerByPhone(phone))
                 {
                     smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, PhoneList, Constant.CustomerType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
                     flag = true;
