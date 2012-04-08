@@ -56,10 +56,13 @@ public partial class Administrator_CustomerManagement : System.Web.UI.Page
                         int district = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistricts")).SelectedValue);
                         int local=Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlLocation")).SelectedValue);
 
+                        string noteOfSalesmen = ((TextBox)gdItem.FindControl("txtNoteOfSalesmen")).Text;
+
                         //CustomerRepo.UpdateCustomer(CustomerId, (string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"],
                         //    (string)values["Ward"], (string)values["Phone"], (string)values["Password"], customerType,channel, district,local, CreateDate, UpdateDate, (bool)values["Status"]);
                         Clog.InsertCustomer((string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"],
-                            (string)values["Ward"], (string)values["Phone"], (string)values["Password"], customerType, channel, district, local, CreateDate, UpdateDate, (bool)values["Status"], CustomerId,false,0,adm.Id);
+                            (string)values["Ward"], (string)values["Phone"], (string)values["Password"], customerType, channel, district, local, CreateDate,
+                            UpdateDate, (bool)values["Status"], CustomerId, false, 0, adm.Id, noteOfSalesmen);
                     }
                 }
                 else
@@ -225,6 +228,11 @@ public partial class Administrator_CustomerManagement : System.Web.UI.Page
                 txtCreateDate.DbSelectedDate= CreateDate;
                 RadDatePicker txtUpdateDate = ((RadDatePicker)edititem.FindControl("txtUpdateDate"));
                 txtUpdateDate.DbSelectedDate = UpdateDate;
+
+                // Note of Salesmen
+                string noteOfSalesmen = values["NoteOfSalesmen"].ToString();
+                var txtNoteOfSalesmen = ((TextBox)edititem.FindControl("txtNoteOfSalesmen"));
+                txtNoteOfSalesmen.Text = noteOfSalesmen;
             }
             
         }

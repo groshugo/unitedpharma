@@ -70,8 +70,11 @@ public partial class Administrator_CustomerLog : System.Web.UI.Page
     {
         if (hdfID == null) return;
 
+        var item = (GridDataItem)e.Item;
+        var delId = int.Parse(item.GetDataKeyValue("Id").ToString());
+        CLogRepo.DeleteCustomerLogById(delId);
+
         var customerLogId = int.Parse(hdfID.Value);
-        CLogRepo.DeleteCustomerLogById(customerLogId);
         GetCustomerLogByPhone(customerLogId);
     }
 }

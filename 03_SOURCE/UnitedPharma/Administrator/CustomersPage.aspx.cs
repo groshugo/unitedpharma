@@ -97,10 +97,14 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
                         int district = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistricts")).SelectedValue);
                         int local = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlLocation")).SelectedValue);
                         string password = ((string)values["Password"] == null) ? "" : (string)values["Password"];
+
+                        string noteOfSalesmen = ((TextBox)gdItem.FindControl("txtNoteOfSalesmen")).Text;
+
                         //CustomerRepo.UpdateCustomer(CustomerId, (string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"],
                         //    (string)values["Ward"], (string)values["Phone"], (string)values["Password"], customerType, channel, district, local, CreateDate, UpdateDate, (bool)values["Status"]);
                         Clog.InsertCustomer((string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"],
-                            (string)values["Ward"], phoneNumber, password, customerType, channel, district, local, CreateDate, UpdateDate, (bool)values["Status"], CustomerId, false, 0, adm.Id);
+                            (string)values["Ward"], phoneNumber, password, customerType, channel, district, local, CreateDate, UpdateDate, 
+                            (bool)values["Status"], CustomerId, false, 0, adm.Id, noteOfSalesmen);
                         CustomerRepo.SetEnableOfCustomer(CustomerId, false);
                         Response.Redirect("CustomersPage.aspx");
                     }
@@ -145,7 +149,8 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
                              (string)values["Phone"], (string)values["Password"], customertype, channel, district, location, CreateDate, UpdateDate, (bool)values["Status"],false);
 
                     Clog.InsertCustomer((string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"],
-                            (string)values["Ward"], (string)values["Phone"], (string)values["Password"], customertype, channel, district, local, CreateDate, UpdateDate, (bool)values["Status"], CustomerId, false, 0,adm.Id);
+                            (string)values["Ward"], (string)values["Phone"], (string)values["Password"], customertype, channel, district, local, 
+                            CreateDate, UpdateDate, (bool)values["Status"], CustomerId, false, 0,adm.Id, string.Empty);
                     Response.Redirect("CustomersPage.aspx");
                 }
                 else
@@ -174,7 +179,6 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
         {
             ShowErrorMessage("Error");
         }
-
     }
 
     protected void CustomerList_ItemDataBound(object sender, GridItemEventArgs e)
@@ -184,6 +188,8 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
             GridEditableItem edititem = (GridEditableItem)e.Item;
             Hashtable values = new Hashtable();
             edititem.ExtractValues(values);
+
+           vwCustomer vCustomer = (vwCustomer) e.Item.DataItem;
 
             using (UPIDataContext db = new UPIDataContext())
             {
@@ -274,6 +280,11 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
                 txtCreateDate.DbSelectedDate = CreateDate;
                 RadDatePicker txtUpdateDate = ((RadDatePicker)edititem.FindControl("txtUpdateDate"));
                 txtUpdateDate.DbSelectedDate = UpdateDate;
+
+                // Note of Salesmen
+                string noteOfSalesmen = vCustomer.NoteOfSalesmen;
+                var txtNoteOfSalesmen = ((TextBox)edititem.FindControl("txtNoteOfSalesmen"));
+                txtNoteOfSalesmen.Text = noteOfSalesmen;
             }
 
         }

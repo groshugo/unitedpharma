@@ -152,7 +152,7 @@ public partial class Administrator_ImportCustomers : System.Web.UI.Page
                                     true, false);
                                 CLogRepo.InsertCustomer(item.Upicode, item.Customername, item.Customeraddress, "", "", "", "", CTRepo.GetCustomerTypeIdByName(item.Channel3),
                                     ChRepo.GetChannelIdByName(item.Channel3), DisRepo.GetDistrictIdByName(""), LocalRepo.GetLocalIdByName(item.Local), DateTime.Now, DateTime.Now,
-                                    true, CustomerId, false, 0,adm.Id);
+                                    true, CustomerId, false, 0,adm.Id, string.Empty);
                             }
                             flag++;
                         }

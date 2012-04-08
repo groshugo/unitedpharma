@@ -31,6 +31,8 @@ public partial class Administrator_CustomerDetail : System.Web.UI.Page
             lblStatus.Text = (Select.Status == true) ? "Active" : "Closed";
             chkEnable.Checked = Convert.ToBoolean(Select.IsEnable);
 
+            litNoteOfSalesmen.Text = Select.NoteOfSalesmen;
+
             LoadSaleManager(Convert.ToInt32(Select.LocalId));
             LoadSupervisorManager(CustomerID);
         }

@@ -147,6 +147,12 @@
                 </telerik:GridTemplateColumn>
                 <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status">
                 </telerik:GridCheckBoxColumn>
+                <telerik:GridTemplateColumn HeaderText="Note Of Salesmen" DataField="NoteOfSalesmen">
+                    <EditItemTemplate>
+                        <asp:TextBox runat="server" ID="txtNoteOfSalesmen" TextMode="MultiLine" Rows="4"
+                            Columns="50" ></asp:TextBox>
+                    </EditItemTemplate>
+                </telerik:GridTemplateColumn>
                 <telerik:GridButtonColumn ConfirmText="Delete this customer?" ConfirmDialogType="RadWindow"
                     ConfirmTitle="Delete" ButtonType="ImageButton" CommandName="Delete" />
             </Columns>

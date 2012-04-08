@@ -122,7 +122,7 @@
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>
                
-                <telerik:GridTemplateColumn HeaderText="Custome Type">
+                <telerik:GridTemplateColumn HeaderText="Customer Type">
                     <ItemTemplate>
                         <asp:Literal runat="server" ID="litCustomerType" Text='<%# Eval("CustomerTypeName") %>'></asp:Literal>
                     </ItemTemplate>
@@ -177,6 +177,12 @@
                         <asp:CheckBox runat="server" ID="chkStatusEdit" Checked='<%# bool.Parse(Eval("Status").ToString()) %>' />
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>
+                <telerik:GridTemplateColumn HeaderText="Note Of Salesmen" DataField="NoteOfSalesmen">
+                    <EditItemTemplate>
+                        <asp:TextBox runat="server" ID="txtNoteOfSalesmen" TextMode="MultiLine" Rows="4"
+                            Columns="50" ></asp:TextBox>
+                    </EditItemTemplate>
+                </telerik:GridTemplateColumn>
                 <telerik:GridTemplateColumn HeaderText="View detail">
                     <ItemTemplate>
                         <asp:HyperLink ID="CustomerDetail" runat="server" Text="View customer detail" NavigateUrl='<%# String.Format("CustomerDetail.aspx?ID={0}",Eval("Id")) %>'></asp:HyperLink>
@@ -206,7 +212,7 @@
                         <asp:TextBox ID="txtFullName" runat="server" Text='<%# Eval("FullName") %>'></asp:TextBox>
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>
-                <telerik:GridBoundColumn DataField="CustomerTypeName" HeaderText="Custome Typer" ReadOnly="true" />
+                <telerik:GridBoundColumn DataField="CustomerTypeName" HeaderText="Customer Type" ReadOnly="true" />
                 <telerik:GridBoundColumn DataField="ChannelName" HeaderText="Channel" ReadOnly="true" />
                 <telerik:GridTemplateColumn HeaderText="Address" UniqueName="AddressColumn">
                     <ItemTemplate>

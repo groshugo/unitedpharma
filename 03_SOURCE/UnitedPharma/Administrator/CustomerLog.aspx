@@ -89,6 +89,11 @@
                     </telerik:GridTemplateColumn>
                         <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status">
                     </telerik:GridCheckBoxColumn>
+                    <telerik:GridTemplateColumn HeaderText="Note of salesmen" >
+                        <ItemTemplate>
+                            <asp:Literal runat="server" ID="litNoteOfSalesmen" Text='<%# Eval("NoteOfSalesmen") %>'></asp:Literal>
+                        </ItemTemplate>
+                    </telerik:GridTemplateColumn>
                     <telerik:GridButtonColumn ConfirmText="Are you sure you want to delete this customer log?" ConfirmDialogType="RadWindow"
                     ConfirmTitle="Delete" ButtonType="ImageButton" CommandName="Delete" />
                 </Columns>

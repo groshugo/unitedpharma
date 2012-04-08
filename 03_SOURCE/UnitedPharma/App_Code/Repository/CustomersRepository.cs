@@ -46,7 +46,8 @@ public class CustomersRepository
                                     UpdateDate = c.UpdateDate,
                                     Status = c.Status,
                                     ProvinceId = c.District.ProvinceId,
-                                    SectionId = c.District.Province.SectionId
+                                    SectionId = c.District.Province.SectionId,
+                                    NoteOfSalesmen = c.NoteOfSalesmen
                                 }).ToList();
         return viewAllProerties;
     }
@@ -79,45 +80,11 @@ public class CustomersRepository
                                     UpdateDate = c.UpdateDate,
                                     Status = c.Status,
                                     ProvinceId = c.District.ProvinceId,
-                                    SectionId = c.District.Province.SectionId
+                                    SectionId = c.District.Province.SectionId,
+                                    NoteOfSalesmen = c.NoteOfSalesmen
                                 }).SingleOrDefault();
         return viewAllProerties;
     }
-    //List customer edited
-    //public List<vwCustomer> GetAllViewCustomersLog()
-    //{
-    //    var viewAllProerties = (from c in db.Customers
-    //                            where c.Id in (from log in db.CustomerLogs  where log.IsApprove==false select log.CustomerId)
-    //                            && c.IsEnable == true
-    //                            select new vwCustomer
-    //                            {
-    //                                Id = c.Id,
-    //                                UpiCode = c.UpiCode,
-    //                                FullName = c.FullName,
-    //                                Address = c.Address,
-    //                                Street = c.Street,
-    //                                Ward = c.Ward,
-    //                                Phone = c.Phone,
-    //                                Password = c.Password,
-    //                                CustomerTypeId = c.CustomerTypeId,
-    //                                CustomerTypeName = c.CustomerType.TypeName,
-    //                                ChannelId = c.ChannelId,
-    //                                ChannelName = c.Channel.ChannelName,
-    //                                DistrictId = c.DistrictId,
-    //                                DistrictName = c.District.DistrictName,
-    //                                LocalId = c.LocalId,
-    //                                LocalName = c.Local.LocalName,
-    //                                GroupId = c.Local.Area.Region.GroupId,
-    //                                RegionId = c.Local.Area.RegionId,
-    //                                AreaId = c.Local.AreaId,
-    //                                CreateDate = c.CreateDate,
-    //                                UpdateDate = c.UpdateDate,
-    //                                Status = c.Status,
-    //                                ProvinceId = c.District.ProvinceId,
-    //                                SectionId = c.District.Province.SectionId
-    //                            }).ToList();
-    //    return viewAllProerties;
-    //}
 
     public Customer GetCustomerById(int id)
     {
@@ -234,39 +201,6 @@ public class CustomersRepository
         catch
         { return false; }
     }
-    public bool UpdateCustomer(int id, string UPICode, string FullName, string Address, string Street, string Ward, string Phone, string Password, int CustomerTypeId, int ChannelId,
-        int DistrictId, int LocalId,DateTime CreateDate, DateTime UpdateDate, bool Status)
-    {
-        try
-        {
-            var o = (from e in db.Customers where e.Id == id select e).SingleOrDefault();
-            if (o != null)
-            {
-                o.UpiCode = UPICode;
-                o.FullName = FullName;
-                o.Address = Address;
-                o.Street = Street;
-                o.Ward = Ward;
-                o.Phone = Phone;
-                o.Password = Password;
-                o.CustomerTypeId = CustomerTypeId;
-                o.ChannelId = ChannelId;
-                o.DistrictId = DistrictId;
-                o.LocalId = LocalId;
-                o.CreateDate = CreateDate;
-                o.UpdateDate = UpdateDate;
-                o.Status = Status;
-                db.SubmitChanges();
-                return true;
-            }
-            else
-                return false;
-        }
-        catch
-        {
-            return false;
-        }
-    }
 
     public bool DeleteCustomerById(int id)
     {
@@ -307,7 +241,7 @@ public class CustomersRepository
         return o.Count() > 0 ? o.SingleOrDefault() : null;
     }
 
-    public bool UpdateCustomerFromLog(int Id,int customerId)
+    public bool UpdateCustomerFromLog(int Id, int customerId)
     {
         var l = (from o in db.CustomerLogs where o.Id == Id select o).FirstOrDefault();
         if (l != null)
@@ -330,6 +264,7 @@ public class CustomersRepository
                 c.UpdateDate = l.UpdateDate;
                 c.Status = l.Status;
                 c.IsEnable = true;
+                c.NoteOfSalesmen = l.NoteOfSalesmen;
                 db.SubmitChanges();
                 return true;
             }
@@ -498,7 +433,8 @@ public class CustomersRepository
                                     UpdateDate = c.UpdateDate,
                                     Status = c.Status,
                                     ProvinceId = c.District.ProvinceId,
-                                    SectionId = c.District.Province.SectionId
+                                    SectionId = c.District.Province.SectionId,
+                                    NoteOfSalesmen = c.NoteOfSalesmen
                                 }).ToList();
         return viewAllProerties;
     }
