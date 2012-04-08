@@ -323,6 +323,15 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
                 ddlDistricts.DataBind();
                 ddlDistricts.SelectedValue = districtIndex;
 
+                // Customer Type
+                RadComboBox comboCustomerType = ((RadComboBox)edititem.FindControl("dropdownCustomerType"));
+                comboCustomerType.DataSource = (from ct in db.CustomerTypes select ct);
+                comboCustomerType.DataTextField = "TypeName";
+                comboCustomerType.DataValueField = "Id";
+                comboCustomerType.DataBind();
+
+                HiddenField hdfCt = ((HiddenField)edititem.FindControl("hdfCustomerTypeId"));
+                if (hdfCt != null) comboCustomerType.SelectedValue = hdfCt.Value;
             }
 
         }

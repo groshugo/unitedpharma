@@ -1,5 +1,6 @@
 ﻿<%@ Page Title="Customers Management" Language="C#" MasterPageFile="~/Salemans/MasterPage.master" AutoEventWireup="true" CodeFile="CustomersManagement.aspx.cs" Inherits="Salemans_CustomersManagement" %>
 
+<%@ Import Namespace="System.Net.Mime" %>
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
@@ -120,11 +121,20 @@
                         <asp:TextBox ID="txtFullName" runat="server" Text='<%# Eval("FullName") %>'></asp:TextBox>
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>
-                <telerik:GridBoundColumn DataField="CustomerTypeName" HeaderText="Custome Typer" ReadOnly="true" />
+               
+                <telerik:GridTemplateColumn HeaderText="Custome Type">
+                    <ItemTemplate>
+                        <asp:Literal runat="server" ID="litCustomerType" Text='<%# Eval("CustomerTypeName") %>'></asp:Literal>
+                    </ItemTemplate>
+                    <EditItemTemplate>
+                        <asp:HiddenField ID="hdfCustomerTypeId" runat="server" Value='<%# Eval("CustomerTypeId") %>' />
+                        <telerik:RadComboBox ID="dropdownCustomerType" runat="server"></telerik:RadComboBox>
+                    </EditItemTemplate>                
+                </telerik:GridTemplateColumn>
                 <telerik:GridTemplateColumn HeaderText="Phone" UniqueName="PhoneNumber">
                     <ItemTemplate>
                         <asp:Label runat="server" ID="lblPhone" Text='<%# Eval("Phone") %>'></asp:Label>
-                    </ItemTemplate>
+                    </ItemTemplate>                    
                 </telerik:GridTemplateColumn>
                 <telerik:GridBoundColumn DataField="Address" HeaderText="Address" Visible="false" />
                 <telerik:GridBoundColumn DataField="Street" HeaderText="Street" Visible="false" />
@@ -157,11 +167,16 @@
                         </table>
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>
-                <%--<telerik:GridBoundColumn DataField="CreateDate" HeaderText="CreateDate" DataFormatString="{0:d}" ReadOnly="true" />
-                <telerik:GridBoundColumn DataField="UpdateDate" HeaderText="UpdateDate" DataFormatString="{0:d}" ReadOnly="true" />--%>
                 <telerik:GridBoundColumn DataField="LocalName" HeaderText="Local" ReadOnly="true" />
-                <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status" ReadOnly="true">
-                </telerik:GridCheckBoxColumn>
+                
+                <telerik:GridTemplateColumn HeaderText="Status">
+                    <ItemTemplate>
+                        <asp:CheckBox runat="server" ID="chkStatus" Checked='<%# bool.Parse(Eval("Status").ToString()) %>' />
+                    </ItemTemplate>
+                    <EditItemTemplate>
+                        <asp:CheckBox runat="server" ID="chkStatusEdit" Checked='<%# bool.Parse(Eval("Status").ToString()) %>' />
+                    </EditItemTemplate>
+                </telerik:GridTemplateColumn>
                 <telerik:GridTemplateColumn HeaderText="View detail">
                     <ItemTemplate>
                         <asp:HyperLink ID="CustomerDetail" runat="server" Text="View customer detail" NavigateUrl='<%# String.Format("CustomerDetail.aspx?ID={0}",Eval("Id")) %>'></asp:HyperLink>

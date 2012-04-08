@@ -8,6 +8,8 @@ using System.Web.UI.WebControls;
 public partial class Customers_ViewDetailSMS : System.Web.UI.Page
 {
     SMSObjRepository repo = new SMSObjRepository();
+    private const int NumberSmsPerday = 5;
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (Request.QueryString["ID"] != null)
@@ -36,6 +38,12 @@ public partial class Customers_ViewDetailSMS : System.Web.UI.Page
                         lvSMS.DataSource = rs;
                         lvSMS.DataBind();
                         repo.SetIsRead(Convert.ToInt32(Request.QueryString["ID"]));
+
+                        if(!CanSendSmsToday(cust.Phone))
+                        {
+                            btnReply.Enabled = false;
+                            btnReply.ToolTip = string.Format("You can send 5 SMS message per day");
+                        }
                     }
                     else
                     {
@@ -68,5 +76,13 @@ public partial class Customers_ViewDetailSMS : System.Web.UI.Page
     protected void btnBack_Click(object sender, EventArgs e)
     {
         Response.Redirect("~/Customers/Default.aspx");
+    }
+
+    private bool CanSendSmsToday(string phone)
+    {
+        // Count SMS per day, get OutSms to count
+        int usedSms = repo.GetOutboxSMS(phone).Count(vwSms => vwSms.Date.HasValue && vwSms.Date.Value.DayOfYear == DateTime.Now.DayOfYear);
+
+        return usedSms < NumberSmsPerday;
     }
 }

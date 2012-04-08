@@ -240,7 +240,7 @@ a:hover
 }
 .sms_header
 {    
-    height:35px;
+    /*height:35px;*/
     line-height:25px;
     font-size:14px;
 }
