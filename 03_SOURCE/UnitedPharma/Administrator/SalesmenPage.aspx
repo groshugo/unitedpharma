@@ -57,7 +57,14 @@
                     <td><asp:TextBox ID="txtPhoneNumber" runat="server" Width="158px"></asp:TextBox></td>
                     <td>Role</td>
                     <td><asp:TextBox ID="txtRoleName" runat="server" Width="158px"></asp:TextBox></td>
-                    <td colspan="2" align="center"><asp:Button ID="btnFilter" runat="server" Text="Filter" OnClick="btnFilter_Click" /></td>
+                    <td colspan="2" align="center"></td>
+                </tr>
+                <tr>
+                    <td>POC</td>
+                    <td><telerik:RadComboBox ID="ddlPOC" runat="server" Enabled="true" ></telerik:RadComboBox></td>
+                    <td>POS</td>
+                    <td><telerik:RadComboBox ID="ddlPOS" runat="server" Enabled="true" ></telerik:RadComboBox></td>
+                    <td colspan="4" align="left"><asp:Button ID="btnFilter" runat="server" Text="Filter" OnClick="btnFilter_Click" /></td>
                 </tr>
             </table>
         </asp:Panel>

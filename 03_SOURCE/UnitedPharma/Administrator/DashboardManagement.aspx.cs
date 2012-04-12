@@ -14,34 +14,74 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
     DashboardRepository dRepo = new DashboardRepository();
     SalesmanRepository sRepo = new SalesmanRepository();
 
+    private const string DataTextFieldName = "Fullname";
+    private const string DataValueFieldName = "Id";
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
         {
             Utility.SetCurrentMenu("mDashboard");
-            LoadListSalesmen();
-            LoadGridDashboard();
+
+            //LoadListSalesmen();
+
+            // Load TROM to combo
+            LoadSalesmenToComboTROM();
         }
     }
 
-    private void LoadListSalesmen()
+    //private void LoadListSalesmen()
+    //{
+    //    cbSalesmen.DataSource = sRepo.GetAll();
+    //    cbSalesmen.DataTextField = "FullName";
+    //    cbSalesmen.DataValueField = "Phone";
+    //    cbSalesmen.DataBind();
+    //}
+
+    private void LoadSalesmenToComboTROM()
     {
-        cbSalesmen.DataSource = sRepo.GetAll();
-        cbSalesmen.DataTextField = "FullName";
-        cbSalesmen.DataValueField = "Phone";
-        cbSalesmen.DataBind();
+        var trom = sRepo.GetSalesmenByRoleId((int)SalesmenRole.TROM);
+        if (trom == null)
+        {
+            cboTPS.Enabled = false;
+            cboTPR.Enabled = false;
+            // write log here
+        }
+        else
+        {
+            cboTROM.DataSource = trom;
+            cboTROM.DataTextField = DataTextFieldName;
+            cboTROM.DataValueField = DataValueFieldName;
+            cboTROM.DataBind();
+
+            // Load default value for TPS
+            int id = trom[0].Id;
+            var tps = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPS, id);
+            if (tps != null)
+            {
+                cboTPS.DataSource = tps;
+                cboTPS.DataTextField = DataTextFieldName;
+                cboTPS.DataValueField = DataValueFieldName;
+                cboTPS.DataBind();
+
+                if(tps.Count > 0)
+                {
+                    var item = new RadComboBoxItem("Select a TPS", "0");
+                    cboTPS.Items.Insert(0, item);
+                }
+            }
+
+            // Load data for Dashboard grid
+            var phone = trom[0].Phone;
+            LoadGridDashboard(phone);
+        }
     }
 
-    private void LoadGridDashboard()
+    private void LoadGridDashboard(string phone)
     {
-        string ReceiverPhoneNumber = cbSalesmen.Items.Count > 0 ? cbSalesmen.SelectedValue : "";
-        RadGrid1.DataSource = dRepo.GetAllForSalemens(ReceiverPhoneNumber);
+        //RadGrid1.DataSource = null;
+        RadGrid1.DataSource = dRepo.GetAllForSalemens(phone);
         RadGrid1.DataBind();
-    }    
-
-    protected void cbSalesmen_SelectedIndexChanged(object sender, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
-    {
-        LoadGridDashboard();
     }
 
     protected void RadGrid1_CreateColumnEditor(object sender, GridCreateColumnEditorEventArgs e)
@@ -66,8 +106,8 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
 
     protected void RadGrid1_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        string ReceiverPhoneNumber = cbSalesmen.Items.Count > 0 ? cbSalesmen.SelectedValue : "";
-        RadGrid1.DataSource = dRepo.GetAllForSalemens(ReceiverPhoneNumber);
+        //string ReceiverPhoneNumber = cboTROM.Items.Count > 0 ? cboTROM.SelectedValue : "";
+        //RadGrid1.DataSource = dRepo.GetAllForSalemens(ReceiverPhoneNumber);
     }
     protected void RadGrid1_ItemCreated(object sender, Telerik.Web.UI.GridItemEventArgs e)
     {
@@ -87,7 +127,7 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
         editableItem.ExtractValues(values);
         var id = (int)editableItem.GetDataKeyValue("ReceiverPhoneNumber");
         try
-        {   
+        {
             dRepo.Edit(id, (string)values["Title"], (string)values["Content"]);
         }
         catch (System.Exception)
@@ -129,5 +169,98 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
             ShowErrorMessage();
         }
 
+    }
+
+    protected void cboTROM_SelectedIndexChanged(object sender, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string phone = string.Empty;
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var trom = sRepo.GetSalemenById(int.Parse(e.Value));
+            if(trom != null)
+            {
+                // Load data to TPS
+                var tps = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPS, trom.Id);
+
+                if (tps != null)
+                {
+                    cboTPS.DataSource = tps;
+                    cboTPS.DataTextField = DataTextFieldName;
+                    cboTPS.DataValueField = DataValueFieldName;
+                    cboTPS.DataBind();
+
+                    if (tps.Count > 0)
+                    {
+                        var item = new RadComboBoxItem("Select a TPS", "0");
+                        cboTPS.Items.Insert(0, item);
+                    }
+                }
+                else
+                {
+                    cboTPR.DataSource = null;
+                    cboTPR.DataBind();
+                }
+
+                phone = trom.Phone;
+            }
+        }
+        else
+        {
+            cboTPS.DataSource = null;
+            cboTPS.DataBind();
+
+            cboTPR.DataSource = null;
+            cboTPR.DataBind();
+        }
+
+        LoadGridDashboard(phone);
+    }
+    protected void cboTPS_SelectedIndexChanged(object sender, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string phone = string.Empty;
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var tps = sRepo.GetSalemenById(int.Parse(e.Value));
+
+            if (tps != null)
+            {
+                // Load data to TPS
+                var tpr = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPS, tps.Id);
+
+                if (tpr != null)
+                {
+                    cboTPR.DataSource = tpr;
+                    cboTPR.DataTextField = DataTextFieldName;
+                    cboTPR.DataValueField = DataValueFieldName;
+                    cboTPR.DataBind();
+
+                    if (tpr.Count > 0)
+                    {
+                        var item = new RadComboBoxItem("Select a TPR", "0");
+                        cboTPR.Items.Insert(0, item);
+                    }
+                }
+
+                phone = tps.Phone;
+            }
+        }
+        else
+        {
+            cboTPR.DataSource = null;
+            cboTPR.DataBind();
+        }
+
+        LoadGridDashboard(phone);
+    }
+    protected void cboTPR_SelectedIndexChanged(object sender, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string phone = string.Empty;
+        var tpr = sRepo.GetSalemenById(int.Parse(e.Value));
+        if(tpr != null)
+        {
+            phone = tpr.Phone;
+        }
+
+        LoadGridDashboard(phone);
     }
 }

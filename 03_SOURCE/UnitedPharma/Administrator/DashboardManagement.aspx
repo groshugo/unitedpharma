@@ -38,16 +38,14 @@
     <telerik:RadWindowManager ID="RadWindowManager1" ShowContentDuringLoad="false" VisibleStatusbar="false"
         ReloadOnShow="true" runat="server" Skin="Office2007" EnableShadow="true">
         <Windows>
-            <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" Height="605"
-                NavigateUrl="CreateDashboard.aspx">
+            <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" OnClientClose="OnClientClose"
+                Width="850" Height="605" NavigateUrl="CreateDashboard.aspx">
             </telerik:RadWindow>
-
-            <telerik:RadWindow ID="RadWindowDashboardDetails" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" Height="605"
-                NavigateUrl="ViewDashboardDetails.aspx">
-                </telerik:RadWindow>
+            <telerik:RadWindow ID="RadWindowDashboardDetails" runat="server" Behaviors="Close"
+                OnClientClose="OnClientClose" Width="850" Height="605" NavigateUrl="ViewDashboardDetails.aspx">
+            </telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>
-
     <h3>
         Dashboard Management
     </h3>
@@ -73,18 +71,106 @@
         <div class="raColor raTransp">
         </div>
     </telerik:RadAjaxLoadingPanel>
+
+    <div style="float: right; width: 200px; text-align: right">
+        <button onclick="openWin(); return false;">
+            Add new Dashboard</button>
+    </div>
+
     <div style="margin: 10px 0 10px;">
         View dashboard of salesmen: &nbsp;
-        <telerik:RadComboBox runat="server" ID="cbSalesmen" OnSelectedIndexChanged="cbSalesmen_SelectedIndexChanged"
+        <table style="padding-right: 3px; padding-bottom: 3px;">
+            <tr>
+                <td>
+                    <span style="font-weight: bold">POS:</span>
+                </td>
+                <td>
+                    TROM:
+                </td>
+                <td>
+                    <telerik:RadComboBox runat="server" ID="cboTROM" AutoPostBack="true" Skin="Office2007"
+                        OnSelectedIndexChanged="cboTROM_SelectedIndexChanged">
+                    </telerik:RadComboBox>
+                </td>
+                <td>
+                    TPS:
+                </td>
+                <td>
+                    <telerik:RadComboBox runat="server" ID="cboTPS" AutoPostBack="true" Skin="Office2007"
+                        OnSelectedIndexChanged="cboTPS_SelectedIndexChanged">
+                    </telerik:RadComboBox>
+                </td>
+                <td>
+                    TPR:
+                </td>
+                <td>
+                    <telerik:RadComboBox runat="server" ID="cboTPR" AutoPostBack="true" Skin="Office2007"
+                        OnSelectedIndexChanged="cboTPR_SelectedIndexChanged">
+                    </telerik:RadComboBox>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="font-weight: bold">POC:</span>
+                </td>
+                <td>
+                    EROM:
+                </td>
+                <td>
+                    <telerik:RadComboBox runat="server" ID="cboEROM" AutoPostBack="true" Skin="Office2007">
+                    </telerik:RadComboBox>
+                </td>
+                <td>
+                    PSS1:
+                </td>
+                <td>
+                    <telerik:RadComboBox runat="server" ID="cboPSS1" AutoPostBack="true" Skin="Office2007">
+                    </telerik:RadComboBox>
+                </td>
+                <td>
+                    PSR1:
+                </td>
+                <td>
+                    <telerik:RadComboBox runat="server" ID="cboPSR1" AutoPostBack="true" Skin="Office2007">
+                    </telerik:RadComboBox>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    EROM2:
+                </td>
+                <td>
+                    <telerik:RadComboBox runat="server" ID="cboEROM2" AutoPostBack="true" Skin="Office2007">
+                    </telerik:RadComboBox>
+                </td>
+                <td>
+                    PSS2:
+                </td>
+                <td>
+                    <telerik:RadComboBox runat="server" ID="cboPSS2" AutoPostBack="true" Skin="Office2007">
+                    </telerik:RadComboBox>
+                </td>
+                <td>
+                    PSR2:
+                </td>
+                <td>
+                    <telerik:RadComboBox runat="server" ID="cboPSR2" AutoPostBack="true" Skin="Office2007">
+                    </telerik:RadComboBox>
+                </td>
+            </tr>
+        </table>
+        <%--<telerik:RadComboBox runat="server" ID="cbSalesmen" OnSelectedIndexChanged="cbSalesmen_SelectedIndexChanged"
             AutoPostBack="true" Skin="Office2007">
-        </telerik:RadComboBox>
-        <div style="float:right; width:200px; text-align:right">
-            <button onclick="openWin(); return false;">Add new Dashboard</button>
-        </div>
+        </telerik:RadComboBox>--%>
     </div>
-    <telerik:RadGrid runat="server" ID="RadGrid1" AutoGenerateColumns="false" AllowPaging="true" OnItemCreated="RadGrid1_ItemCreated"
-        OnNeedDataSource="RadGrid1_NeedDataSource" OnUpdateCommand="RadGrid1_UpdateCommand" PageSize="50" 
-        OnDeleteCommand="RadGrid1_DeleteCommand" Skin="Office2007" OnCreateColumnEditor="RadGrid1_CreateColumnEditor">
+    
+    <telerik:RadGrid runat="server" ID="RadGrid1" AutoGenerateColumns="false" AllowPaging="true"
+        OnItemCreated="RadGrid1_ItemCreated" OnNeedDataSource="RadGrid1_NeedDataSource"
+        OnUpdateCommand="RadGrid1_UpdateCommand" PageSize="50" OnDeleteCommand="RadGrid1_DeleteCommand"
+        Skin="Office2007" OnCreateColumnEditor="RadGrid1_CreateColumnEditor">
         <MasterTableView DataKeyNames="ReceiverPhoneNumber" CommandItemDisplay="None" InsertItemPageIndexAction="ShowItemOnCurrentPage">
             <PagerTemplate>
                 <asp:Panel ID="PagerPanel" Style="padding: 6px; height: 20px" runat="server">
@@ -133,7 +219,5 @@
             <PagerStyle Mode="NumericPages" PageButtonCount="10" />
         </MasterTableView>
         <PagerStyle Mode="NextPrevAndNumeric" />
-    </telerik:RadGrid>    
-
-
+    </telerik:RadGrid>
 </asp:Content>

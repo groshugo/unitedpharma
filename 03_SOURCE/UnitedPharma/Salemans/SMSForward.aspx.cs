@@ -67,7 +67,7 @@ public partial class Salemans_SMSForward : System.Web.UI.Page
                 var result = rs.FirstOrDefault();
                 foreach (string phone in phoneList)
                 {
-                    if (SRepo.GetSalemenByPhoneNumber(phone))
+                    if (SRepo.CheckSalemenByPhoneNumber(phone))
                         repo.InsertSMS(result.SMSCode, 0, adm.Phone, Constant.SalemenType, phone, Constant.SalemenType, DateTime.Now, txtTitle.Text, txtForwardContent.Text, true, false, false, (int)result.SmsTypeId, (int)result.PromotionId);
                     else if (CRepo.IsExistedCustomerByPhone(phone))
                         repo.InsertSMS(result.SMSCode, 0, adm.Phone, Constant.SalemenType, phone, Constant.CustomerType, DateTime.Now, txtTitle.Text, txtForwardContent.Text, true, false, false, (int)result.SmsTypeId, (int)result.PromotionId);

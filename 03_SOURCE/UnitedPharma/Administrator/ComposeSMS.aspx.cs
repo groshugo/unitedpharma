@@ -84,7 +84,7 @@ public partial class Administrator_Compose : System.Web.UI.Page
         string PhoneNotExist = string.Empty;
         foreach (string phone in phoneList)
         {            
-            if (SRepo.GetSalemenByPhoneNumber(phone))
+            if (SRepo.CheckSalemenByPhoneNumber(phone))
             {
                 smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, PhoneList, Constant.SalemenType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
                 flag = true;
