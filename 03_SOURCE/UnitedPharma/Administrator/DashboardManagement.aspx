@@ -38,11 +38,9 @@
     <telerik:RadWindowManager ID="RadWindowManager1" ShowContentDuringLoad="false" VisibleStatusbar="false"
         ReloadOnShow="true" runat="server" Skin="Office2007" EnableShadow="true">
         <Windows>
-            <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" OnClientClose="OnClientClose"
-                Width="850" Height="605" NavigateUrl="CreateDashboard.aspx">
+            <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" Height="605" NavigateUrl="CreateDashboard.aspx">
             </telerik:RadWindow>
-            <telerik:RadWindow ID="RadWindowDashboardDetails" runat="server" Behaviors="Close"
-                OnClientClose="OnClientClose" Width="850" Height="605" NavigateUrl="ViewDashboardDetails.aspx">
+            <telerik:RadWindow ID="RadWindowDashboardDetails" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" Height="605" NavigateUrl="ViewDashboardDetails.aspx">
             </telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>

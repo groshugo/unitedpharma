@@ -32,7 +32,7 @@ public partial class Customers_Default : System.Web.UI.Page
                     }
                 }
 
-                litSmsStatus.Text = string.Format("Used : {0} SMS - Remaining : {1} SMS.<br />(You can send 5 SMS message per day)", usedSms, 5 - usedSms);
+                litSmsStatus.Text = string.Format("Used : <span style='color:#ff0000; font-weight:bold; font-size:20px;'>{0}</span> SMS - Remaining : <span style='color:#00ff00; font-weight:bold; font-size:20px;'>{1}</span> SMS.<br />(You can send <span style='color:#0000ff; font-weight:bold; font-size:24px;'>5</span> SMS messages per day)", usedSms, 5 - usedSms);
 
                 PromotionList();
             }

@@ -116,7 +116,7 @@ public partial class UPIDataContext : System.Data.Linq.DataContext
   #endregion
 	
 	public UPIDataContext() : 
-			base(global::System.Configuration.ConfigurationManager.ConnectionStrings["UPIConnectionString1"].ConnectionString, mappingSource)
+			base(global::System.Configuration.ConfigurationManager.ConnectionStrings["UPIConnectionString"].ConnectionString, mappingSource)
 	{
 		OnCreated();
 	}

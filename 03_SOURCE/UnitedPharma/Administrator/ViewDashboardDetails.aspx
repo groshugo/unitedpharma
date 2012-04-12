@@ -21,7 +21,7 @@
         }
     </style>
 </head>
-<body style="width: 650px; height: 400px;">
+<body style="width: 850px; height: 605px;">
     <form id="form1" runat="server" method="post">
     <telerik:RadScriptManager ID="RadScriptManager1" runat="server">
     </telerik:RadScriptManager>
