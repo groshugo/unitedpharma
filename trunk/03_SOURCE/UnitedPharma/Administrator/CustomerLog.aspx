@@ -45,14 +45,49 @@
     </telerik:RadScriptManager>
     <telerik:RadFormDecorator ID="RadFormDecorator1" DecoratedControls="All" runat="server" Skin="Office2007" />
     <div style="width:915px;">
-        <telerik:RadGrid runat="server" ID="DetailLog" AutoGenerateColumns="false" Skin="Office2007" AllowMultiRowSelection="false" 
+        <h3>Original Customer Info</h3>
+        <telerik:RadGrid ID="CustomerList" runat="server" Skin="Office2007" AllowPaging="true" Width="100%"
+        AutoGenerateColumns="false" OnNeedDataSource="CustomerList_NeedDataSource" PageSize="50">
+        <MasterTableView DataKeyNames="Id" ClientDataKeyNames="Id">
+            <Columns>
+                <telerik:GridBoundColumn DataField="UpiCode" HeaderText="UPI Code" />
+                <telerik:GridBoundColumn DataField="FullName" HeaderText="Full Name" />
+                <telerik:GridBoundColumn DataField="CustomerTypeName" HeaderText="CustomerType" />
+                <telerik:GridBoundColumn DataField="ChannelName" HeaderText="Channel" />
+                <telerik:GridBoundColumn DataField="Address" HeaderText="Address" />
+                <telerik:GridBoundColumn DataField="Street" HeaderText="Street" />
+                <telerik:GridBoundColumn DataField="Phone" HeaderText="Phone" />
+                <telerik:GridBoundColumn DataField="DistrictName" HeaderText="District" />
+                <telerik:GridBoundColumn DataField="Ward" HeaderText="Ward" />
+                <%--<telerik:GridTemplateColumn HeaderText="CreateDate">
+                    <ItemTemplate>
+                        <asp:Label ID="lblCreateDate" runat="server" Text='<%# String.Format("{0:d}", Eval("CreateDate")) %>'></asp:Label>
+                    </ItemTemplate>
+                </telerik:GridTemplateColumn>
+                <telerik:GridTemplateColumn HeaderText="UpdateDate">
+                    <ItemTemplate>
+                        <asp:Label ID="lblUpdateDate" runat="server" Text='<%# String.Format("{0:d}", Eval("UpdateDate")) %>'></asp:Label>
+                    </ItemTemplate>
+                </telerik:GridTemplateColumn>--%>                
+                <telerik:GridBoundColumn DataField="LocalName" HeaderText="Location" />
+                <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status">
+                </telerik:GridCheckBoxColumn>
+            </Columns>
+        </MasterTableView>
+        <ClientSettings EnableRowHoverStyle="true">
+            <Selecting AllowRowSelect="True" />
+        </ClientSettings>
+        <PagerStyle Mode="NextPrevAndNumeric" />
+    </telerik:RadGrid>
+    <h3>Edited Info</h3>
+        <telerik:RadGrid runat="server" ID="DetailLog" AutoGenerateColumns="false" Skin="Office2007" AllowMultiRowSelection="false" Width="100%"
             AllowPaging="false" OnDeleteCommand="RadGrid1_DeleteCommand" >
             <MasterTableView DataKeyNames="Id" ClientDataKeyNames="Id">
                 <Columns>
                     <telerik:GridClientSelectColumn UniqueName="CheckboxSelectColumn" FooterText="CheckBoxSelect footer" />
                     <telerik:GridBoundColumn DataField="UpiCode" HeaderText="UPI Code" />
                     <telerik:GridBoundColumn DataField="FullName" HeaderText="Full Name" />
-                    <telerik:GridBoundColumn DataField="Password" HeaderText="Password" />
+                    <%--<telerik:GridBoundColumn DataField="Password" HeaderText="Password" />--%>
                     <telerik:GridTemplateColumn HeaderText="Custome Typer">
                         <ItemTemplate>
                             <asp:Label runat="server" ID="lblCustomerType" Text='<%# Eval("CustomerTypeName") %>'></asp:Label>
@@ -72,7 +107,12 @@
                             <asp:Label runat="server" ID="lblDistrict" Text='<%# Eval("DistrictName") %>'></asp:Label>
                         </ItemTemplate>
                     </telerik:GridTemplateColumn>
-                    <telerik:GridTemplateColumn HeaderText="CreateDate">
+                    <telerik:GridTemplateColumn HeaderText="Ward" UniqueName="WardColumn">
+                        <ItemTemplate>
+                            <asp:Label runat="server" ID="lblWard" Text='<%# Eval("Ward") %>'></asp:Label>
+                        </ItemTemplate>
+                    </telerik:GridTemplateColumn>
+                    <%--<telerik:GridTemplateColumn HeaderText="CreateDate">
                         <ItemTemplate>
                             <asp:Label ID="lblCreateDate" runat="server" Text='<%# String.Format("{0:d}", Eval("CreateDate")) %>'></asp:Label>
                         </ItemTemplate>
@@ -81,7 +121,7 @@
                         <ItemTemplate>
                             <asp:Label ID="lblUpdateDate" runat="server" Text='<%# String.Format("{0:d}", Eval("UpdateDate")) %>'></asp:Label>
                         </ItemTemplate>
-                    </telerik:GridTemplateColumn>
+                    </telerik:GridTemplateColumn>--%>
                     <telerik:GridTemplateColumn HeaderText="Location" UniqueName="LocationColumn">
                         <ItemTemplate>
                             <asp:Label runat="server" ID="lblLocation" Text='<%# Eval("LocalName") %>'></asp:Label>
@@ -103,41 +143,7 @@
             </ClientSettings>
         </telerik:RadGrid>
 
-        Original data:
-        <telerik:RadGrid ID="CustomerList" runat="server" Skin="Office2007" AllowPaging="true"
-        AutoGenerateColumns="false" OnNeedDataSource="CustomerList_NeedDataSource" PageSize="50">
-        <MasterTableView DataKeyNames="Id" ClientDataKeyNames="Id">
-            <Columns>
-                <telerik:GridBoundColumn DataField="UpiCode" HeaderText="UPI Code" />
-                <telerik:GridBoundColumn DataField="FullName" HeaderText="Full Name" />
-                <telerik:GridBoundColumn DataField="CustomerTypeName" HeaderText="CustomerType" />
-                <telerik:GridBoundColumn DataField="ChannelName" HeaderText="Channel" />
-                <telerik:GridBoundColumn DataField="Address" HeaderText="Address" />
-                <telerik:GridBoundColumn DataField="Street" HeaderText="Street" />
-                <telerik:GridBoundColumn DataField="Phone" HeaderText="Phone" />
-                <telerik:GridBoundColumn DataField="DistrictName" HeaderText="District" />
-                
-                <telerik:GridTemplateColumn HeaderText="CreateDate">
-                    <ItemTemplate>
-                        <asp:Label ID="lblCreateDate" runat="server" Text='<%# String.Format("{0:d}", Eval("CreateDate")) %>'></asp:Label>
-                    </ItemTemplate>
-                </telerik:GridTemplateColumn>
-                <telerik:GridTemplateColumn HeaderText="UpdateDate">
-                    <ItemTemplate>
-                        <asp:Label ID="lblUpdateDate" runat="server" Text='<%# String.Format("{0:d}", Eval("UpdateDate")) %>'></asp:Label>
-                    </ItemTemplate>
-                </telerik:GridTemplateColumn>                
-                <telerik:GridBoundColumn DataField="LocalName" HeaderText="Location" />
-                <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status">
-                </telerik:GridCheckBoxColumn>
-                <telerik:GridBoundColumn DataField="Ward" HeaderText="Ward" />
-            </Columns>
-        </MasterTableView>
-        <ClientSettings EnableRowHoverStyle="true">
-            <Selecting AllowRowSelect="True" />
-        </ClientSettings>
-        <PagerStyle Mode="NextPrevAndNumeric" />
-    </telerik:RadGrid>
+        
 
         <div style="padding-top: 5px;">
             <asp:Button ID="btn1" runat="server" Text="Approve" onclick="btn1_Click" OnClientClick="GetId();" SkinID="Office2007" Enabled="false" />            
