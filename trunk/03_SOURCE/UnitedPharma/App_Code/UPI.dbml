@@ -174,24 +174,6 @@
       <Association Name="Salesmen_SalesLocal" Member="Salesmen" ThisKey="SalesmenId" OtherKey="Id" Type="Salesmen" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.Salesmen" Member="Salesmens">
-    <Type Name="Salesmen">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="UpiCode" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="FullName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="Phone" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="RoleId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="SmsQuota" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="SmsUsed" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="ExpiredDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="Salesmen_SalesArea" Member="SalesAreas" ThisKey="Id" OtherKey="SalesmenId" Type="SalesArea" />
-      <Association Name="Salesmen_SalesGroup" Member="SalesGroups" ThisKey="Id" OtherKey="SalesmenId" Type="SalesGroup" />
-      <Association Name="Salesmen_SalesLocal" Member="SalesLocals" ThisKey="Id" OtherKey="SalesmenId" Type="SalesLocal" />
-      <Association Name="Salesmen_SalesRegion" Member="SalesRegions" ThisKey="Id" OtherKey="SalesmenId" Type="SalesRegion" />
-      <Association Name="Salesmen_CustomerLog" Member="CustomerLogs" ThisKey="Id" OtherKey="ChangeBy" Type="CustomerLog" />
-      <Association Name="Role_Salesmen" Member="Role" ThisKey="RoleId" OtherKey="Id" Type="Role" IsForeignKey="true" DeleteRule="SET NULL" />
-    </Type>
-  </Table>
   <Table Name="dbo.SalesRegion" Member="SalesRegions">
     <Type Name="SalesRegion">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -312,8 +294,8 @@
       <Association Name="CustomerType_CustomerLog" Member="CustomerType" ThisKey="CustomerTypeId" OtherKey="Id" Type="CustomerType" IsForeignKey="true" DeleteRule="SET NULL" />
       <Association Name="District_CustomerLog" Member="District" ThisKey="DistrictId" OtherKey="Id" Type="District" IsForeignKey="true" DeleteRule="SET NULL" />
       <Association Name="Local_CustomerLog" Member="Local" ThisKey="LocalId" OtherKey="Id" Type="Local" IsForeignKey="true" DeleteRule="SET NULL" />
-      <Association Name="Salesmen_CustomerLog" Member="Salesmen" ThisKey="ChangeBy" OtherKey="Id" Type="Salesmen" IsForeignKey="true" DeleteRule="SET NULL" />
       <Association Name="Customer_CustomerLog" Member="Customer" ThisKey="CustomerId" OtherKey="Id" Type="Customer" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="Salesmen_CustomerLog" Member="Salesmen" ThisKey="ChangeBy" OtherKey="Id" Type="Salesmen" IsForeignKey="true" DeleteRule="SET NULL" />
     </Type>
   </Table>
   <Table Name="dbo.Customer" Member="Customers">
@@ -344,6 +326,25 @@
       <Association Name="CustomerType_Customer" Member="CustomerType" ThisKey="CustomerTypeId" OtherKey="Id" Type="CustomerType" IsForeignKey="true" DeleteRule="SET NULL" />
       <Association Name="District_Customer" Member="District" ThisKey="DistrictId" OtherKey="Id" Type="District" IsForeignKey="true" DeleteRule="SET NULL" />
       <Association Name="Local_Customer" Member="Local" ThisKey="LocalId" OtherKey="Id" Type="Local" IsForeignKey="true" DeleteRule="SET NULL" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Salesmen" Member="Salesmens">
+    <Type Name="Salesmen">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UpiCode" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Phone" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="RoleId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SmsQuota" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SmsUsed" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExpiredDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="SalesmenManagerId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Salesmen_SalesArea" Member="SalesAreas" ThisKey="Id" OtherKey="SalesmenId" Type="SalesArea" />
+      <Association Name="Salesmen_SalesGroup" Member="SalesGroups" ThisKey="Id" OtherKey="SalesmenId" Type="SalesGroup" />
+      <Association Name="Salesmen_SalesLocal" Member="SalesLocals" ThisKey="Id" OtherKey="SalesmenId" Type="SalesLocal" />
+      <Association Name="Salesmen_SalesRegion" Member="SalesRegions" ThisKey="Id" OtherKey="SalesmenId" Type="SalesRegion" />
+      <Association Name="Salesmen_CustomerLog" Member="CustomerLogs" ThisKey="Id" OtherKey="ChangeBy" Type="CustomerLog" />
+      <Association Name="Role_Salesmen" Member="Role" ThisKey="RoleId" OtherKey="Id" Type="Role" IsForeignKey="true" DeleteRule="SET NULL" />
     </Type>
   </Table>
   <Function Name="dbo.SP_SchedulePromotion" Method="SP_SchedulePromotion">

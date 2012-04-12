@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Activities.Expressions;
 using System.Collections.Generic;
 using System.Data.Linq;
 using System.Linq;
@@ -390,7 +391,7 @@ public class SalesmanRepository
             }
         }
     }
-    public bool GetSalemenByPhoneNumber(string phone)
+    public bool CheckSalemenByPhoneNumber(string phone)
     {
         try
         {
@@ -404,6 +405,16 @@ public class SalesmanRepository
         {
             return false;
         }
+    }
+
+    public Salesmen GetSalemenByPhoneNumber(string phone)
+    {
+        return (from e in db.Salesmens where e.Phone == phone select e).SingleOrDefault();
+    }
+
+    public Salesmen GetSalemenById(int id)
+    {
+        return (from e in db.Salesmens where e.Id == id select e).SingleOrDefault();
     }
 
     public Salesmen CheckLogin(string phone)
@@ -747,5 +758,16 @@ public class SalesmanRepository
         List<vwSalemen> source = GetvwSaleContact(saleId);        
         return  (from e in source where e.FullName.Contains(valueFilter) select e).ToList();
         
+    }
+
+    public List<Salesmen> GetSalesmenByRoleId(int roleId)
+    {
+        return (from e in db.Salesmens where e.RoleId == roleId select e).ToList();
+    }
+
+    public List<Salesmen> GetSalesmenByRoleIdAndManagerId(int roleId, int managerId)
+    {
+        return (from e in db.Salesmens where e.RoleId == roleId  
+                    && e.SalesmenManagerId == managerId select e).ToList();
     }
 }

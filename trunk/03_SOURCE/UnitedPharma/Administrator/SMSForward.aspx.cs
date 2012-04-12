@@ -75,7 +75,7 @@ public partial class Administrator_SMSForward : System.Web.UI.Page
                 var result = rs.FirstOrDefault();
                 foreach (string phone in phoneList)
                 {
-                    if (SRepo.GetSalemenByPhoneNumber(phone))
+                    if (SRepo.CheckSalemenByPhoneNumber(phone))
                         repo.InsertSMS(result.SMSCode,  0, adm.Phone, 0, phone, 1, DateTime.Now, txtTitle.Text, txtForwardContent.Text, true, false, false, (int)result.SmsTypeId, (int)result.PromotionId);
                     else if (CRepo.IsExistedCustomerByPhone(phone))
                         repo.InsertSMS(result.SMSCode, 0, adm.Phone, 0, phone, 2, DateTime.Now, txtTitle.Text, txtForwardContent.Text, true, false, false, (int)result.SmsTypeId, (int)result.PromotionId);
