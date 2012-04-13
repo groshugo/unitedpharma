@@ -16,3 +16,10 @@ public enum SalesmenRole
     EROM2 = 15
 
 }
+
+public enum SalesChannel
+{
+    Erom,
+    Erom2,
+    Trom
+}

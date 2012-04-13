@@ -378,4 +378,9 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
             ddlLocation.DataBind();
         }
     }
+
+    protected void btnClear_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("CustomersPage.aspx");
+    }
 }

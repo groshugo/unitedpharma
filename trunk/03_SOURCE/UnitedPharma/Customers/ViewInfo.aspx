@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Customers/CustomerMaster.master"
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Customers/MasterPage.master"
     AutoEventWireup="true" CodeFile="ViewInfo.aspx.cs" Inherits="Customers_ViewInfo" %>
 
 <%@ Register TagPrefix="telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI, Version=2011.1.315.0, Culture=neutral, PublicKeyToken=29ac1a93ec063d92" %>

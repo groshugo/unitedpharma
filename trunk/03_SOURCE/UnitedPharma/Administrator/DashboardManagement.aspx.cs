@@ -23,63 +23,19 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
         {
             Utility.SetCurrentMenu("mDashboard");
 
-            //LoadListSalesmen();
-
             // Load TROM to combo
             LoadSalesmenToComboTROM();
-        }
-    }
 
-    //private void LoadListSalesmen()
-    //{
-    //    cbSalesmen.DataSource = sRepo.GetAll();
-    //    cbSalesmen.DataTextField = "FullName";
-    //    cbSalesmen.DataValueField = "Phone";
-    //    cbSalesmen.DataBind();
-    //}
+            // Load EROM to combo
+            LoadSalesmenToComboErom();
 
-    private void LoadSalesmenToComboTROM()
-    {
-        var trom = sRepo.GetSalesmenByRoleId((int)SalesmenRole.TROM);
-        if (trom == null)
-        {
-            cboTPS.Enabled = false;
-            cboTPR.Enabled = false;
-            // write log here
-        }
-        else
-        {
-            cboTROM.DataSource = trom;
-            cboTROM.DataTextField = DataTextFieldName;
-            cboTROM.DataValueField = DataValueFieldName;
-            cboTROM.DataBind();
-
-            // Load default value for TPS
-            int id = trom[0].Id;
-            var tps = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPS, id);
-            if (tps != null)
-            {
-                cboTPS.DataSource = tps;
-                cboTPS.DataTextField = DataTextFieldName;
-                cboTPS.DataValueField = DataValueFieldName;
-                cboTPS.DataBind();
-
-                if(tps.Count > 0)
-                {
-                    var item = new RadComboBoxItem("Select a TPS", "0");
-                    cboTPS.Items.Insert(0, item);
-                }
-            }
-
-            // Load data for Dashboard grid
-            var phone = trom[0].Phone;
-            LoadGridDashboard(phone);
+            // Load EROM2 to combo
+            LoadSalesmenToComboErom2();
         }
     }
 
     private void LoadGridDashboard(string phone)
     {
-        //RadGrid1.DataSource = null;
         RadGrid1.DataSource = dRepo.GetAllForSalemens(phone);
         RadGrid1.DataBind();
     }
@@ -106,8 +62,7 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
 
     protected void RadGrid1_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        //string ReceiverPhoneNumber = cboTROM.Items.Count > 0 ? cboTROM.SelectedValue : "";
-        //RadGrid1.DataSource = dRepo.GetAllForSalemens(ReceiverPhoneNumber);
+        RadGrid1.DataSource = new List<Salesmen>();
     }
     protected void RadGrid1_ItemCreated(object sender, Telerik.Web.UI.GridItemEventArgs e)
     {
@@ -171,51 +126,33 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
 
     }
 
-    protected void cboTROM_SelectedIndexChanged(object sender, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    protected void cboTROM_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
         string phone = string.Empty;
         if (!string.IsNullOrEmpty(e.Value))
         {
             var trom = sRepo.GetSalemenById(int.Parse(e.Value));
-            if(trom != null)
+            if (trom != null)
             {
                 // Load data to TPS
                 var tps = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPS, trom.Id);
-
-                if (tps != null)
-                {
-                    cboTPS.DataSource = tps;
-                    cboTPS.DataTextField = DataTextFieldName;
-                    cboTPS.DataValueField = DataValueFieldName;
-                    cboTPS.DataBind();
-
-                    if (tps.Count > 0)
-                    {
-                        var item = new RadComboBoxItem("Select a TPS", "0");
-                        cboTPS.Items.Insert(0, item);
-                    }
-                }
-                else
-                {
-                    cboTPR.DataSource = null;
-                    cboTPR.DataBind();
-                }
+                LoadListSalesmenToCombo(tps, cboTPS, "Select a TPS");
+                
+                ClearComboData(cboTPR);
 
                 phone = trom.Phone;
             }
         }
         else
         {
-            cboTPS.DataSource = null;
-            cboTPS.DataBind();
-
-            cboTPR.DataSource = null;
-            cboTPR.DataBind();
+            ClearComboData(cboTPS);
+            ClearComboData(cboTPR);
         }
 
         LoadGridDashboard(phone);
+        ResetChannelCombo(SalesChannel.Trom);
     }
-    protected void cboTPS_SelectedIndexChanged(object sender, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    protected void cboTPS_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
         string phone = string.Empty;
         if (!string.IsNullOrEmpty(e.Value))
@@ -234,11 +171,7 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
                     cboTPR.DataValueField = DataValueFieldName;
                     cboTPR.DataBind();
 
-                    if (tpr.Count > 0)
-                    {
-                        var item = new RadComboBoxItem("Select a TPR", "0");
-                        cboTPR.Items.Insert(0, item);
-                    }
+                    LoadListSalesmenToCombo(tpr, cboTPR, "Select a TPR");
                 }
 
                 phone = tps.Phone;
@@ -252,15 +185,245 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
 
         LoadGridDashboard(phone);
     }
-    protected void cboTPR_SelectedIndexChanged(object sender, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    protected void cboTPR_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
         string phone = string.Empty;
         var tpr = sRepo.GetSalemenById(int.Parse(e.Value));
-        if(tpr != null)
+        if (tpr != null)
         {
             phone = tpr.Phone;
         }
 
         LoadGridDashboard(phone);
+    }
+
+    protected void cboEROM_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string phone = string.Empty;
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var erom = sRepo.GetSalemenById(int.Parse(e.Value));
+            if (erom != null)
+            {
+                // Load data to PSS1
+                var pss1 = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSS1, erom.Id);
+                LoadListSalesmenToCombo(pss1, cboPSS1, "Select a PSS1");
+
+                ClearComboData(cboPSR1);
+
+                phone = erom.Phone;
+            }
+        }
+        else
+        {
+            ClearComboData(cboPSS1);
+            ClearComboData(cboPSR1);
+        }
+
+        LoadGridDashboard(phone);
+        ResetChannelCombo(SalesChannel.Erom);
+    }
+    protected void cboPSS1_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string phone = string.Empty;
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var pss1 = sRepo.GetSalemenById(int.Parse(e.Value));
+
+            if (pss1 != null)
+            {
+                // Load data to PSR 1
+                var psr1 = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSR1, pss1.Id);
+
+                if (psr1 != null)
+                {
+                    cboPSS1.DataSource = psr1;
+                    cboPSS1.DataTextField = DataTextFieldName;
+                    cboPSS1.DataValueField = DataValueFieldName;
+                    cboPSS1.DataBind();
+
+                    LoadListSalesmenToCombo(psr1, cboPSS1, "Select a PSS1");
+                }
+
+                phone = pss1.Phone;
+            }
+        }
+        else
+        {
+            cboPSS1.DataSource = null;
+            cboPSS1.DataBind();
+        }
+
+        LoadGridDashboard(phone);
+    }
+    protected void cboPSR1_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string phone = string.Empty;
+        var pss1 = sRepo.GetSalemenById(int.Parse(e.Value));
+        if (pss1 != null)
+        {
+            phone = pss1.Phone;
+        }
+
+        LoadGridDashboard(phone);
+    }
+
+    protected void cboEROM2_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string phone = string.Empty;
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var erom2 = sRepo.GetSalemenById(int.Parse(e.Value));
+            if (erom2 != null)
+            {
+                // Load data to PSS2
+                var pss2 = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSS2, erom2.Id);
+                LoadListSalesmenToCombo(pss2, cboPSS2, "Select a PSS2");
+
+                ClearComboData(cboPSR2);
+
+                phone = erom2.Phone;
+            }
+        }
+        else
+        {
+            ClearComboData(cboPSS2);
+
+            ClearComboData(cboPSR2);
+        }
+
+        LoadGridDashboard(phone);
+        ResetChannelCombo(SalesChannel.Erom2);
+    }
+    protected void cboPSS2_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string phone = string.Empty;
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var pss2 = sRepo.GetSalemenById(int.Parse(e.Value));
+
+            if (pss2 != null)
+            {
+                // Load data to PSR 2
+                var psr2 = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSR2, pss2.Id);
+
+                if (psr2 != null)
+                {
+                    cboPSR2.DataSource = psr2;
+                    cboPSR2.DataTextField = DataTextFieldName;
+                    cboPSR2.DataValueField = DataValueFieldName;
+                    cboPSR2.DataBind();
+
+                    LoadListSalesmenToCombo(psr2, cboPSR2, "Select a PSR2");
+                }
+
+                phone = pss2.Phone;
+            }
+        }
+        else
+        {
+            cboPSR2.DataSource = null;
+            cboPSR2.DataBind();
+        }
+
+        LoadGridDashboard(phone);
+    }
+    protected void cboPSR2_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string phone = string.Empty;
+        var pss2 = sRepo.GetSalemenById(int.Parse(e.Value));
+        if (pss2 != null)
+        {
+            phone = pss2.Phone;
+        }
+
+        LoadGridDashboard(phone);
+    }
+
+    private void ResetChannelCombo(SalesChannel channel)
+    {
+        switch (channel)
+        {
+            case SalesChannel.Erom:
+                ClearComboData(cboTPS);
+                ClearComboData(cboTPR);
+                cboTROM.SelectedIndex = -1;
+
+                ClearComboData(cboPSS2);
+                ClearComboData(cboPSR2);
+                cboEROM2.SelectedIndex = -1;
+                break;
+            case SalesChannel.Erom2:
+                ClearComboData(cboTPS);
+                ClearComboData(cboTPR);
+                cboTROM.SelectedIndex = -1;
+
+                ClearComboData(cboPSS1);
+                ClearComboData(cboPSR1);
+                cboEROM.SelectedIndex = -1;
+                break;
+            default:
+                ClearComboData(cboPSS1);
+                ClearComboData(cboPSR1);
+                cboEROM.SelectedIndex = -1;
+
+                ClearComboData(cboPSS2);
+                ClearComboData(cboPSR2);
+                cboEROM2.SelectedIndex = -1;
+                break;
+        }
+
+    }
+
+    private void LoadSalesmenToComboTROM()
+    {
+        LoadSalesmenToCombo(SalesmenRole.TROM, cboTROM, "Select a TROM");
+    }
+    private void LoadSalesmenToComboErom2()
+    {
+        LoadSalesmenToCombo(SalesmenRole.EROM2, cboEROM2, "Select a EROM2");
+    }
+    private void LoadSalesmenToComboErom()
+    {
+        LoadSalesmenToCombo(SalesmenRole.EROM, cboEROM, "Select a EROM");
+    }
+
+    private void LoadSalesmenToCombo(SalesmenRole role, RadComboBox cbo, string firstItemText)
+    {
+        var salesmens = sRepo.GetSalesmenByRoleId((int)role);
+        if (salesmens == null)
+        {
+            cbo.Enabled = false;
+            cbo.Enabled = false;
+            // write log here
+        }
+        else
+        {
+            LoadListSalesmenToCombo(salesmens, cbo, firstItemText);
+        }
+    }
+    private void LoadListSalesmenToCombo(List<Salesmen> trom, RadComboBox comboBox, string firstItemText)
+    {
+        if (trom != null)
+        {
+            comboBox.DataSource = trom;
+            comboBox.DataTextField = DataTextFieldName;
+            comboBox.DataValueField = DataValueFieldName;
+            comboBox.DataBind();
+
+            if (trom.Count > 0)
+            {
+                var item = new RadComboBoxItem(firstItemText, "0");
+                comboBox.Items.Insert(0, item);
+            }
+        }
+
+    }
+    private void ClearComboData(RadComboBox comboBox)
+    {
+        if(comboBox.Items != null && comboBox.Items.Count >0)
+        {
+            comboBox.Items.Clear();
+        }
     }
 }
