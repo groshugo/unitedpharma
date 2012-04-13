@@ -30,8 +30,6 @@ public partial class Administrator_CustomerLog : System.Web.UI.Page
                     btn1.Enabled = false;
                     btn1.Text = "You don't have permission to approve";
                 }
-
-                hdfID.Value = customerId.ToString();
             }
         }
     }
@@ -68,13 +66,10 @@ public partial class Administrator_CustomerLog : System.Web.UI.Page
     }
     protected void RadGrid1_DeleteCommand(object source, GridCommandEventArgs e)
     {
-        if (hdfID == null) return;
-
         var item = (GridDataItem)e.Item;
         var delId = int.Parse(item.GetDataKeyValue("Id").ToString());
         CLogRepo.DeleteCustomerLogById(delId);
 
-        var customerLogId = int.Parse(hdfID.Value);
-        GetCustomerLogByPhone(customerLogId);
+        GetCustomerLogByPhone(int.Parse(Request.QueryString["Id"]));
     }
 }

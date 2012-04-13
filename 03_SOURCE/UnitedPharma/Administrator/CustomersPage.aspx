@@ -68,16 +68,20 @@
                             UPI Code:
                         </td>
                         <td>
-                            <asp:TextBox ID="txtUpiCode" runat="server" Width="158px"></asp:TextBox>
+                            <%--<asp:TextBox ID="txtUpiCode" runat="server" Width="158px"></asp:TextBox>--%>
+                            <telerik:RadTextBox runat="server" ID="txtUpiCode" Width="158px" SkinID="Office2007"/>
                         </td>
                         <td>
                             FullName:
                         </td>
                         <td>
-                            <asp:TextBox ID="txtFullName" runat="server" Width="158px"></asp:TextBox>
+                            <%--<asp:TextBox ID="txtFullName" runat="server" Width="158px"></asp:TextBox>--%>
+                            <telerik:RadTextBox runat="server" ID="txtFullName" Width="158px" SkinID="Office2007"/>
                         </td>
                         <td colspan="2">
-                            <asp:Button ID="btnFilter" runat="server" Text="Filter" OnClick="btnFilter_Click" />
+                            <%--<asp:Button ID="btnFilter" runat="server" Text="Filter" OnClick="btnFilter_Click" />--%>
+                            <telerik:RadButton ID="btnFilter" runat="server" SkinID="Office2007" Text="Filter" OnClick="btnFilter_Click"></telerik:RadButton>
+                            <telerik:RadButton ID="btnClear" runat="server" SkinID="Office2007" Text="Clear" OnClick="btnClear_Click"></telerik:RadButton>
                         </td>
                     </tr>
                 </table>

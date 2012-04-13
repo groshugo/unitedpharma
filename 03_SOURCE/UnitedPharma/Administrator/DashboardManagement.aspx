@@ -55,7 +55,56 @@
                     <telerik:AjaxUpdatedControl ControlID="RadWindowManager1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
-            <telerik:AjaxSetting AjaxControlID="cbSalesmen">
+
+            <telerik:AjaxSetting AjaxControlID="cboTROM">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="cboTPS" />
+                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="cboTPS">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="cboTPR" />
+                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="cboTPR">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+
+            <telerik:AjaxSetting AjaxControlID="cboEROM">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="cboPSS1" />
+                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="cboPSS1">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="cboPSR1" />
+                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="cboPSR1">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+
+            <telerik:AjaxSetting AjaxControlID="cboEROM2">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="cboPSS2" />
+                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="cboTPS">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="cboPSR2" />
+                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="cboPSR2">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
                 </UpdatedControls>
@@ -115,21 +164,24 @@
                     EROM:
                 </td>
                 <td>
-                    <telerik:RadComboBox runat="server" ID="cboEROM" AutoPostBack="true" Skin="Office2007">
+                    <telerik:RadComboBox runat="server" ID="cboEROM" AutoPostBack="true" Skin="Office2007"
+                        OnSelectedIndexChanged="cboEROM_SelectedIndexChanged">
                     </telerik:RadComboBox>
                 </td>
                 <td>
                     PSS1:
                 </td>
                 <td>
-                    <telerik:RadComboBox runat="server" ID="cboPSS1" AutoPostBack="true" Skin="Office2007">
+                    <telerik:RadComboBox runat="server" ID="cboPSS1" AutoPostBack="true" Skin="Office2007"
+                        OnSelectedIndexChanged="cboPSS1_SelectedIndexChanged">
                     </telerik:RadComboBox>
                 </td>
                 <td>
                     PSR1:
                 </td>
                 <td>
-                    <telerik:RadComboBox runat="server" ID="cboPSR1" AutoPostBack="true" Skin="Office2007">
+                    <telerik:RadComboBox runat="server" ID="cboPSR1" AutoPostBack="true" Skin="Office2007"
+                        OnSelectedIndexChanged="cboPSR1_SelectedIndexChanged">
                     </telerik:RadComboBox>
                 </td>
             </tr>
@@ -141,28 +193,28 @@
                     EROM2:
                 </td>
                 <td>
-                    <telerik:RadComboBox runat="server" ID="cboEROM2" AutoPostBack="true" Skin="Office2007">
+                    <telerik:RadComboBox runat="server" ID="cboEROM2" AutoPostBack="true" Skin="Office2007"
+                        OnSelectedIndexChanged="cboEROM2_SelectedIndexChanged">
                     </telerik:RadComboBox>
                 </td>
                 <td>
                     PSS2:
                 </td>
                 <td>
-                    <telerik:RadComboBox runat="server" ID="cboPSS2" AutoPostBack="true" Skin="Office2007">
+                    <telerik:RadComboBox runat="server" ID="cboPSS2" AutoPostBack="true" Skin="Office2007"
+                        OnSelectedIndexChanged="cboPSS2_SelectedIndexChanged">
                     </telerik:RadComboBox>
                 </td>
                 <td>
                     PSR2:
                 </td>
                 <td>
-                    <telerik:RadComboBox runat="server" ID="cboPSR2" AutoPostBack="true" Skin="Office2007">
+                    <telerik:RadComboBox runat="server" ID="cboPSR2" AutoPostBack="true" Skin="Office2007"
+                        OnSelectedIndexChanged="cboPSR2_SelectedIndexChanged">
                     </telerik:RadComboBox>
                 </td>
             </tr>
         </table>
-        <%--<telerik:RadComboBox runat="server" ID="cbSalesmen" OnSelectedIndexChanged="cbSalesmen_SelectedIndexChanged"
-            AutoPostBack="true" Skin="Office2007">
-        </telerik:RadComboBox>--%>
     </div>
     
     <telerik:RadGrid runat="server" ID="RadGrid1" AutoGenerateColumns="false" AllowPaging="true"

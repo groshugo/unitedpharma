@@ -770,4 +770,50 @@ public class SalesmanRepository
         return (from e in db.Salesmens where e.RoleId == roleId  
                     && e.SalesmenManagerId == managerId select e).ToList();
     }
+    public List<Salesmen> GetSalesmenBy2RoleIdAndManagerId(List<int> listRoleId, int managerId)
+    {
+        if (listRoleId == null || listRoleId.Count != 2) return null;
+
+        return (from e in db.Salesmens
+                where (e.RoleId == listRoleId[0] || e.RoleId == listRoleId[1])
+                    && e.SalesmenManagerId == managerId
+                select e).ToList();
+    }
+
+    public List<vwSalemen> GetViewWebSalesmenByRoleIdAndManagerId(int roleId, int managerId)
+    {
+        return (from a in db.Salesmens
+                where a.RoleId == roleId
+                    && a.SalesmenManagerId == managerId
+                select new vwSalemen
+                {
+                    Id = a.Id,
+                    UpiCode = a.UpiCode,
+                    FullName = a.FullName,
+                    Phone = a.Phone,
+                    RoleId = a.RoleId,
+                    RoleName = a.Role.RoleName,
+                    SmsQuota = a.SmsQuota,
+                    SmsUsed = a.SmsUsed,
+                    ExpiredDate = a.ExpiredDate
+                }).ToList();
+    }
+
+    public List<vwSalemen> GetViewWebSalesmenByRoleId(int roleId)
+    {
+        return (from a in db.Salesmens
+                where a.RoleId == roleId
+                select new vwSalemen
+                {
+                    Id = a.Id,
+                    UpiCode = a.UpiCode,
+                    FullName = a.FullName,
+                    Phone = a.Phone,
+                    RoleId = a.RoleId,
+                    RoleName = a.Role.RoleName,
+                    SmsQuota = a.SmsQuota,
+                    SmsUsed = a.SmsUsed,
+                    ExpiredDate = a.ExpiredDate
+                }).ToList();
+    }
 }

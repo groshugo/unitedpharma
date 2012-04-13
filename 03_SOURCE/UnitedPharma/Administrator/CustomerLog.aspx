@@ -141,9 +141,7 @@
             <ClientSettings>
                 <Selecting AllowRowSelect="true" />
             </ClientSettings>
-        </telerik:RadGrid>
-
-        
+        </telerik:RadGrid>        
 
         <div style="padding-top: 5px;">
             <asp:Button ID="btn1" runat="server" Text="Approve" onclick="btn1_Click" OnClientClick="GetId();" SkinID="Office2007" Enabled="false" />            
