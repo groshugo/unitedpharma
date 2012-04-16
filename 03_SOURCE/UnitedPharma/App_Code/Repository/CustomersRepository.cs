@@ -20,7 +20,9 @@ public class CustomersRepository
 
     public List<vwCustomer> GetAllViewCustomers()
     {
-        var viewAllProerties = (from c in db.Customers where c.IsEnable==true
+        var viewAllProerties = (from c in db.Customers
+                                from cS in db.CustomerSupervisors.Where(j => j.CustomerId == c.Id).DefaultIfEmpty()
+                                where c.IsEnable==true
                                 select new vwCustomer
                                 {
                                     Id = c.Id,
@@ -47,7 +49,8 @@ public class CustomersRepository
                                     Status = c.Status,
                                     ProvinceId = c.District.ProvinceId,
                                     SectionId = c.District.Province.SectionId,
-                                    NoteOfSalesmen = c.NoteOfSalesmen
+                                    NoteOfSalesmen = c.NoteOfSalesmen,
+                                    SupervisorName = cS.FullName
                                 }).ToList();
         return viewAllProerties;
     }
@@ -436,6 +439,48 @@ public class CustomersRepository
                                     SectionId = c.District.Province.SectionId,
                                     NoteOfSalesmen = c.NoteOfSalesmen
                                 }).ToList();
+        return viewAllProerties;
+    }
+
+    public List<vwCustomer> FilterCustomersForBrowsePhoneNumber(string fullname, int cutomerTypeId, int channelId, int localId)
+    {
+        var viewAllProerties = (from c in db.Customers
+                                where c.IsEnable == true
+                                        && (fullname == string.Empty || c.FullName.Contains(fullname))
+                                        && (cutomerTypeId == 0 || c.CustomerTypeId == cutomerTypeId)
+                                        && (channelId == 0 || c.ChannelId == channelId)
+                                        && (localId == 0 || c.LocalId == localId)
+                                select new vwCustomer
+                                {
+                                    Id = c.Id,
+                                    UpiCode = c.UpiCode,
+                                    FullName = c.FullName,
+                                    Address = c.Address,
+                                    Street = c.Street,
+                                    Ward = c.Ward,
+                                    Phone = c.Phone,
+                                    Password = c.Password,
+                                    CustomerTypeId = c.CustomerTypeId,
+                                    CustomerTypeName = c.CustomerType.TypeName,
+                                    ChannelId = c.ChannelId,
+                                    ChannelName = c.Channel.ChannelName,
+                                    DistrictId = c.DistrictId,
+                                    DistrictName = c.District.DistrictName,
+                                    LocalId = c.LocalId,
+                                    LocalName = c.Local.LocalName,
+                                    GroupId = c.Local.Area.Region.GroupId,
+                                    RegionId = c.Local.Area.RegionId,
+                                    AreaId = c.Local.AreaId,
+                                    CreateDate = c.CreateDate,
+                                    UpdateDate = c.UpdateDate,
+                                    Status = c.Status,
+                                    ProvinceId = c.District.ProvinceId,
+                                    SectionId = c.District.Province.SectionId,
+                                    NoteOfSalesmen = c.NoteOfSalesmen
+                                }).ToList();
+
+        
+
         return viewAllProerties;
     }
 

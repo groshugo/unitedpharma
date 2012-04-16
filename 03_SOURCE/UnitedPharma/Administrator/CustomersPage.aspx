@@ -231,6 +231,7 @@
                 <telerik:GridBoundColumn DataField="LocalName" HeaderText="Local" ReadOnly="true" />
                 <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status">
                 </telerik:GridCheckBoxColumn>
+                <telerik:GridBoundColumn DataField="SupervisorName" HeaderText="Supervisor Name" />
                 <telerik:GridTemplateColumn HeaderText="Note Of Salesmen">
                     <EditItemTemplate>
                         <asp:TextBox runat="server" ID="txtNoteOfSalesmen" TextMode="MultiLine" Rows="4"

@@ -60,7 +60,7 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
     }
     protected void RadGrid1_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        RadGrid1.DataSource = sRepo.GetAllViewSales();
+        RadGrid1.DataSource = GetDataForGridCommand();
     }
 
     #region Load data to combobox
@@ -149,8 +149,8 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
             sql += " and sa.AreaId=" + AreaId;
         if (LocalId > 0)
             sql += " and sl.LocalId=" + LocalId;
-        if(txtFullName.Text.Trim()!="")
-            sql += " and s.FullName like '%" + txtFullName.Text.Trim()+"%'";
+        if (txtFullName.Text.Trim() != "")
+            sql += " and s.FullName like '%" + txtFullName.Text.Trim() + "%'";
         if (txtPhoneNumber.Text.Trim() != "")
             sql += " and s.Phone like '%" + txtPhoneNumber.Text.Trim() + "%'";
         if (txtRoleName.Text.Trim() != "")
@@ -167,6 +167,7 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
     {
         GridEditFormItem gdItem = (e.Item as GridEditFormItem);
         var editableItem = ((GridEditableItem)e.Item);
+
         Hashtable values = new Hashtable();
         editableItem.ExtractValues(values);
 
@@ -176,9 +177,34 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
         {
             if (checkValid.phoneFormat((string)values["Phone"]))
             {
-                DateTime ExpiredDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("ExpiredDate")).SelectedDate.Value.Date);
-                sRepo.Edit(SalesmenId, (string)values["UpiCode"], (string)values["FullName"], (string)values["Phone"],
-                    Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlRoles")).SelectedValue), int.Parse(((RadNumericTextBox)gdItem.FindControl("txtSmsQuota")).ToString()), ExpiredDate);
+                if (gdItem != null)
+                {
+                    var expDate = gdItem.FindControl("txtExpiredDate") as RadDateTimePicker;
+                    var expDateValue = DateTime.Now;
+                    if (expDate != null && expDate.SelectedDate.HasValue)
+                    {
+                        expDateValue = expDate.SelectedDate.Value;
+                    }
+
+                    var cboRole = gdItem.FindControl("ddlRoles") as RadComboBox;
+                    int roleId = 0;
+                    if (cboRole != null)
+                    {
+                        roleId = int.Parse(cboRole.SelectedValue);
+                    }
+
+                    int smsQuota = 0;
+                    var txtQuota = gdItem.FindControl("txtSmsQuota") as RadNumericTextBox;
+                    if (txtQuota != null)
+                    {
+                        smsQuota = int.Parse(txtQuota.Text.Trim());
+                    }
+
+                    sRepo.Edit(SalesmenId, (string)values["UpiCode"], (string)values["FullName"], (string)values["Phone"],
+                    roleId, smsQuota, expDateValue);
+                }
+
+
             }
             else
                 ShowErrorMessage("Phone number is not valid");
@@ -202,17 +228,25 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
                 int role = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlRoles")).SelectedValue);
                 int SmsQuota = Convert.ToInt32(((RadNumericTextBox)gdItem.FindControl("txtSmsQuota")).Text);
 
-                string groupVal = ((RadComboBox) gdItem.FindControl("ddlGroupAddNew")).SelectedValue;
-                int groupId = Convert.ToInt32(string.IsNullOrEmpty(groupVal) ? "0": groupVal);
-                string regionVal = ((RadComboBox)gdItem.FindControl("ddlRegionAddNew")).SelectedValue;
-                int regionId = Convert.ToInt32(string.IsNullOrEmpty(regionVal) ? "0" : regionVal);
-                string areaVal = ((RadComboBox)gdItem.FindControl("ddlAreaAddNew")).SelectedValue;
-                int areaId = Convert.ToInt32(string.IsNullOrEmpty(areaVal) ? "0" : areaVal);
-                string localVal = ((RadComboBox)gdItem.FindControl("ddlLocalAddNew")).SelectedValue;
-                int localId = Convert.ToInt32(string.IsNullOrEmpty(localVal) ? "0" : localVal);
+                if(UtilitiesHelpers.Instance.IsRepRole(role))
+                {
+                    string groupVal = ((RadComboBox)gdItem.FindControl("ddlGroupAddNew")).SelectedValue;
+                    int groupId = Convert.ToInt32(string.IsNullOrEmpty(groupVal) ? "0" : groupVal);
+                    string regionVal = ((RadComboBox)gdItem.FindControl("ddlRegionAddNew")).SelectedValue;
+                    int regionId = Convert.ToInt32(string.IsNullOrEmpty(regionVal) ? "0" : regionVal);
+                    string areaVal = ((RadComboBox)gdItem.FindControl("ddlAreaAddNew")).SelectedValue;
+                    int areaId = Convert.ToInt32(string.IsNullOrEmpty(areaVal) ? "0" : areaVal);
+                    string localVal = ((RadComboBox)gdItem.FindControl("ddlLocalAddNew")).SelectedValue;
+                    int localId = Convert.ToInt32(string.IsNullOrEmpty(localVal) ? "0" : localVal);
 
-                sRepo.Add((string)values["UpiCode"], (string)values["FullName"], (string)values["Phone"], role, SmsQuota, ExpiredDate, 
-                    groupId, regionId, areaId, localId);
+                    sRepo.Add((string)values["UpiCode"], (string)values["FullName"], (string)values["Phone"], role, SmsQuota, ExpiredDate,
+                        groupId, regionId, areaId, localId);
+                }
+                else
+                {
+                    sRepo.Add((string)values["UpiCode"], (string)values["FullName"], (string)values["Phone"], role, SmsQuota, ExpiredDate,
+                        0, 0, 0, 0);
+                }
             }
             else
                 ShowErrorMessage("Phone number is not valid");
@@ -244,9 +278,18 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
         if ((e.Item is GridEditableItem) && (e.Item.IsInEditMode))
         {
             GridEditableItem edititem = (GridEditableItem)e.Item;
+
+            int roleId = 0;
+
+            var vwSalesmen = edititem.DataItem as vwSalemen;
+            if (vwSalesmen != null)
+            {
+                roleId = vwSalesmen.RoleId.HasValue ? vwSalesmen.RoleId.Value : 0;
+            }
+
             Hashtable values = new Hashtable();
             edititem.ExtractValues(values);
-            int roleId = Convert.ToInt32((string)values["roleId"]);
+
             var RolesList = from r in DbContext.Roles select new { roleId = r.Id, RoleName = r.RoleName };
             if (RolesList.Count() > 0)
             {
@@ -255,25 +298,81 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
                 ddlRoles.DataTextField = "RoleName";
                 ddlRoles.DataValueField = "roleId";
                 ddlRoles.DataBind();
+
+                RadComboBoxItem item = new RadComboBoxItem("Select a Role", "0");
+                ddlRoles.Items.Insert(0, item);
+
                 ddlRoles.SelectedValue = roleId.ToString();
             }
+
+            if (UtilitiesHelpers.Instance.IsRepRole(roleId))
+            {
+                // Get group
+                var group = groupRepo.GetAll();
+                if (group != null && group.Count > 0)
+                {
+                    var ddlGroupAddNew = ((RadComboBox)edititem.FindControl("ddlGroupAddNew"));
+                    if (ddlGroupAddNew != null)
+                    {
+                        var newGroup = new Group { Id = 0, GroupName = "Select a group" };
+                        group.Insert(0, newGroup);
+                        ddlGroupAddNew.DataSource = group;
+                        ddlGroupAddNew.DataTextField = "GroupName";
+                        ddlGroupAddNew.DataValueField = "Id";
+                        ddlGroupAddNew.DataBind();
+                    }
+                }
+            }
+        }
+    }
+
+    protected void ddlRoles_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        var roleId = int.Parse(e.Value);
+        GridEditableItem editedItem = (o as RadComboBox).NamingContainer as GridEditableItem;
+
+        if (editedItem == null) return;
+
+        if (UtilitiesHelpers.Instance.IsRepRole(roleId))
+        {
+            var ddlGroupAddNew = ((RadComboBox)editedItem.FindControl("ddlGroupAddNew"));
 
             // Get group
             var group = groupRepo.GetAll();
             if (group != null && group.Count > 0)
             {
-                var ddlGroupAddNew = ((RadComboBox)edititem.FindControl("ddlGroupAddNew"));
-                if(ddlGroupAddNew != null)
-                {
-                    var newGroup = new Group {Id = 0, GroupName = "Select a group"};
-                    group.Insert(0, newGroup);
-                    ddlGroupAddNew.DataSource = group;
-                    ddlGroupAddNew.DataTextField = "GroupName";
-                    ddlGroupAddNew.DataValueField = "Id";
-                    ddlGroupAddNew.DataBind();
-                }
+                var newGroup = new Group { Id = 0, GroupName = "Select a group" };
+                group.Insert(0, newGroup);
+                ddlGroupAddNew.DataSource = group;
+                ddlGroupAddNew.DataTextField = "GroupName";
+                ddlGroupAddNew.DataValueField = "Id";
+                ddlGroupAddNew.DataBind();
+
+                CleanComboAddNew(editedItem, false);
             }
         }
+        else
+        {
+            CleanComboAddNew(editedItem, true);
+        }
+    }
+
+    private static void CleanComboAddNew(GridEditableItem editedItem, bool clearFirstComboFlag)
+    {
+        if (clearFirstComboFlag)
+        {
+            var ddlGroupAddNew = ((RadComboBox)editedItem.FindControl("ddlGroupAddNew"));
+            UtilitiesHelpers.Instance.ClearComboData(ddlGroupAddNew);
+        }
+
+        var ddlRegionAddNew = ((RadComboBox)editedItem.FindControl("ddlRegionAddNew"));
+        UtilitiesHelpers.Instance.ClearComboData(ddlRegionAddNew);
+
+        var ddlAreaAddNew = ((RadComboBox)editedItem.FindControl("ddlAreaAddNew"));
+        UtilitiesHelpers.Instance.ClearComboData(ddlAreaAddNew);
+
+        var ddlLocalAddNew = ((RadComboBox)editedItem.FindControl("ddlLocalAddNew"));
+        UtilitiesHelpers.Instance.ClearComboData(ddlLocalAddNew);
     }
 
     protected void ddlGroupAddNew_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
@@ -281,7 +380,7 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
         GridEditableItem editedItem = (o as RadComboBox).NamingContainer as GridEditableItem;
 
         var regionCombo = ((RadComboBox)editedItem.FindControl("ddlRegionAddNew"));
-        if(regionCombo != null && e.Value != "0")
+        if (regionCombo != null && e.Value != "0")
         {
             var region = regionRepo.GetRegionByGroupId(int.Parse(e.Value));
             if (region != null)
@@ -297,17 +396,15 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
         }
 
         var areaCombo = ((RadComboBox)editedItem.FindControl("ddlAreaAddNew"));
-        if(areaCombo != null)
+        if (areaCombo != null)
         {
             areaCombo.Items.Clear();
-            //ResetComboBox(areaCombo);
         }
 
         var localCombo = ((RadComboBox)editedItem.FindControl("ddlLocalAddNew"));
         if (localCombo != null)
         {
             localCombo.Items.Clear();
-            //ResetComboBox(localCombo);
         }
     }
     protected void ddlRegionAddNew_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
@@ -396,7 +493,7 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
             var trom = sRepo.GetSalemenById(int.Parse(e.Value));
             if (trom != null)
             {
-                // Load data to TPS
+                // Load TPS to grid
                 var tps = sRepo.GetViewWebSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPS, trom.Id);
                 LoadListSalesmenToCombo(tps, cboTPS, "Select a TPS");
 
@@ -418,8 +515,8 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
 
             if (tps != null)
             {
-                // Load data to TPR
-                var tpr = sRepo.GetViewWebSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPS, tps.Id);
+                // Load TPR to grid
+                var tpr = sRepo.GetViewWebSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPR, tps.Id);
                 LoadSalesmenToGrid(tpr);
             }
         }
@@ -454,7 +551,7 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
 
             if (pss1 != null)
             {
-                // Load data to PSR
+                // Load PSR1 to grid
                 var psr1 = sRepo.GetViewWebSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSR1, pss1.Id);
                 LoadSalesmenToGrid(psr1);
             }
@@ -582,5 +679,39 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
     {
         RadGrid1.DataSource = vwSalemens;
         RadGrid1.DataBind();
+    }
+
+    private List<vwSalemen> GetDataForGridCommand()
+    {
+        // POS
+        var tromId = UtilitiesHelpers.Instance.GetSelectedValueOfCombo(cboTROM);
+        if (tromId > 0)
+        {
+            var tpsId = UtilitiesHelpers.Instance.GetSelectedValueOfCombo(cboTPS);
+            return tpsId > 0 ? sRepo.GetViewWebSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPR, tpsId)
+                : sRepo.GetViewWebSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPS, tromId);
+        }
+        else
+        {
+            // POC
+            var eromId = UtilitiesHelpers.Instance.GetSelectedValueOfCombo(cboEROM);
+            if (eromId > 0)
+            {
+                var pss1Id = UtilitiesHelpers.Instance.GetSelectedValueOfCombo(cboPSS1);
+                return pss1Id > 0 ? sRepo.GetViewWebSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSR1, pss1Id)
+                    : sRepo.GetViewWebSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSS1, eromId);
+            }
+            else
+            {
+                var erom2Id = UtilitiesHelpers.Instance.GetSelectedValueOfCombo(cboEROM2);
+                if (erom2Id > 0)
+                {
+                    var pss2Id = UtilitiesHelpers.Instance.GetSelectedValueOfCombo(cboPSS2);
+                    return pss2Id > 0 ? sRepo.GetViewWebSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSR2, pss2Id)
+                        : sRepo.GetViewWebSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSS2, erom2Id);
+                }
+                return sRepo.GetAllViewSales();
+            }
+        }
     }
 }

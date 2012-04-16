@@ -176,9 +176,9 @@
             <button title="Submit" id="close" onclick="returnToParent(); return false;">Submit</button>
         </div>
     </div>
-    <script type="text/javascript">
+    <%--<script type="text/javascript">
         document.getElementById("GridSalemen_GridData").removeAttribute('style');
-    </script>
+    </script>--%>
     </form>
 </body>
 </html>

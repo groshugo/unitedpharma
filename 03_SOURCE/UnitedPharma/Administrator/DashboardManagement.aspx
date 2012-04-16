@@ -31,7 +31,7 @@
             }
 
             function openWinViewDashboard(dashboardId) {
-                var oWnd = radopen("ViewDashboardDetails.aspx?ID=" + dashboardId, "RadWindowViewDashboard");
+                var oWnd = radopen("ViewDashboardDetails.aspx?ID=" + dashboardId, "RadWindowDashboardDetails");
             }
         </script>
     </telerik:RadCodeBlock>
@@ -40,7 +40,8 @@
         <Windows>
             <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" Height="605" NavigateUrl="CreateDashboard.aspx">
             </telerik:RadWindow>
-            <telerik:RadWindow ID="RadWindowDashboardDetails" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" Height="605" NavigateUrl="ViewDashboardDetails.aspx">
+            <telerik:RadWindow ID="RadWindowDashboardDetails" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" 
+                Height="300" NavigateUrl="ViewDashboardDetails.aspx">
             </telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>
@@ -59,7 +60,16 @@
             <telerik:AjaxSetting AjaxControlID="cboTROM">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="cboTPS" />
+                    <telerik:AjaxUpdatedControl ControlID="cboTPR" />
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                    
+                    <telerik:AjaxUpdatedControl ControlID="cboEROM" />                    
+                    <telerik:AjaxUpdatedControl ControlID="cboPSS1" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSR1" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboEROM2" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSS2" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSR2" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
             <telerik:AjaxSetting AjaxControlID="cboTPS">
@@ -77,7 +87,16 @@
             <telerik:AjaxSetting AjaxControlID="cboEROM">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="cboPSS1" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSR1" />
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboTPS" />
+                    <telerik:AjaxUpdatedControl ControlID="cboTPR" />
+                    <telerik:AjaxUpdatedControl ControlID="cboTROM" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboEROM2" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSS2" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSR2" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
             <telerik:AjaxSetting AjaxControlID="cboPSS1">
@@ -95,7 +114,16 @@
             <telerik:AjaxSetting AjaxControlID="cboEROM2">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="cboPSS2" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSR2" />
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboTPS" />
+                    <telerik:AjaxUpdatedControl ControlID="cboTPR" />
+                    <telerik:AjaxUpdatedControl ControlID="cboTROM" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboEROM" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSS1" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSR1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
             <telerik:AjaxSetting AjaxControlID="cboTPS">
@@ -221,7 +249,7 @@
         OnItemCreated="RadGrid1_ItemCreated" OnNeedDataSource="RadGrid1_NeedDataSource"
         OnUpdateCommand="RadGrid1_UpdateCommand" PageSize="50" OnDeleteCommand="RadGrid1_DeleteCommand"
         Skin="Office2007" OnCreateColumnEditor="RadGrid1_CreateColumnEditor">
-        <MasterTableView DataKeyNames="ReceiverPhoneNumber" CommandItemDisplay="None" InsertItemPageIndexAction="ShowItemOnCurrentPage">
+        <MasterTableView DataKeyNames="Id" CommandItemDisplay="None" InsertItemPageIndexAction="ShowItemOnCurrentPage">
             <PagerTemplate>
                 <asp:Panel ID="PagerPanel" Style="padding: 6px; height: 20px" runat="server">
                     <div style="float: left">
@@ -255,9 +283,7 @@
                 </telerik:GridBoundColumn>
                 <telerik:GridTemplateColumn HeaderText="">
                     <ItemTemplate>
-                        <a href="javascript:openWinViewDashboard(<%# Eval("ID") %>);">View Details</a><%--
-                        <asp:LinkButton runat="server" ID="ViewDashboardDetails" Text="View Detail" 
-                            OnClientClick='openWinViewDashboard(<%# Eval("ID") %>); return false;'></asp:LinkButton>--%>
+                        <a href="javascript:void(0);" onclick="openWinViewDashboard(<%# Eval("ID") %>); return false;">View Details</a>
                     </ItemTemplate>
                 </telerik:GridTemplateColumn>
                 <telerik:GridButtonColumn ConfirmText="Delete this dashboard?" ConfirmDialogType="RadWindow"
