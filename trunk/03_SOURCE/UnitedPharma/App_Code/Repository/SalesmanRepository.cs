@@ -138,7 +138,14 @@ public class SalesmanRepository
         else
             return false;
     }
+
     public bool Edit(int id, string UpiCode, string FullName, string Phone, int RoleId, int SmsQuota, DateTime ExpiredDate)
+    {
+        return Edit(id, UpiCode, FullName, Phone, RoleId, SmsQuota, ExpiredDate, 0, 0, 0, 0);
+    }
+
+    public bool Edit(int id, string UpiCode, string FullName, string Phone, int RoleId, int SmsQuota, DateTime ExpiredDate, 
+        int groupId, int regionId, int areaId, int localId)
     {
         try
         {
@@ -152,6 +159,51 @@ public class SalesmanRepository
                 o.SmsQuota = SmsQuota;
                 o.ExpiredDate = ExpiredDate;
                 db.SubmitChanges();
+
+                int salesMenId = id;
+                if (groupId != 0)
+                {
+                    //// delete all existing setting for this 
+                    //db.SalesGroups.DeleteAllOnSubmit(from sg in db.SalesGroups where sg.SalesmenId == salesMenId select sg);
+
+                    // insert Group to SaleGroup
+                    SalesGroup salesGroup = new SalesGroup();
+                    salesGroup.GroupId = groupId;
+                    salesGroup.SalesmenId = salesMenId;
+                    db.SalesGroups.InsertOnSubmit(salesGroup);
+                    db.SubmitChanges();
+                }
+
+                if (regionId != 0)
+                {
+                    // insert region
+                    SalesRegion salesRegion = new SalesRegion();
+                    salesRegion.SalesmenId = salesMenId;
+                    salesRegion.RegionId = regionId;
+                    db.SalesRegions.InsertOnSubmit(salesRegion);
+                    db.SubmitChanges();
+                }
+
+                if (areaId != 0)
+                {
+                    // insert area
+                    SalesArea salesArea = new SalesArea();
+                    salesArea.SalesmenId = salesMenId;
+                    salesArea.AreaId = areaId;
+                    db.SalesAreas.InsertOnSubmit(salesArea);
+                    db.SubmitChanges();
+                }
+
+                if (localId != 0)
+                {
+                    // insert area
+                    SalesLocal salesLocal = new SalesLocal();
+                    salesLocal.SalesmenId = salesMenId;
+                    salesLocal.LocalId = localId;
+                    db.SalesLocals.InsertOnSubmit(salesLocal);
+                    db.SubmitChanges();
+                }
+
                 return true;
             }
             else
@@ -803,6 +855,30 @@ public class SalesmanRepository
     {
         return (from a in db.Salesmens
                 where a.RoleId == roleId
+                select new vwSalemen
+                {
+                    Id = a.Id,
+                    UpiCode = a.UpiCode,
+                    FullName = a.FullName,
+                    Phone = a.Phone,
+                    RoleId = a.RoleId,
+                    RoleName = a.Role.RoleName,
+                    SmsQuota = a.SmsQuota,
+                    SmsUsed = a.SmsUsed,
+                    ExpiredDate = a.ExpiredDate
+                }).ToList();
+    }
+
+    public List<vwSalemen> FilterSalesmenForBrowsePhoneNumber(string fullname, int localId)
+    {
+        return (from a in db.Salesmens
+                where (fullname == string.Empty || a.FullName.Contains(fullname))
+                    && (localId == 0 || (from sl in db.SalesLocals
+                                         where sl.LocalId == localId
+                                         select new
+                                         {
+                                             sl.SalesmenId
+                                         }).Any(cc => cc.SalesmenId == a.Id))
                 select new vwSalemen
                 {
                     Id = a.Id,

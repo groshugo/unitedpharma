@@ -21,15 +21,15 @@
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="cboTPS" />
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboEROM" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSS1" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboEROM2" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSS2" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
             <telerik:AjaxSetting AjaxControlID="cboTPS">
-                <UpdatedControls>
-                    <telerik:AjaxUpdatedControl ControlID="cboTPR" />
-                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
-                </UpdatedControls>
-            </telerik:AjaxSetting>
-            <telerik:AjaxSetting AjaxControlID="cboTPR">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
                 </UpdatedControls>
@@ -39,15 +39,15 @@
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="cboPSS1" />
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboTROM" />
+                    <telerik:AjaxUpdatedControl ControlID="cboTPS" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboEROM2" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSS2" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
             <telerik:AjaxSetting AjaxControlID="cboPSS1">
-                <UpdatedControls>
-                    <telerik:AjaxUpdatedControl ControlID="cboPSR1" />
-                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
-                </UpdatedControls>
-            </telerik:AjaxSetting>
-            <telerik:AjaxSetting AjaxControlID="cboPSR1">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
                 </UpdatedControls>
@@ -57,17 +57,23 @@
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="cboPSS2" />
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboTROM" />
+                    <telerik:AjaxUpdatedControl ControlID="cboTPS" />
+
+                    <telerik:AjaxUpdatedControl ControlID="cboEROM" />
+                    <telerik:AjaxUpdatedControl ControlID="cboPSS1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
             <telerik:AjaxSetting AjaxControlID="cboTPS">
                 <UpdatedControls>
-                    <telerik:AjaxUpdatedControl ControlID="cboPSR2" />
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
-            <telerik:AjaxSetting AjaxControlID="cboPSR2">
+
+            <telerik:AjaxSetting AjaxControlID="ddlRoles">
                 <UpdatedControls>
-                    <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                    <telerik:AjaxUpdatedControl ControlID="ddlGroupAddNew" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
 
@@ -203,7 +209,7 @@
                         <asp:Label runat="server" ID="lblRole" Text='<%# Eval("RoleName") %>'></asp:Label>
                     </ItemTemplate>
                     <EditItemTemplate>
-                        <telerik:RadComboBox runat="server" ID="ddlRoles">
+                        <telerik:RadComboBox runat="server" ID="ddlRoles" AutoPostBack="true" OnSelectedIndexChanged="ddlRoles_SelectedIndexChanged">
                         </telerik:RadComboBox>
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>

@@ -21,7 +21,7 @@
         }
     </style>
 </head>
-<body style="width: 850px; height: 605px;">
+<body >
     <form id="form1" runat="server" method="post">
     <telerik:RadScriptManager ID="RadScriptManager1" runat="server">
     </telerik:RadScriptManager>
@@ -56,25 +56,11 @@
         <div class="raColor raTransp">
         </div>
     </telerik:RadAjaxLoadingPanel>
-    <table cellpadding="5" cellspacing="0" style="margin: 10px;">
+    <div style="background:#AEC7FF; font-size:18px; padding:5px; font-weight:bold"><asp:Literal ID="litTitle" runat="server" /></div>
+    <div style="padding-top:10px; text-align:justify"><asp:Literal ID="litContent" runat="server" /></div>
+    <table cellpadding="5" cellspacing="0" style="margin: 10px;" width="750">
         <tr>
-            <td valign="top">
-                Title:
-            </td>
-            <td>
-                <asp:Literal ID="litTitle" runat="server" />
-            </td>
-        </tr>
-        <tr>
-            <td valign="top">
-                Content:
-            </td>
-            <td>
-                <asp:Literal ID="litContent" runat="server" />
-            </td>
-        </tr>
-        <tr>
-            <td valign="top">
+            <td valign="top" style="width: 150px;">
                 Attached file:
             </td>
             <td>
@@ -90,7 +76,7 @@
             </td>
         </tr>
         <tr>
-            <td valign="top">
+            <td valign="top" nowrap="nowrap">
                 Receiver Phone Number:
             </td>
             <td>

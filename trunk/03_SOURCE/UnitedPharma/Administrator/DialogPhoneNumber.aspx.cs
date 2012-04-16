@@ -29,17 +29,12 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
     }
     private void InitializeComponent()
     {
-        ///
-        /// SelectedIndexChanged of combobox
-        ///
         ddlChannel.SelectedIndexChanged += new RadComboBoxSelectedIndexChangedEventHandler(ddlChannel_SelectedIndexChanged);
         ddlGroup.SelectedIndexChanged += new RadComboBoxSelectedIndexChangedEventHandler(ddlGroup_SelectedIndexChanged);
         ddlRegion.SelectedIndexChanged += new RadComboBoxSelectedIndexChangedEventHandler(ddlRegion_SelectedIndexChanged);
         ddlArea.SelectedIndexChanged += new RadComboBoxSelectedIndexChangedEventHandler(ddlArea_SelectedIndexChanged);
         ddlLocal.SelectedIndexChanged += new RadComboBoxSelectedIndexChangedEventHandler(ddlLocal_SelectedIndexChanged);
-        ///
-        /// Button click
-        ///
+
         this.btnFilterName.Click += new System.EventHandler(this.btnFilterName_Click);
 
         this.Load += new System.EventHandler(this.Page_Load);
@@ -52,22 +47,22 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
             ListCustomerType();
             ListChannel();
             ListGroup();
-            ListRegion();
-            ListArea();
-            ListLocal();
+            //ListRegion();
+            //ListArea();
+            //ListLocal();
         }
     }
-    private void AllCustomers()
-    {
-        CustomerList.DataSource = CustomerRepo.GetAllViewCustomers();
-    }
+
     protected void CustomerList_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        GetFilterData();
+        //GetFilterData();
+
+        CustomerList.DataSource = FilterCustomers();// CustomerRepo.GetAllViewCustomers();
     }
     protected void GridSalemen_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        GetFilterData();
+        //GetFilterData();
+        GridSalemen.DataSource = FilterSalesmen();
     }
 
     #region Load data to comboboxes
@@ -104,41 +99,10 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
         RadComboBoxItem item = new RadComboBoxItem("Select a group", "0");
         ddlGroup.Items.Insert(0, item);
     }
-    private void ListRegion()
-    {
-        var region = regionRepo.GetAll();
-        ddlRegion.DataSource = region;
-        ddlRegion.DataTextField = "RegionName";
-        ddlRegion.DataValueField = "Id";
-        ddlRegion.DataBind();
-        RadComboBoxItem item = new RadComboBoxItem("Select a region", "0");
-        ddlRegion.Items.Insert(0, item);
-    }
-    private void ListArea()
-    {
-        var area = areaRepo.GetAll();
-        ddlArea.DataSource = area;
-        ddlArea.DataTextField = "AreaName";
-        ddlArea.DataValueField = "Id";
-        ddlArea.DataBind();
-        RadComboBoxItem item = new RadComboBoxItem("Select a area", "0");
-        ddlArea.Items.Insert(0, item);
-    }
-    private void ListLocal()
-    {
-        var local = localRepo.GetAll();
-        ddlLocal.DataSource = local;
-        ddlLocal.DataTextField = "LocalName";
-        ddlLocal.DataValueField = "Id";
-        ddlLocal.DataBind();
-        RadComboBoxItem item = new RadComboBoxItem("Select a local", "0");
-        ddlLocal.Items.Insert(0, item);
-    }
+
     #endregion
 
-    /// <summary>
-    /// Select item on combobox
-    /// </summary>
+   
     #region Select item on combobox
     public string GetLocalList(int GroupId, int RegionId, int AreaId, int LocalId)
     {
@@ -383,7 +347,7 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
         return dt;
     }
 
-    private void rebindGrid()
+    private void   rebindGrid()
     {
         if (int.Parse(ddlSelect.SelectedValue) == 1)
             CustomerList.Rebind();
@@ -391,61 +355,146 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
             GridSalemen.Rebind();
     }
     protected void ddlCustomerType_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
-    {      
-        GetFilterData();
-        rebindGrid();
+    {
+        FilterDateOnForm();
     }
     private void ddlChannel_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
-         GetFilterData();
-         rebindGrid();
+        FilterDateOnForm();
     }
 
     private void ddlGroup_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        GetFilterData();
-        rebindGrid();
+        var region = regionRepo.GetRegionByGroupId(int.Parse(e.Value));
+        if (region != null)
+        {
+            ddlRegion.DataSource = region;
+            ddlRegion.DataTextField = "RegionName";
+            ddlRegion.DataValueField = "Id";
+            ddlRegion.DataBind();
+
+            var item = new RadComboBoxItem("Select a region", "0");
+            ddlRegion.Items.Insert(0, item);
+        }
     }
 
     private void ddlRegion_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        GetFilterData();
-        rebindGrid();
+        var area = areaRepo.GetAreaByRegionId(int.Parse(e.Value));
+        if (area != null)
+        {
+            ddlArea.DataSource = area;
+            ddlArea.DataTextField = "AreaName";
+            ddlArea.DataValueField = "Id";
+            ddlArea.DataBind();
+
+            var item = new RadComboBoxItem("Select a area", "0");
+            ddlArea.Items.Insert(0, item);
+        }
     }
 
     private void ddlArea_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        GetFilterData();
-        rebindGrid();
+        var local = localRepo.GetLocalByAreaId(int.Parse(e.Value));
+        if (local != null)
+        {
+            ddlLocal.DataSource = local;
+            ddlLocal.DataTextField = "LocalName";
+            ddlLocal.DataValueField = "Id";
+            ddlLocal.DataBind();
+
+            var item = new RadComboBoxItem("Select a local", "0");
+            ddlLocal.Items.Insert(0, item);
+        }
     }
 
     private void ddlLocal_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        GetFilterData();
-        rebindGrid();
+        FilterDateOnForm();
     }
 
     private void btnFilterName_Click(object sender, EventArgs e)
     {
-        GetFilterData();
-        rebindGrid();
+        FilterDateOnForm();
     }
+
+    private void FilterDateOnForm()
+    {
+        if (IsCustomerOptionForFilter())
+        {
+            CustomerList.DataSource = FilterCustomers();
+            CustomerList.DataBind();
+        }
+        else
+        {
+            // salesmen
+            GridSalemen.DataSource = FilterSalesmen();
+            GridSalemen.DataBind();
+        }
+    }
+
     #endregion
     protected void ddlSelect_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
+        ResetFormWhenOptionChange();
+
         if (int.Parse(ddlSelect.SelectedValue) == 1)//customer
         {
             trCustomerType.Visible = true;
             CustomerList.Visible = true;
             GridSalemen.Visible = false;
+
         }
         else//sales
         {
             trCustomerType.Visible = false;
             CustomerList.Visible = false;
             GridSalemen.Visible = true;
+
             GetFilterData();
             rebindGrid();
         }
     }    
+
+    private void ResetFormWhenOptionChange()
+    {
+        txtFilterName.Text = string.Empty;
+        ddlCustomerType.SelectedIndex = 0;
+        ddlChannel.SelectedIndex = 0;
+        ddlGroup.SelectedIndex = 0;
+        ddlRegion.SelectedIndex = 0;
+        ddlArea.SelectedIndex = 0;
+        ddlLocal.SelectedIndex = 0;
+    }
+
+    private List<vwCustomer> FilterCustomers()
+    {
+        var fullname = txtFilterName.Text.Trim();
+
+        var customerTypeStringValue = !string.IsNullOrEmpty(ddlCustomerType.SelectedValue) ? ddlCustomerType.SelectedValue : "0";
+        var customerTypeId = int.Parse(customerTypeStringValue);
+
+        var channelStringValue = !string.IsNullOrEmpty(ddlChannel.SelectedValue) ? ddlChannel.SelectedValue : "0";
+        var channelId = int.Parse(channelStringValue);
+
+        var localStringValue = !string.IsNullOrEmpty(ddlLocal.SelectedValue) ? ddlLocal.SelectedValue : "0";
+        var localId = int.Parse(localStringValue);
+
+        return CustomerRepo.FilterCustomersForBrowsePhoneNumber(fullname, customerTypeId, channelId, localId);
+    }
+
+    private List<vwSalemen> FilterSalesmen()
+    {
+        var fullname = txtFilterName.Text.Trim();
+        var localId = int.Parse(ddlLocal.SelectedValue);
+
+        return SRepo.FilterSalesmenForBrowsePhoneNumber(fullname, localId);
+    }
+
+    private bool IsCustomerOptionForFilter()
+    {
+        if (ddlSelect.SelectedValue == "1") return true;
+
+        return false;
+    }
 }

@@ -65,6 +65,7 @@ public class vwCustomer
     public bool? Status { get; set; }
     public bool? IsEnable { get; set; }
     public string NoteOfSalesmen { get; set; }
+    public string SupervisorName { get; set; }
     
     public vwCustomer()
 	{		

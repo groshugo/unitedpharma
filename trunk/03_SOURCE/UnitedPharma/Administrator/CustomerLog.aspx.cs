@@ -49,10 +49,13 @@ public partial class Administrator_CustomerLog : System.Web.UI.Page
     }
     protected void btn1_Click(object sender, EventArgs e)
     {
-        Crepo.UpdateCustomerFromLog(int.Parse(hdfID.Value), int.Parse(Request.QueryString["Id"]));
-        //CLogRepo.DeleteCustomerLogById(int.Parse(Request.QueryString["Id"]));
-        GetCustomerLogByPhone(int.Parse(Request.QueryString["Id"]));
-        Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('Approve success.');", true);
+        if (hdfID != null && !string.IsNullOrEmpty(hdfID.Value))
+        {
+            Crepo.UpdateCustomerFromLog(int.Parse(hdfID.Value), int.Parse(Request.QueryString["Id"]));
+            //CLogRepo.DeleteCustomerLogById(int.Parse(Request.QueryString["Id"]));
+            GetCustomerLogByPhone(int.Parse(Request.QueryString["Id"]));
+            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('Approve success.');", true);
+        }
     }
     protected void CustomerList_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
