@@ -67,7 +67,7 @@ public partial class Administrator_Compose : System.Web.UI.Page
         ddlPromotion.DataValueField = "Id";
         ddlPromotion.DataBind();
     }
-    
+
     private void btnSendSMS_Click(object sender, EventArgs e)
     {
         string subject = (!string.IsNullOrEmpty(txtSubject.Text)) ? txtSubject.Text : "No subject";
@@ -83,7 +83,7 @@ public partial class Administrator_Compose : System.Web.UI.Page
         bool flag = false;
         string PhoneNotExist = string.Empty;
         foreach (string phone in phoneList)
-        {            
+        {
             if (SRepo.CheckSalemenByPhoneNumber(phone))
             {
                 smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, PhoneList, Constant.SalemenType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
@@ -127,5 +127,14 @@ public partial class Administrator_Compose : System.Web.UI.Page
     private void btnAbort_Click(object sender, EventArgs e)
     {
         Response.Redirect("Default.aspx");
+    }
+
+    protected void SchedulePhoneNumbers_DeleteCommand(object sender, GridCommandEventArgs e)
+    {
+        var phone = e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["Phone"].ToString();
+
+        var currentTextboxTovValue = txtPhoneNumber.Text;
+        txtPhoneNumber.Text = currentTextboxTovValue.IndexOf(';') == -1 ? string.Empty : txtPhoneNumber.Text.Replace(phone, string.Empty);
+
     }
 }
