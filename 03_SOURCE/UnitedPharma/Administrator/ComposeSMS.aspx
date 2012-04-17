@@ -1,19 +1,22 @@
-﻿<%@ Page Title="Compose SMS" Language="C#" MasterPageFile="~/Administrator/SMS.master" AutoEventWireup="true" CodeFile="ComposeSMS.aspx.cs" Inherits="Administrator_Compose" %>
-<%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
+﻿<%@ Page Title="Compose SMS" Language="C#" MasterPageFile="~/Administrator/SMS.master"
+    AutoEventWireup="true" CodeFile="ComposeSMS.aspx.cs" Inherits="Administrator_Compose" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
-<asp:Content ID="Content3" ContentPlaceHolderID="ContentCommand" Runat="Server">
-    <h3>Compose SMS</h3>
+<asp:Content ID="Content3" ContentPlaceHolderID="ContentCommand" runat="Server">
+    <h3>
+        Compose SMS</h3>
 </asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <style>
         .sms_header
         {
             background: url(Images/nav_bg.png) repeat-x;
         }
     </style>
-    <telerik:RadFormDecorator ID="FormDecorator1" runat="server" DecoratedControls="all" Skin="Office2007"></telerik:RadFormDecorator>
+    <telerik:RadFormDecorator ID="FormDecorator1" runat="server" DecoratedControls="all"
+        Skin="Office2007"></telerik:RadFormDecorator>
     <telerik:RadCodeBlock ID="RadCodeBlock1" runat="server">
         <script type="text/javascript">
             <!--
@@ -41,7 +44,7 @@
                 var arg = args.get_argument();
                 var Phone = "";
                 for (var i = 0; i < arg.length; i++) {
-                    if (CheckExistedPhoneNumber(arg[i])==false) {
+                    if (CheckExistedPhoneNumber(arg[i]) == false) {
                         Phone += arg[i] + ",";
                     }
                 }
@@ -94,12 +97,13 @@
     <telerik:RadWindowManager ID="RadWindowManager1" ShowContentDuringLoad="false" VisibleStatusbar="false"
         ReloadOnShow="true" runat="server" Skin="Office2007" EnableShadow="true">
         <Windows>
-            <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="770" Height="605"
-                NavigateUrl="DialogPhoneNumber.aspx">
+            <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" OnClientClose="OnClientClose"
+                Width="770" Height="605" NavigateUrl="DialogPhoneNumber.aspx">
             </telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>
-    <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="RadAjaxLoadingPanel1" OnAjaxRequest="RadAjaxManager1_AjaxRequest">
+    <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="RadAjaxLoadingPanel1"
+        OnAjaxRequest="RadAjaxManager1_AjaxRequest">
         <AjaxSettings>
             <telerik:AjaxSetting AjaxControlID="rdbPhoneNumber">
                 <UpdatedControls>
@@ -192,45 +196,65 @@
             </telerik:AjaxSetting>
         </AjaxSettings>
     </telerik:RadAjaxManager>
-    <telerik:RadAjaxLoadingPanel runat="server" Transparency="25" ID="RadAjaxLoadingPanel1" CssClass="RadAjax RadAjax_Vista">
+    <telerik:RadAjaxLoadingPanel runat="server" Transparency="25" ID="RadAjaxLoadingPanel1"
+        CssClass="RadAjax RadAjax_Vista">
         <div class="raDiv">
         </div>
         <div class="raColor raTransp">
         </div>
     </telerik:RadAjaxLoadingPanel>
     <asp:Panel ID="RadPanel1" runat="server">
-        <div style="width:820px; position:relative">
+        <div style="width: 820px; position: relative">
             <table>
                 <tr>
-                    <td>Promotion</td>
-                    <td><telerik:RadComboBox ID="ddlPromotion" runat="server" AutoPostBack="true" Width="650px"></telerik:RadComboBox></td>
+                    <td>
+                        Promotion
+                    </td>
+                    <td>
+                        <telerik:RadComboBox ID="ddlPromotion" runat="server" AutoPostBack="true" Width="650px">
+                        </telerik:RadComboBox>
+                    </td>
                 </tr>
                 <tr>
-                    <td>Subject</td>
-                    <td><telerik:RadTextBox ID="txtSubject" runat="server" Width="645px"></telerik:RadTextBox></td>
+                    <td>
+                        Subject
+                    </td>
+                    <td>
+                        <telerik:RadTextBox ID="txtSubject" runat="server" Width="645px">
+                        </telerik:RadTextBox>
+                    </td>
                 </tr>
                 <tr>
-                    <td>Content</td>
+                    <td>
+                        Content
+                    </td>
                     <td>
                         <div>
-                            <asp:TextBox ID="txtContent" runat="server" TextMode="MultiLine" Width="647px" Height="100px" onkeyup="countChar(this)"></asp:TextBox>
+                            <asp:TextBox ID="txtContent" runat="server" TextMode="MultiLine" Width="647px" Height="100px"
+                                onkeyup="countChar(this)"></asp:TextBox>
                         </div>
                         <div>
-                            <div style="float:left">
-                                <h2>Remaining : <span id="charaterleft">150</span> characters</h2>
+                            <div style="float: left">
+                                <h2>
+                                    Remaining : <span id="charaterleft">150</span> characters</h2>
                                 <span>(You can send 150 characters per sms)</span>
                             </div>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>To:</td>
+                    <td>
+                        To:
+                    </td>
                     <td>
                         <table>
                             <tr>
-                                <td><asp:TextBox runat="server" ID="txtPhoneNumber" Width="645px" ReadOnly="true"></asp:TextBox></td>
                                 <td>
-                                    <button onclick="openWin(); return false;">Browse</button>
+                                    <asp:TextBox runat="server" ID="txtPhoneNumber" Width="645px" ReadOnly="true"></asp:TextBox>
+                                </td>
+                                <td>
+                                    <button onclick="openWin(); return false;">
+                                        Browse</button>
                                 </td>
                             </tr>
                         </table>
@@ -241,34 +265,36 @@
                         <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Always">
                             <ContentTemplate>
                                 <telerik:RadGrid ID="SchedulePhoneNumbers" runat="server" Skin="Office2007" AllowMultiRowSelection="true"
-                                    AutoGenerateColumns="false" Width="820px" Visible="false" AllowPaging="true" PageSize="10">
+                                    AutoGenerateColumns="false" Width="800px" Visible="false" AllowPaging="true"
+                                    PageSize="10">
                                     <PagerStyle Visible="false" />
-                                    <MasterTableView>
+                                    <MasterTableView DataKeyNames="Phone">
                                         <Columns>
-                                            <telerik:GridBoundColumn DataField="Phone" HeaderText="Phone" />      
-                                            <telerik:GridBoundColumn DataField="CustomerName" HeaderText="FullName" />
-                                            <telerik:GridBoundColumn DataField="UpiCode" HeaderText="UpiCode" />       
-                                            <telerik:GridBoundColumn DataField="FullName" HeaderText="Supervisor" />    
-                                            <telerik:GridBoundColumn DataField="PositionName" HeaderText="Position" />        
+                                            <telerik:GridBoundColumn DataField="Phone" HeaderText="Phone" />
+                                            <telerik:GridBoundColumn DataField="CustomerName" HeaderText="FullName" MaxLength="250" />
+                                            <telerik:GridBoundColumn DataField="UpiCode" HeaderText="UpiCode" />
+                                            <telerik:GridBoundColumn DataField="FullName" HeaderText="Supervisor" />
+                                            <telerik:GridBoundColumn DataField="PositionName" HeaderText="Position" />
                                         </Columns>
                                     </MasterTableView>
                                     <ClientSettings>
                                         <Scrolling AllowScroll="True" UseStaticHeaders="True" SaveScrollPosition="True">
                                         </Scrolling>
-                                        <ClientEvents OnScroll="HandleScrolling" />
+                                        <%--<ClientEvents OnScroll="HandleScrolling" />--%>
                                     </ClientSettings>
                                 </telerik:RadGrid>
                             </ContentTemplate>
-                        </asp:UpdatePanel>                        
+                        </asp:UpdatePanel>
                     </td>
                 </tr>
             </table>
         </div>
     </asp:Panel>
-    <div style="float:right; position:absolute; top:5px; right:15px">
-        <telerik:RadButton ID="btnSendSMS" runat="server" Text="Send SMS" Skin="Office2007"></telerik:RadButton>
-        <telerik:RadButton ID="btnAbort" runat="server" Text="Abort" Skin="Office2007"></telerik:RadButton>
+    <div style="float: right; position: absolute; top: 5px; right: 15px">
+        <telerik:RadButton ID="btnSendSMS" runat="server" Text="Send SMS" Skin="Office2007">
+        </telerik:RadButton>
+        <telerik:RadButton ID="btnAbort" runat="server" Text="Abort" Skin="Office2007">
+        </telerik:RadButton>
     </div>
     <asp:HiddenField ID="hdfPhoneNumbers" runat="server" />
 </asp:Content>
-
