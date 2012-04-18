@@ -125,6 +125,10 @@ public class SalesmanRepository
         }
     }
 
+    public bool Add(string UpiCode, string FullName, string Phone, int RoleId, int SmsQuota, DateTime ExpiredDate, int localId)
+    {
+        return Add(UpiCode, FullName, Phone, RoleId, SmsQuota, ExpiredDate, 0, 0, 0, localId);
+    }
     public bool Add(string UpiCode, string FullName, string Phone, int RoleId, int SmsQuota, DateTime ExpiredDate)
     {
         return Add(UpiCode, FullName, Phone, RoleId, SmsQuota, ExpiredDate, 0, 0, 0, 0);
@@ -891,5 +895,37 @@ public class SalesmanRepository
                     SmsUsed = a.SmsUsed,
                     ExpiredDate = a.ExpiredDate
                 }).ToList();
+    }
+
+    public int ImportSalesmen(string UpiCode, string FullName, string Phone, int RoleId, int SmsQuota, DateTime ExpiredDate, int managerId)
+    {
+        try
+        {
+            if (CheckExistedSalesmen(FullName) == false)
+            {
+                Salesmen o = new Salesmen();
+                o.UpiCode = UpiCode;
+                o.FullName = FullName;
+                o.Phone = Phone;
+                o.RoleId = RoleId;
+                o.SmsQuota = SmsQuota;
+                o.ExpiredDate = ExpiredDate;
+                o.SalesmenManagerId = managerId;
+
+                db.Salesmens.InsertOnSubmit(o);
+                db.SubmitChanges();
+
+                return o.Id;
+            }
+            var s = (from l in db.Salesmens where l.FullName == FullName select l).SingleOrDefault();
+
+            if (s != null) return s.Id;
+
+            return -1;
+        }
+        catch
+        {
+            return -1;
+        }
     }
 }

@@ -50,11 +50,13 @@ public class GroupsRepository
             return o.Id;
         }
     }
-    public bool Add(string UPICode, string GroupName, string Description)
+    public int Add(string UPICode, string GroupName, string Description)
     {
         try
         {
-            if (CheckExistedGroup(GroupName) == false)
+            var g = GetByName(GroupName);
+
+            if(g == null)
             {
                 Group o = new Group();
                 o.UpiCode = UPICode;
@@ -62,14 +64,15 @@ public class GroupsRepository
                 o.Description = Description;
                 db.Groups.InsertOnSubmit(o);
                 db.SubmitChanges();
-                return true;
+
+                return o.Id;
             }
-            else
-                return false;
+            
+            return g.Id;
         }
         catch
         {
-            return false;
+            return -1;
         }
     }
 
@@ -176,5 +179,12 @@ public class GroupsRepository
                 lst.AddRange(e);
         }
         return lst;
+    }
+
+    public Group GetByName(string groupName)
+    {
+        if (groupName == null) throw new ArgumentNullException("groupName");
+
+        return (from e in db.Groups where e.GroupName == groupName select e).SingleOrDefault();
     }
 }

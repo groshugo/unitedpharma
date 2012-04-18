@@ -55,7 +55,7 @@ public class LocalsRepository
             return o.Id;
         }
     }
-    public bool Add(string UPICode, string LocalName, string Description, int AreaId)
+    public int Add(string UPICode, string LocalName, string Description, int AreaId)
     {
         try
         {
@@ -68,14 +68,17 @@ public class LocalsRepository
                 o.AreaId = AreaId;
                 db.Locals.InsertOnSubmit(o);
                 db.SubmitChanges();
-                return true;
+                return o.Id;
             }
-            else
-                return false;
+            var local = (from l in db.Locals where l.LocalName == LocalName select l).SingleOrDefault();
+
+            if (local != null) return local.Id;
+
+            return -1;
         }
         catch
         {
-            return false;
+            return -1;
         }
     }
     public bool CheckExisted(string LocalName)
