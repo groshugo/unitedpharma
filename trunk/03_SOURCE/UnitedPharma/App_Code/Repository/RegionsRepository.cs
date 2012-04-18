@@ -64,7 +64,7 @@ public class RegionsRepository
         }
         return result.Substring(0, result.Length - 1);
     }
-    public bool Add(string UPICode, string RegionName, string Description, int GroupId)
+    public int Add(string UPICode, string RegionName, string Description, int GroupId)
     {
         try
         {
@@ -77,14 +77,17 @@ public class RegionsRepository
                 o.GroupId = GroupId;
                 db.Regions.InsertOnSubmit(o);
                 db.SubmitChanges();
-                return true;
+                return o.Id;
             }
-            else
-                return false;
+            var region = (from r in db.Regions where r.RegionName == RegionName select r).SingleOrDefault();
+
+            if (region != null) return region.Id;
+
+            return -1;
         }
         catch
         {
-            return false;
+            return -1;
         }
     }
     public bool CheckExist(string RegionName)

@@ -54,7 +54,7 @@ public class AreasRepository
             return o.Id;
         }
     }
-    public bool Add(string UPICode, string AreaName, string Description, int RegionId)
+    public int Add(string UPICode, string AreaName, string Description, int RegionId)
     {
         try
         {
@@ -67,14 +67,18 @@ public class AreasRepository
                 o.RegionId = RegionId;
                 db.Areas.InsertOnSubmit(o);
                 db.SubmitChanges();
-                return true;
+                return o.Id;
             }
-            else
-                return false;
+
+            var area = (from a in db.Areas where a.AreaName == AreaName select a).SingleOrDefault();
+
+            if (area != null) return area.Id;
+
+            return -1;
         }
         catch
         {
-            return false;
+            return -1;
         }
     }
     public bool CheckExistedArea(string AreaName)

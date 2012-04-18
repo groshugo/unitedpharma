@@ -373,16 +373,16 @@ public class vwDashboard
 }
 public class vwMasterList
 {
-    public string Salesmen1 { get; set; }
-    public string Salesmen2 { get; set; }
-    public string Salesmen3 { get; set; }
-    public string Region1 { get; set; }
-    public string Region2 { get; set; }    
-    public string Area1 { get; set; }
-    public string Area2 { get; set; }
-    public string Local1 { get; set; }
-    public string Local2 { get; set; }
-    public string Upicode { get; set; }    
+    public string TPR { get; set; }
+    public string TPS { get; set; }
+    public string TROM { get; set; }
+    public string PSR1 { get; set; }
+    public string PSS1 { get; set; }    
+    public string EROM { get; set; }
+    public string PSR2 { get; set; }
+    public string PSS2 { get; set; }
+    public string EROM2 { get; set; }
+    public string CustomerCode { get; set; }    
     public string Customername { get; set; }
     public string Customeraddress { get; set; }
     public string Group { get; set; }
@@ -392,22 +392,23 @@ public class vwMasterList
     public string Channel1 { get; set; }
     public string Channel2 { get; set; }
     public string Channel3 { get; set; }
+
     public vwMasterList()
     {
     }
-    public vwMasterList(string salesmen1, string salesmen2, string salesmen3, string region1, string region2, string area1, string area2, string local1, string local2,
-        string upicode,string customername,string customeraddress,string group,string region,string area,string local,string channel1,string channel2,string channel3)
+    public vwMasterList(string tpr, string tps, string trom, string psr1, string pss1, string erom, string psr2, string pss2, string erom2,
+        string customerCode,string customername,string customeraddress,string group,string region,string area,string local,string channel1,string channel2,string channel3)
     {
-        Salesmen1 = salesmen1;
-        Salesmen2 = salesmen2;
-        Salesmen3 = salesmen3;
-        Region1 = region1;
-        Region2 = region2;
-        Area1 = area1;        
-        Area2 = area2;
-        Local1 = local1;
-        Local2 = local2;
-        Upicode = upicode;
+        TPR = tpr;
+        TPS = tps;
+        TROM = trom;
+        PSR1 = psr1;
+        PSS1 = pss1;
+        EROM = erom;        
+        PSR2 = psr2;
+        PSS2 = pss2;
+        EROM2 = erom2;
+        CustomerCode = customerCode;
         Customername = customername;
         Customeraddress = customeraddress;
         Group = group;        
