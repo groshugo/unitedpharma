@@ -48,7 +48,7 @@ public partial class Administrator_ImportCustomers : System.Web.UI.Page
                 try
                 {
                     ObjLogin adm = (ObjLogin)Session["objLogin"];
-                    
+
                     int smsquota = int.Parse(ConfigurationManager.AppSettings["SMSQuota"]);
                     double expiredDateConfig = Convert.ToDouble(ConfigurationManager.AppSettings["ExpiredDate"]);
                     DateTime expiredDate = Convert.ToDateTime(DateTime.Now.AddDays(expiredDateConfig));
@@ -69,11 +69,11 @@ public partial class Administrator_ImportCustomers : System.Web.UI.Page
                     ef.LoadXls(pathToFile);
                     ExcelWorksheet ws = ef.Worksheets[0];
 
-                    for (int i = 0; i < ws.Rows.Count; i++)
+                    for (int i = 2; i < 100; i++)
                     {
                         try
                         {
-                            var vmMasterItem = new vwMasterList(ws.Rows[i].Cells[4].Value.ToString(),
+                            vwMasterList vmMasterItem = new vwMasterList(ws.Rows[i].Cells[4].Value.ToString(),
                                                                 ws.Rows[i].Cells[5].Value.ToString(),
                                                                 ws.Rows[i].Cells[6].Value.ToString(),
                                                                 ws.Rows[i].Cells[7].Value.ToString(),
@@ -138,7 +138,7 @@ public partial class Administrator_ImportCustomers : System.Web.UI.Page
 
                             lstCustomer.Add(vmMasterItem);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             // write log here => TBD
                         }
@@ -163,7 +163,7 @@ public partial class Administrator_ImportCustomers : System.Web.UI.Page
         btnImport.Text = "Import";
     }
 
-    private static void ImportSalesGroup(int tromId, int tpsId, int tprId, int eromId, int pss1Id, int psr1Id, int erom2Id, int pss2Id, int psr2Id,  
+    private static void ImportSalesGroup(int tromId, int tpsId, int tprId, int eromId, int pss1Id, int psr1Id, int erom2Id, int pss2Id, int psr2Id,
                                          GroupsRepository GRepo, int groupId)
     {
         GRepo.AddSalesmenGroup(tprId, groupId);
