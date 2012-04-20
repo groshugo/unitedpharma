@@ -18,6 +18,8 @@ public partial class Administrator_ViewDashboardDetails : System.Web.UI.Page
                 var dashboardRepo = new DashboardRepository();
                 var dashboard = dashboardRepo.GetById(dashboardId);
                 BindDashboardToUI(dashboard);
+
+                Page.Title = string.Format("Message from phone number {0}", dashboard.SenderPhoneNumber);
             }
             else
             {
@@ -32,9 +34,15 @@ public partial class Administrator_ViewDashboardDetails : System.Web.UI.Page
 
         litTitle.Text = dashboard.Title;
         litContent.Text = dashboard.Content;
-        AttachedFile.Text = dashboard.AttachedFileName;
-        AttachedFile.NavigateUrl = string.Format("/Upload/Attachments/{0}", dashboard.AttachedFileName);
-        litSenderPhoneNumber.Text = dashboard.SenderPhoneNumber;
-        litReceiverPhoneNumber.Text = dashboard.ReceiverPhoneNumber;
+
+        string attachedFile = dashboard.AttachedFileName;
+        litAttachedFile.Visible = false;
+        if (!string.IsNullOrEmpty(attachedFile))
+        {
+            litAttachedFile.Visible = true;
+            AttachedFile.Text = attachedFile;
+            AttachedFile.NavigateUrl = string.Format("/Upload/Attachments/{0}", attachedFile);
+        }
+        
     }
 }

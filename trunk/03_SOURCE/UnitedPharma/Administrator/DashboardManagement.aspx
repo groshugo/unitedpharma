@@ -40,8 +40,8 @@
         <Windows>
             <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" Height="605" NavigateUrl="CreateDashboard.aspx">
             </telerik:RadWindow>
-            <telerik:RadWindow ID="RadWindowDashboardDetails" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="850" 
-                Height="300" NavigateUrl="ViewDashboardDetails.aspx">
+            <telerik:RadWindow ID="RadWindowDashboardDetails" runat="server" Behaviors="Close" OnClientClose="OnClientClose" Width="600" 
+                Height="400" NavigateUrl="ViewDashboardDetails.aspx">
             </telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>
