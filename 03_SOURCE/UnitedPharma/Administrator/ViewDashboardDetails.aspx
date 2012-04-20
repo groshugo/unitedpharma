@@ -5,23 +5,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
-    <title>Dashboard Details</title>
+    <title></title>
     <style type="text/css">
-        html, body, form
-        {
-            padding: 0;
-            margin: 0;
-            height: 100%;
-            background: #f2f2de;
-        }
-        
-        body
-        {
-            font: normal 11px Arial, Verdana, Sans-serif;
-        }
+        .BoldText{font-weight:bold;}
     </style>
 </head>
-<body >
+<body>
     <form id="form1" runat="server" method="post">
     <telerik:RadScriptManager ID="RadScriptManager1" runat="server">
     </telerik:RadScriptManager>
@@ -48,7 +37,6 @@
             -->
         </script>
     </telerik:RadCodeBlock>
-
     <telerik:RadAjaxLoadingPanel runat="server" Transparency="25" ID="RadAjaxLoadingPanel1"
         CssClass="RadAjax RadAjax_Vista">
         <div class="raDiv">
@@ -56,37 +44,21 @@
         <div class="raColor raTransp">
         </div>
     </telerik:RadAjaxLoadingPanel>
-    <div style="background:#AEC7FF; font-size:18px; padding:5px; font-weight:bold"><asp:Literal ID="litTitle" runat="server" /></div>
-    <div style="padding-top:10px; text-align:justify"><asp:Literal ID="litContent" runat="server" /></div>
-    <table cellpadding="5" cellspacing="0" style="margin: 10px;" width="750">
+    <div style="background: #AEC7FF; font-size: 18px; padding: 5px; font-weight: bold">
+        <asp:Literal ID="litTitle" runat="server" /></div>
+    <div style="padding-top: 10px; text-align: justify">
+        <asp:Literal ID="litContent" runat="server" /></div>
+    <table style="margin: 10px;">
         <tr>
             <td valign="top" style="width: 150px;">
-                Attached file:
+                <asp:Literal ID="litAttachedFile" runat="server" Text="Attached file:" />
             </td>
             <td>
                 <asp:HyperLink runat="server" ID="AttachedFile"></asp:HyperLink>
             </td>
         </tr>
         <tr>
-            <td valign="top">
-                Sender Phone Number:
-            </td>
-            <td>
-                <asp:Literal runat="server" ID="litSenderPhoneNumber"></asp:Literal>
-            </td>
-        </tr>
-        <tr>
-            <td valign="top" nowrap="nowrap">
-                Receiver Phone Number:
-            </td>
-            <td>
-                <asp:Literal runat="server" ID="litReceiverPhoneNumber"></asp:Literal>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <button onclick="ClosePopup()">
-                    Close</button><br />
+            <td valign="top" colspan="2">
                 <asp:Label runat="server" Text="" ID="lblMessage"></asp:Label>
             </td>
         </tr>
