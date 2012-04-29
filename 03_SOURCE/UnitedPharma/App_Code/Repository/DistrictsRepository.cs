@@ -127,5 +127,30 @@ public class DistrictsRepository
     {
         return (from e in db.Districts where e.ProvinceId == gId select e).ToList();
     }
-    
+
+    public int Import(string DistrictName, int ProvinceId)
+    {
+        try
+        {
+            var district =
+                (from e in db.Districts where e.DistrictName.Trim().ToLower() == DistrictName.Trim().ToLower() select e)
+                    .SingleOrDefault();
+
+            if (district == null)
+            {
+                District o = new District();
+                o.DistrictName = DistrictName;
+                o.ProvinceId = ProvinceId;
+                db.Districts.InsertOnSubmit(o);
+                db.SubmitChanges();
+                return o.Id;
+            }
+
+            return district.Id;
+        }
+        catch
+        {
+            return -1;
+        }
+    }
 }
