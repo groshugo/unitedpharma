@@ -128,4 +128,28 @@ public class ProvincesRepository
     {
         return (from e in db.Provinces where e.SectionId == gId select e).ToList();
     }
+
+    public int Import(string provinceName, int sectionId)
+    {
+        try
+        {
+            var province = (from e in db.Provinces where e.ProvinceName.Trim().ToLower() == provinceName.Trim().ToLower() select e).SingleOrDefault();
+
+            if (province == null)
+            {
+                Province o = new Province();
+                o.ProvinceName = provinceName;
+                o.SectionId = sectionId;
+                db.Provinces.InsertOnSubmit(o);
+                db.SubmitChanges();
+                return o.Id;
+            }
+
+            return province.Id;
+        }
+        catch
+        {
+            return -1;
+        }
+    }
 }

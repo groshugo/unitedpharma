@@ -115,5 +115,27 @@ public class SectionRepository
             return false;
     }
 
-    
+    public int Import(string sectionName)
+    {
+        try
+        {
+            var section = (from e in db.Sections where e.SectionName.Trim().ToLower() == sectionName.Trim().ToLower() select e).SingleOrDefault();
+
+            if (section == null)
+            {
+                var o = new Section();
+                o.SectionName = sectionName;
+                db.Sections.InsertOnSubmit(o);
+                db.SubmitChanges();
+                return o.Id;
+            }
+
+
+            return section.Id;
+        }
+        catch
+        {
+            return -1;
+        }
+    }
 }

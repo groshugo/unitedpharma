@@ -53,23 +53,25 @@ public partial class Administrator_ImportCustomers : System.Web.UI.Page
                     double expiredDateConfig = Convert.ToDouble(ConfigurationManager.AppSettings["ExpiredDate"]);
                     DateTime expiredDate = Convert.ToDateTime(DateTime.Now.AddDays(expiredDateConfig));
 
-                    GroupsRepository GRepo = new GroupsRepository();
-                    RegionsRepository RegionRepo = new RegionsRepository();
-                    AreasRepository AreaRepo = new AreasRepository();
-                    LocalsRepository LocalRepo = new LocalsRepository();
-                    ChannelRepository ChRepo = new ChannelRepository();
-                    SalesmanRepository SaleRepo = new SalesmanRepository();
-                    CustomersLogRepository CLogRepo = new CustomersLogRepository();
-                    CustomersRepository CRepo = new CustomersRepository();
-                    CustomerTypeRepository CTRepo = new CustomerTypeRepository();
-                    DistrictsRepository DisRepo = new DistrictsRepository();
+                    var GRepo = new GroupsRepository();
+                    var RegionRepo = new RegionsRepository();
+                    var AreaRepo = new AreasRepository();
+                    var LocalRepo = new LocalsRepository();
+                    var ChRepo = new ChannelRepository();
+                    var SaleRepo = new SalesmanRepository();
+                    var CLogRepo = new CustomersLogRepository();
+                    var CRepo = new CustomersRepository();
+                    var CTRepo = new CustomerTypeRepository();
+                    var DisRepo = new DistrictsRepository();
+                    var proviceRepo = new ProvincesRepository();
+                    var sectionRepo = new SectionRepository();
 
                     SpreadsheetInfo.SetLicense("E24D-D739-F65A-4E00");
                     ExcelFile ef = new ExcelFile();
                     ef.LoadXls(pathToFile);
                     ExcelWorksheet ws = ef.Worksheets[0];
 
-                    for (int i = 2; i < 100; i++)
+                    for (int i = 2; i < ws.Rows.Count; i++)
                     {
                         try
                         {
@@ -98,6 +100,15 @@ public partial class Administrator_ImportCustomers : System.Web.UI.Page
                             var regionId = RegionRepo.Add("", vmMasterItem.Region, "", groupId);
                             var areaId = AreaRepo.Add("", vmMasterItem.Area, "", regionId);
                             var localId = LocalRepo.Add("", vmMasterItem.Local, "", areaId);
+
+                            // Add section
+                            var sectionId = sectionRepo.Import(vmMasterItem.Area);
+
+                            // Add Province
+                            var provinceId = proviceRepo.Import(vmMasterItem.Local, sectionId);
+
+                            // Add District
+                            var districtId = DisRepo.Import(vmMasterItem.Local, provinceId);
 
                             // Add Channel
                             ChRepo.Insert("", vmMasterItem.Channel1, 0);
@@ -129,11 +140,11 @@ public partial class Administrator_ImportCustomers : System.Web.UI.Page
                             // Add Customer - Customer Log
                             int CustomerId = CRepo.InsertCustomer(vmMasterItem.CustomerCode, vmMasterItem.Customername, vmMasterItem.Customeraddress, "", "", "", "",
                                 CTRepo.GetCustomerTypeIdByName(vmMasterItem.Channel3),
-                                ChRepo.GetChannelIdByName(vmMasterItem.Channel3), -1, localId, DateTime.Now, DateTime.Now,
+                                ChRepo.GetChannelIdByName(vmMasterItem.Channel3), districtId, localId, DateTime.Now, DateTime.Now,
                                 true, false);
                             CLogRepo.InsertCustomer(vmMasterItem.CustomerCode, vmMasterItem.Customername, vmMasterItem.Customeraddress, "", "", "", "",
                                 CTRepo.GetCustomerTypeIdByName(vmMasterItem.Channel3),
-                                ChRepo.GetChannelIdByName(vmMasterItem.Channel3), -1, localId, DateTime.Now, DateTime.Now,
+                                ChRepo.GetChannelIdByName(vmMasterItem.Channel3), districtId, localId, DateTime.Now, DateTime.Now,
                                 true, CustomerId, false, 0, adm.Id, string.Empty);
 
                             lstCustomer.Add(vmMasterItem);
