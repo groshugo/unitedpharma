@@ -99,22 +99,6 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
         RadAjaxManager1.ResponseScripts.Add(string.Format("window.radalert(\"Please enter valid data!\")"));
     }
 
-    //protected void RadGrid1_InsertCommand(object source, GridCommandEventArgs e)
-    //{
-    //    GridEditFormItem gdItem = (e.Item as GridEditFormItem);
-    //    var editableItem = ((GridEditableItem)e.Item);
-    //    Hashtable values = new Hashtable();
-    //    editableItem.ExtractValues(values);
-    //    try
-    //    {            
-    //        dRepo.Add((string)values["Title"], (string)values["Content"], Convert.ToInt32(cbSalesmen.SelectedValue));
-    //    }
-    //    catch (System.Exception)
-    //    {
-    //        ShowErrorMessage();
-    //    }
-    //}
-
     protected void RadGrid1_DeleteCommand(object source, GridCommandEventArgs e)
     {
         var id = (int) ((GridDataItem) e.Item).GetDataKeyValue("Id");
@@ -166,7 +150,7 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
             if (tps != null)
             {
                 // Load data to TPS
-                var tpr = sRepo.GetSalesmenByRoleIdAndManagerId((int) SalesmenRole.TPS, tps.Id);
+                var tpr = sRepo.GetSalesmenByRoleIdAndManagerId((int) SalesmenRole.TPR, tps.Id);
 
                 if (tpr != null)
                 {
@@ -243,12 +227,7 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
 
                 if (psr1 != null)
                 {
-                    cboPSS1.DataSource = psr1;
-                    cboPSS1.DataTextField = DataTextFieldName;
-                    cboPSS1.DataValueField = DataValueFieldName;
-                    cboPSS1.DataBind();
-
-                    LoadListSalesmenToCombo(psr1, cboPSS1, "Select a PSS1");
+                    LoadListSalesmenToCombo(psr1, cboPSR1, "Select a PSS1");
                 }
 
                 phone = pss1.Phone;
@@ -256,8 +235,8 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
         }
         else
         {
-            cboPSS1.DataSource = null;
-            cboPSS1.DataBind();
+            cboPSR1.DataSource = null;
+            cboPSR1.DataBind();
         }
 
         LoadGridDashboard(phone);
@@ -266,10 +245,10 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
     protected void cboPSR1_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
         string phone = string.Empty;
-        var pss1 = sRepo.GetSalemenById(int.Parse(e.Value));
-        if (pss1 != null)
+        var ps11 = sRepo.GetSalemenById(int.Parse(e.Value));
+        if (ps11 != null)
         {
-            phone = pss1.Phone;
+            phone = ps11.Phone;
         }
 
         LoadGridDashboard(phone);
@@ -316,11 +295,6 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
 
                 if (psr2 != null)
                 {
-                    cboPSR2.DataSource = psr2;
-                    cboPSR2.DataTextField = DataTextFieldName;
-                    cboPSR2.DataValueField = DataValueFieldName;
-                    cboPSR2.DataBind();
-
                     LoadListSalesmenToCombo(psr2, cboPSR2, "Select a PSR2");
                 }
 
@@ -339,20 +313,13 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
     protected void cboPSR2_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
         string phone = string.Empty;
-        var pss2 = sRepo.GetSalemenById(int.Parse(e.Value));
-        if (pss2 != null)
+        var psr2 = sRepo.GetSalemenById(int.Parse(e.Value));
+        if (psr2 != null)
         {
-            phone = pss2.Phone;
+            phone = psr2.Phone;
         }
 
         LoadGridDashboard(phone);
-    }
-
-    private void ResetAllChannelCombo()
-    {
-        ResetChannelCombo(SalesChannel.Trom);
-        ResetChannelCombo(SalesChannel.Erom);
-        ResetChannelCombo(SalesChannel.Erom2);
     }
 
     private void ResetChannelCombo(SalesChannel channel)
