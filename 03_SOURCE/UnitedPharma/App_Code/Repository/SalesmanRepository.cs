@@ -852,7 +852,7 @@ public class SalesmanRepository
                     SmsQuota = a.SmsQuota,
                     SmsUsed = a.SmsUsed,
                     ExpiredDate = a.ExpiredDate
-                }).ToList();
+                }).Distinct().ToList();
     }
 
     public List<vwSalemen> GetViewWebSalesmenByRoleId(int roleId)
