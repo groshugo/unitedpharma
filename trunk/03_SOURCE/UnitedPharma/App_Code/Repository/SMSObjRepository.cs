@@ -213,7 +213,8 @@ public class SMSObjRepository
         return (from e in db.SmsObjs where e.Id == id select e).SingleOrDefault();
     }
 
-    public bool InsertSMS(string SMSCode, int SmsParentId, string senderNumber, int SenderType, string ReceiverPhone, int ReceiverType, DateTime Date, string Subject, string Content,
+    public bool InsertSMS(string SMSCode, int SmsParentId, string senderNumber, int SenderType, string ReceiverPhone, int ReceiverType, 
+        DateTime Date, string Subject, string Content,
         bool IsSendSuccess, bool IsDelete, bool IsRead, int SmsTypeId, int PromotionId)
     {
         try

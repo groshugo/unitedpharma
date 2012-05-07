@@ -54,6 +54,44 @@ public class CustomersRepository
                                 }).ToList();
         return viewAllProerties;
     }
+
+    public List<vwCustomer> GetAllViewCustomersBySupervisor(int supervisorId)
+    {
+        var viewAllProerties = (from c in db.Customers
+                                join cS in db.CustomerSupervisors on c.Id equals cS.CustomerId
+                                where c.IsEnable == true && cS.Id == supervisorId
+                                select new vwCustomer
+                                {
+                                    Id = c.Id,
+                                    UpiCode = c.UpiCode,
+                                    FullName = c.FullName,
+                                    Address = c.Address,
+                                    Street = c.Street,
+                                    Ward = c.Ward,
+                                    Phone = c.Phone,
+                                    Password = c.Password,
+                                    CustomerTypeId = c.CustomerTypeId,
+                                    CustomerTypeName = c.CustomerType.TypeName,
+                                    ChannelId = c.ChannelId,
+                                    ChannelName = c.Channel.ChannelName,
+                                    DistrictId = c.DistrictId,
+                                    DistrictName = c.District.DistrictName,
+                                    LocalId = c.LocalId,
+                                    LocalName = c.Local.LocalName,
+                                    GroupId = c.Local.Area.Region.GroupId,
+                                    RegionId = c.Local.Area.RegionId,
+                                    AreaId = c.Local.AreaId,
+                                    CreateDate = c.CreateDate,
+                                    UpdateDate = c.UpdateDate,
+                                    Status = c.Status,
+                                    ProvinceId = c.District.ProvinceId,
+                                    SectionId = c.District.Province.SectionId,
+                                    NoteOfSalesmen = c.NoteOfSalesmen,
+                                    SupervisorName = cS.FullName
+                                }).ToList();
+        return viewAllProerties;
+    }
+
     public vwCustomer GetCustomersByID(int ID)
     {
         var viewAllProerties = (from c in db.Customers
@@ -251,6 +289,8 @@ public class CustomersRepository
         {
             try
             {
+                l.IsApprove = true;
+
                 var c = (from a in db.Customers where a.Id == customerId select a).FirstOrDefault();
                 c.UpiCode = l.UpiCode;
                 c.FullName = l.FullName;

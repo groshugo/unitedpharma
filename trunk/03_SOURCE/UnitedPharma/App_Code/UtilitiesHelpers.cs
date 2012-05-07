@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using Telerik.Web.UI;
 
@@ -50,5 +51,31 @@ public class UtilitiesHelpers
             return true;
 
         return false;
+    }
+
+    /// <summary>
+    /// right format: UPI Phone_Number Message 
+    /// </summary>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public  string[] GetRightFormatOfMessage(string message)
+    {
+        if (message == null) throw new ArgumentNullException("message");
+
+        if (message.Length < 14) return null;
+
+        var results = new string[3];
+
+        results[0] = message.Substring(0, message.IndexOf(' '));
+        if (results[0].ToLower() != "upi") return null;
+
+        message = message.Substring(message.IndexOf(' ')).Trim();
+        results[1] = message.Substring(0, message.IndexOf(' '));
+        var regex = new Regex(@"^\d+$");
+        if (!regex.IsMatch(results[1])) return null;
+
+        results[2] = message.Substring(message.IndexOf(' ')).Trim();
+
+        return results;
     }
 }

@@ -104,6 +104,86 @@
                     </td>
             </tr>
             </table>
+            <table style="padding-right: 3px; padding-bottom: 3px;" runat="server" id="poc_pos_container">
+                    <tr>
+                        <td>
+                            <asp:Literal ID="litTROM" runat="server">TROM:</asp:Literal>
+                        </td>
+                        <td>
+                            <telerik:RadComboBox runat="server" ID="cboTROM" AutoPostBack="true" Skin="Office2007"
+                                OnSelectedIndexChanged="cboTROM_SelectedIndexChanged">
+                            </telerik:RadComboBox>
+                        </td>
+                        <td>
+                            <asp:Literal ID="litTPS" runat="server">TPS:</asp:Literal>
+                        </td>
+                        <td>
+                            <telerik:RadComboBox runat="server" ID="cboTPS" AutoPostBack="true" Skin="Office2007"
+                                OnSelectedIndexChanged="cboTPS_SelectedIndexChanged">
+                            </telerik:RadComboBox>
+                        </td>
+                        <td>
+                            <asp:Literal ID="litTPR" runat="server">TPR:</asp:Literal>
+                        </td>
+                        <td>
+                            <telerik:RadComboBox runat="server" ID="cboTPR" AutoPostBack="true" Skin="Office2007"
+                                OnSelectedIndexChanged="cboTPR_SelectedIndexChanged">
+                            </telerik:RadComboBox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Literal ID="litEROM" runat="server">EROM:</asp:Literal>
+                        </td>
+                        <td>
+                            <telerik:RadComboBox runat="server" ID="cboEROM" AutoPostBack="true" Skin="Office2007"
+                                OnSelectedIndexChanged="cboEROM_SelectedIndexChanged">
+                            </telerik:RadComboBox>
+                        </td>
+                        <td>
+                            <asp:Literal ID="litPSS1" runat="server">PSS1:</asp:Literal>
+                        </td>
+                        <td>
+                            <telerik:RadComboBox runat="server" ID="cboPSS1" AutoPostBack="true" Skin="Office2007"
+                                OnSelectedIndexChanged="cboPSS1_SelectedIndexChanged">
+                            </telerik:RadComboBox>
+                        </td>
+                        <td>
+                            <asp:Literal ID="litPSR1" runat="server">PSR1:</asp:Literal>
+                        </td>
+                        <td>
+                            <telerik:RadComboBox runat="server" ID="cboPSR1" AutoPostBack="true" Skin="Office2007"
+                                OnSelectedIndexChanged="cboPSR1_SelectedIndexChanged">
+                            </telerik:RadComboBox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Literal ID="litEROM2" runat="server">EROM2:</asp:Literal>
+                        </td>
+                        <td>
+                            <telerik:RadComboBox runat="server" ID="cboEROM2" AutoPostBack="true" Skin="Office2007"
+                                OnSelectedIndexChanged="cboEROM2_SelectedIndexChanged">
+                            </telerik:RadComboBox>
+                        </td>
+                        <td>
+                            <asp:Literal ID="litPSS2" runat="server">PSS2:</asp:Literal>
+                        </td>
+                        <td>
+                            <telerik:RadComboBox runat="server" ID="cboPSS2" AutoPostBack="true" Skin="Office2007"
+                                OnSelectedIndexChanged="cboPSS2_SelectedIndexChanged">
+                            </telerik:RadComboBox>
+                        </td>
+                        <td>
+                            <asp:Literal ID="litPSR2" runat="server">PSR2:</asp:Literal>
+                        </td>
+                        <td>
+                            <telerik:RadComboBox runat="server" ID="cboPSR2" AutoPostBack="true" Skin="Office2007"
+                                OnSelectedIndexChanged="cboPSR2_SelectedIndexChanged">
+                            </telerik:RadComboBox>
+                        </td>
+                    </tr>
+                </table>
         </div>
         <div class="clear"></div>
         <telerik:RadGrid runat="server" ID="RadGrid2" AutoGenerateColumns="false" AllowPaging="true"
