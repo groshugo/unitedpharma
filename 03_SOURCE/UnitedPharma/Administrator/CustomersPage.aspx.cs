@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ASP.App_Code;
 using Telerik.Web.UI;
 using System.Collections;
 
@@ -14,6 +17,9 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
     CustomersRepository CustomerRepo = new CustomersRepository();
     ValidationFields checkvalid = new ValidationFields();
     CustomersLogRepository Clog = new CustomersLogRepository();
+    private SalesmanRepository sRepo = new SalesmanRepository();
+    private const string DataTextFieldName = "Fullname";
+    private const string DataValueFieldName = "Id";
 
     #endregion
 
@@ -22,14 +28,89 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
         if (!IsPostBack)
         {
             Utility.SetCurrentMenu("mCustomer");
-            string sql = "select c.*, t.TypeName as CustomerTypeName, ch.ChannelName as ChannelName,d.DistrictName as DistrictName, l.LocalName as LocalName,s.FullName as SupervisorName,p.PositionName,s.Phone as supervisorPhone ";
-                sql+="from Customer c left join CustomerType t on c.CustomerTypeId=t.Id";
-                sql+=" left join Channel ch on c.ChannelId=ch.Id left join District d on c.DistrictId=d.Id";
-                sql+=" left join Local l on c.LocalId=l.Id left join CustomerSupervisor s on c.Id=s.CustomerId left join SupervisorPosition p on s.PositionId=p.Id ";
-                sql+="where c.Id in (select CustomerId from CustomerLog where IsApprove=0 group by CustomerId)";
-            Utility U = new Utility();
-            gridCustomerLog.DataSource = U.GetList(sql);
+
+            LoadCustomerLog(-1);
+
+            // Load TROM to combo
+            LoadSalesmenToComboTROM();
+
+            // Load EROM to combo
+            LoadSalesmenToComboErom();
+
+            // Load EROM2 to combo
+            LoadSalesmenToComboErom2();
         }
+    }
+
+    private DataTable GetCustomerLog(int supervisorId)
+    {
+        var sql =
+            "select c.*, t.TypeName as CustomerTypeName, ch.ChannelName as ChannelName,d.DistrictName as DistrictName, " +
+            "l.LocalName as LocalName,s.FullName as SupervisorName,p.PositionName,s.Phone as supervisorPhone, cusLog.IsApprove ";
+        sql += "from Customer c left join CustomerType t on c.CustomerTypeId=t.Id";
+        sql += " left join Channel ch on c.ChannelId=ch.Id left join District d on c.DistrictId=d.Id";
+        sql +=
+            " left join Local l on c.LocalId=l.Id left join CustomerSupervisor s on c.Id=s.CustomerId left join SupervisorPosition p on s.PositionId=p.Id ";
+
+        sql += supervisorId != -1
+                   ? string.Format("join CustomerLog cusLog on cusLog.CustomerId=c.Id where c.Id='{0}'", supervisorId)
+                   : string.Format("join CustomerLog cusLog on cusLog.CustomerId=c.Id");
+
+        Utility U = new Utility();
+        return U.GetList(sql);
+    }
+
+    private void LoadCustomerLog(int supervisorId)
+    {
+        gridCustomerLog.DataSource = GetCustomerLog(supervisorId);
+    }
+
+    private void LoadSalesmenToComboTROM()
+    {
+        LoadSalesmenToCombo(SalesmenRole.TROM, cboTROM, "Select a TROM");
+    }
+
+    private void LoadSalesmenToComboErom()
+    {
+        LoadSalesmenToCombo(SalesmenRole.EROM, cboEROM, "Select a EROM");
+    }
+
+    private void LoadSalesmenToComboErom2()
+    {
+        LoadSalesmenToCombo(SalesmenRole.EROM2, cboEROM2, "Select a EROM2");
+    }
+
+    private void LoadSalesmenToCombo(SalesmenRole role, RadComboBox cbo, string firstItemText)
+    {
+        var salesmens = sRepo.GetSalesmenByRoleId((int)role);
+        if (salesmens == null)
+        {
+            cbo.Enabled = false;
+            cbo.Enabled = false;
+            // write log here
+        }
+        else
+        {
+            LoadListSalesmenToCombo(salesmens, cbo, firstItemText);
+        }
+    }
+
+    private void LoadListSalesmenToCombo(List<Salesmen> trom, RadComboBox comboBox, string firstItemText)
+    {
+        if (trom != null)
+        {
+            comboBox.DataSource = trom;
+            comboBox.DataTextField = DataTextFieldName;
+            comboBox.DataValueField = DataValueFieldName;
+            comboBox.DataBind();
+
+            if (trom.Count > 0)
+            {
+                var item = new RadComboBoxItem(firstItemText, "0");
+                comboBox.Items.Insert(0, item);
+            }
+        }
+
     }
 
     protected void btnFilter_Click(object sender, EventArgs e)
@@ -46,20 +127,37 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
 
     protected void CustomerList_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        CustomerList.DataSource = CustomerRepo.GetAllViewCustomers();
+        string upiCode = txtUpiCode.Text.Trim();
+        string fullname = txtFullName.Text.Trim();
+
+        if (!string.IsNullOrEmpty(upiCode) || !string.IsNullOrEmpty(fullname))
+        {
+            CustomerList.DataSource = CustomerRepo.FilterCustomers(upiCode, fullname);
+        }
+        else
+        {
+            var supervisorId = GetSupervisorOfPOC_POS();
+
+            CustomerList.DataSource = supervisorId ==-1 ? CustomerRepo.GetAllViewCustomers() : CustomerRepo.GetAllViewCustomersBySupervisor(supervisorId);
+        }
     }
-    //gridCustomerLog
 
     protected void gridCustomerLog_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        string sql = "select c.*, t.TypeName as CustomerTypeName, ch.ChannelName as ChannelName,d.DistrictName as DistrictName, l.LocalName as LocalName,s.FullName as SupervisorName,p.PositionName,s.Phone as supervisorPhone ";
-        sql += "from Customer c left join CustomerType t on c.CustomerTypeId=t.Id";
-        sql += " left join Channel ch on c.ChannelId=ch.Id left join District d on c.DistrictId=d.Id";
-        sql += " left join Local l on c.LocalId=l.Id left join CustomerSupervisor s on c.Id=s.CustomerId left join SupervisorPosition p on s.PositionId=p.Id ";
-        sql += "where c.Id in (select CustomerId from CustomerLog where IsApprove=0 group by CustomerId)";
-        Utility U = new Utility();
-        gridCustomerLog.DataSource = U.GetList(sql);
+        string upiCode = txtUpiCode.Text.Trim();
+        string fullname = txtFullName.Text.Trim();
+
+        if (!string.IsNullOrEmpty(upiCode) || !string.IsNullOrEmpty(fullname))
+        {
+            gridCustomerLog.DataSource = Clog.FilterCustomers(upiCode, fullname);
+        }
+        else
+        {
+            var supervisorId = GetSupervisorOfPOC_POS();
+            gridCustomerLog.DataSource = GetCustomerLog(supervisorId);
+        }
     }
+
     protected void gridCustomerLog_ItemCreated(object sender, Telerik.Web.UI.GridItemEventArgs e)
     {
         if (e.Item is GridPagerItem)
@@ -382,5 +480,255 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
     protected void btnClear_Click(object sender, EventArgs e)
     {
         Response.Redirect("CustomersPage.aspx");
+    }
+
+    protected void gridCustomerLog_ItemDataBound(object sender, GridItemEventArgs e)
+    {
+
+        if (e.Item is GridDataItem)
+        {
+            GridDataItem dataItem = (GridDataItem) e.Item;
+            if (dataItem["IsApprove"].Text.ToLower() == "true")
+            {
+                dataItem.BackColor = Color.FromArgb(255, 0, 155, 255);
+            }
+        }
+    }
+
+    protected void cboTROM_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var trom = sRepo.GetSalemenById(int.Parse(e.Value));
+            if (trom != null)
+            {
+                // Load data to TPS
+                var tps = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPS, trom.Id);
+                LoadListSalesmenToCombo(tps, cboTPS, "Select a TPS");
+
+                UtilitiesHelpers.Instance.ClearComboData(cboTPR);
+            }
+        }
+        else
+        {
+            UtilitiesHelpers.Instance.ClearComboData(cboTPS);
+            UtilitiesHelpers.Instance.ClearComboData(cboTPR);
+        }
+
+        ResetChannelCombo(SalesChannel.Trom);
+    }
+
+    protected void cboTPS_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var tps = sRepo.GetSalemenById(int.Parse(e.Value));
+
+            if (tps != null)
+            {
+                // Load data to TPS
+                var tpr = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.TPR, tps.Id);
+
+                if (tpr != null)
+                {
+                    cboTPR.DataSource = tpr;
+                    cboTPR.DataTextField = DataTextFieldName;
+                    cboTPR.DataValueField = DataValueFieldName;
+                    cboTPR.DataBind();
+
+                    LoadListSalesmenToCombo(tpr, cboTPR, "Select a TPR");
+                }
+            }
+        }
+        else
+        {
+            cboTPR.DataSource = null;
+            cboTPR.DataBind();
+        }
+    }
+
+    protected void cboTPR_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        var supervisorId = Parsers.ToInt(e.Value);
+
+        FilterCustomerAndCustomerLog(supervisorId);
+    }
+
+    private void FilterCustomerAndCustomerLog(int supervisorId)
+    {
+        CustomerList.DataSource = (supervisorId == -1 || supervisorId == 0)
+                                      ? CustomerRepo.GetAllViewCustomers()
+                                      : CustomerRepo.GetAllViewCustomersBySupervisor(supervisorId);
+        CustomerList.DataBind();
+
+        gridCustomerLog.DataSource = GetCustomerLog(supervisorId);
+        gridCustomerLog.DataBind();
+    }
+
+    protected void cboEROM_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var erom = sRepo.GetSalemenById(int.Parse(e.Value));
+            if (erom != null)
+            {
+                // Load data to PSS1
+                var pss1 = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSS1, erom.Id);
+                LoadListSalesmenToCombo(pss1, cboPSS1, "Select a PSS1");
+
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR1);
+            }
+        }
+        else
+        {
+            UtilitiesHelpers.Instance.ClearComboData(cboPSS1);
+            UtilitiesHelpers.Instance.ClearComboData(cboPSR1);
+        }
+
+        ResetChannelCombo(SalesChannel.Erom);
+    }
+
+    protected void cboPSS1_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var pss1 = sRepo.GetSalemenById(int.Parse(e.Value));
+
+            if (pss1 != null)
+            {
+                // Load data to PSR 1
+                var psr1 = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSR1, pss1.Id);
+
+                if (psr1 != null)
+                {
+                    LoadListSalesmenToCombo(psr1, cboPSR1, "Select a PSR1");
+                }
+            }
+        }
+        else
+        {
+            cboPSR1.DataSource = null;
+            cboPSR1.DataBind();
+        }
+    }
+
+    protected void cboPSR1_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        var supervisorId = Parsers.ToInt(e.Value);
+
+        FilterCustomerAndCustomerLog(supervisorId);
+    }
+
+    protected void cboEROM2_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var erom2 = sRepo.GetSalemenById(int.Parse(e.Value));
+            if (erom2 != null)
+            {
+                // Load data to PSS2
+                var pss2 = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSS2, erom2.Id);
+                LoadListSalesmenToCombo(pss2, cboPSS2, "Select a PSS2");
+
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR2);
+            }
+        }
+        else
+        {
+            UtilitiesHelpers.Instance.ClearComboData(cboPSS2);
+            UtilitiesHelpers.Instance.ClearComboData(cboPSR2);
+        }
+
+        ResetChannelCombo(SalesChannel.Erom2);
+    }
+
+    protected void cboPSS2_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value))
+        {
+            var pss2 = sRepo.GetSalemenById(int.Parse(e.Value));
+
+            if (pss2 != null)
+            {
+                // Load data to PSR 2
+                var psr2 = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSR2, pss2.Id);
+
+                if (psr2 != null)
+                {
+                    LoadListSalesmenToCombo(psr2, cboPSR2, "Select a PSR2");
+                }
+
+            }
+        }
+        else
+        {
+            cboPSR2.DataSource = null;
+            cboPSR2.DataBind();
+        }
+    }
+
+    protected void cboPSR2_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        var supervisorId = Parsers.ToInt(e.Value);
+
+        FilterCustomerAndCustomerLog(supervisorId);
+    }
+
+    private void ResetChannelCombo(SalesChannel channel)
+    {
+        switch (channel)
+        {
+            case SalesChannel.Erom:
+                UtilitiesHelpers.Instance.ClearComboData(cboTPS);
+                UtilitiesHelpers.Instance.ClearComboData(cboTPR);
+                cboTROM.SelectedIndex = 0;
+
+                UtilitiesHelpers.Instance.ClearComboData(cboPSS2);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR2);
+                cboEROM2.SelectedIndex = 0;
+                break;
+            case SalesChannel.Erom2:
+                UtilitiesHelpers.Instance.ClearComboData(cboTPS);
+                UtilitiesHelpers.Instance.ClearComboData(cboTPR);
+                cboTROM.SelectedIndex = 0;
+
+                UtilitiesHelpers.Instance.ClearComboData(cboPSS1);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR1);
+                cboEROM.SelectedIndex = 0;
+                break;
+            default:
+                UtilitiesHelpers.Instance.ClearComboData(cboPSS1);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR1);
+                cboEROM.SelectedIndex = 0;
+
+                UtilitiesHelpers.Instance.ClearComboData(cboPSS2);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR2);
+                cboEROM2.SelectedIndex = 0;
+                break;
+        }
+    }
+
+    private int GetSupervisorOfPOC_POS()
+    {
+        // POS
+        var tprId = UtilitiesHelpers.Instance.GetSelectedValueOfCombo(cboTPR);
+        if (tprId > 0)
+        {
+            return tprId;
+        }
+        
+        // POC
+        var psr1Id = UtilitiesHelpers.Instance.GetSelectedValueOfCombo(cboPSR1);
+        if (psr1Id > 0)
+        {
+            return psr1Id;
+        }
+
+        var psr2Id = UtilitiesHelpers.Instance.GetSelectedValueOfCombo(cboPSR2);
+        if (psr2Id > 0)
+        {
+            return psr2Id;
+        }
+        return -1;
     }
 }

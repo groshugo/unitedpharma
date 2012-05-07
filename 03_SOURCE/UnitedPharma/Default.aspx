@@ -14,8 +14,8 @@
                 $("#lblLoginTitle").html("Administrator"); 
                 $("#light_bg").fadeIn("slow");
                 $("#login_box").fadeIn("slow");
-                $("#input_login").val("");
-                $("#input_password").val("");
+                $("#input_login").val("0909313336");
+                $("#input_password").val("123");
                 $("body").css("overflow", "hidden");
                 $("#input_login").focus();
             });
@@ -24,8 +24,8 @@
                 $("#lblLoginTitle").html("Salemens");
                 $("#light_bg").fadeIn("slow");
                 $("#login_box").fadeIn("slow");
-                $("#input_login").val("");
-                $("#input_password").val("");
+                $("#input_login").val("0987435325");
+                $("#input_password").val("123");
                 $("body").css("overflow", "hidden");
                 $("#input_login").focus();
             });
@@ -34,7 +34,7 @@
                 $("#lbl_header_cust_1").html("Customers");
                 $("#light_bg").fadeIn("slow");
                 $("#login_cust_1").fadeIn("slow");
-                $("#txtCustPhone").val("");                
+                $("#txtCustPhone").val("0123456789");                
                 $("body").css("overflow", "hidden");
                 $("#txtCustPhone").focus();
             });

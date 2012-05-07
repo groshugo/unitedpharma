@@ -137,4 +137,38 @@ public class CustomersLogRepository
         else
             return false;
     }
+
+    public List<vwCustomerLog> FilterCustomers(string upiCode, string fullname)
+    {
+        return (from a in db.CustomerLogs
+                where (upiCode == string.Empty || a.UpiCode.Contains(upiCode))
+                                        && (fullname == string.Empty || a.FullName.Contains(fullname)) 
+                select new vwCustomerLog
+                {
+                    Id = a.Id,
+                    UpiCode = a.UpiCode,
+                    FullName = a.FullName,
+                    Address = a.Address,
+                    Street = a.Street,
+                    Ward = a.Ward,
+                    Phone = a.Phone,
+                    Password = a.Password,
+                    CustomerTypeId = a.CustomerTypeId,
+                    CustomerTypeName = a.CustomerType.TypeName,
+                    ChannelId = a.ChannelId,
+                    ChannelName = a.Channel.ChannelName,
+                    DistrictId = a.DistrictId,
+                    DistrictName = a.District.DistrictName,
+                    LocalId = a.LocalId,
+                    LocalName = a.Local.LocalName,
+                    CreateDate = a.CreateDate,
+                    UpdateDate = a.UpdateDate,
+                    Status = a.Status,
+                    IsApprove = a.IsApprove,
+                    ApproveBy = a.ApproveBy,
+                    ChangeBy = a.ChangeBy,
+                    CustomerId = a.CustomerId,
+                    NoteOfSalesmen = a.NoteOfSalesmen
+                }).OrderByDescending(i => i.Id).ToList();
+    }
 }

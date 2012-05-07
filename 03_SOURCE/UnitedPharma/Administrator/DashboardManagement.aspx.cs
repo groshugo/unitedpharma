@@ -125,15 +125,15 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
                 var tps = sRepo.GetSalesmenByRoleIdAndManagerId((int) SalesmenRole.TPS, trom.Id);
                 LoadListSalesmenToCombo(tps, cboTPS, "Select a TPS");
 
-                ClearComboData(cboTPR);
+                UtilitiesHelpers.Instance.ClearComboData(cboTPR);
 
                 phone = trom.Phone;
             }
         }
         else
         {
-            ClearComboData(cboTPS);
-            ClearComboData(cboTPR);
+            UtilitiesHelpers.Instance.ClearComboData(cboTPS);
+            UtilitiesHelpers.Instance.ClearComboData(cboTPR);
         }
 
         LoadGridDashboard(phone);
@@ -198,15 +198,15 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
                 var pss1 = sRepo.GetSalesmenByRoleIdAndManagerId((int) SalesmenRole.PSS1, erom.Id);
                 LoadListSalesmenToCombo(pss1, cboPSS1, "Select a PSS1");
 
-                ClearComboData(cboPSR1);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR1);
 
                 phone = erom.Phone;
             }
         }
         else
         {
-            ClearComboData(cboPSS1);
-            ClearComboData(cboPSR1);
+            UtilitiesHelpers.Instance.ClearComboData(cboPSS1);
+            UtilitiesHelpers.Instance.ClearComboData(cboPSR1);
         }
 
         LoadGridDashboard(phone);
@@ -266,15 +266,15 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
                 var pss2 = sRepo.GetSalesmenByRoleIdAndManagerId((int) SalesmenRole.PSS2, erom2.Id);
                 LoadListSalesmenToCombo(pss2, cboPSS2, "Select a PSS2");
 
-                ClearComboData(cboPSR2);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR2);
 
                 phone = erom2.Phone;
             }
         }
         else
         {
-            ClearComboData(cboPSS2);
-            ClearComboData(cboPSR2);
+            UtilitiesHelpers.Instance.ClearComboData(cboPSS2);
+            UtilitiesHelpers.Instance.ClearComboData(cboPSR2);
         }
 
         LoadGridDashboard(phone);
@@ -327,34 +327,33 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
         switch (channel)
         {
             case SalesChannel.Erom:
-                ClearComboData(cboTPS);
-                ClearComboData(cboTPR);
+                UtilitiesHelpers.Instance.ClearComboData(cboTPS);
+                UtilitiesHelpers.Instance.ClearComboData(cboTPR);
                 cboTROM.SelectedIndex = 0;
 
-                ClearComboData(cboPSS2);
-                ClearComboData(cboPSR2);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSS2);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR2);
                 cboEROM2.SelectedIndex = 0;
                 break;
             case SalesChannel.Erom2:
-                ClearComboData(cboTPS);
-                ClearComboData(cboTPR);
+                UtilitiesHelpers.Instance.ClearComboData(cboTPS);
+                UtilitiesHelpers.Instance.ClearComboData(cboTPR);
                 cboTROM.SelectedIndex = 0;
 
-                ClearComboData(cboPSS1);
-                ClearComboData(cboPSR1);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSS1);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR1);
                 cboEROM.SelectedIndex = 0;
                 break;
             default:
-                ClearComboData(cboPSS1);
-                ClearComboData(cboPSR1);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSS1);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR1);
                 cboEROM.SelectedIndex = 0;
 
-                ClearComboData(cboPSS2);
-                ClearComboData(cboPSR2);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSS2);
+                UtilitiesHelpers.Instance.ClearComboData(cboPSR2);
                 cboEROM2.SelectedIndex = 0;
                 break;
         }
-
     }
 
     private void LoadSalesmenToComboTROM()
@@ -403,14 +402,6 @@ public partial class Administrator_DashboardManagement : System.Web.UI.Page
             }
         }
 
-    }
-
-    private void ClearComboData(RadComboBox comboBox)
-    {
-        if (comboBox.Items != null && comboBox.Items.Count > 0)
-        {
-            comboBox.Items.Clear();
-        }
     }
 
     private List<Dashboard> GetDataForGridCommand()
