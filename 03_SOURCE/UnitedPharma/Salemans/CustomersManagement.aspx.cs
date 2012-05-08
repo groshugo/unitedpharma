@@ -376,6 +376,12 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
 
     private DataTable LoadSaleManager(int salemenId, int IsEnable, string FullName, string PhoneNumber, int LocalId, string upiCode)
     {
+        if(salemenId == 0 || salemenId == 1)
+        {
+            var adm = Session["objLogin"] as ObjLogin;
+            if (adm != null) salemenId = adm.Id;
+        }
+
         string strGroupIdList = GetGroupBySalemenId(salemenId);
         string strRegionIdList = SalesRegionList(strGroupIdList, salemenId);
         string strAreaIdList = SalesAreaList(strRegionIdList, salemenId);
@@ -386,7 +392,6 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         sql += " left join Local l on c.LocalId=l.Id left join CustomerSupervisor s on c.Id=s.CustomerId left join SupervisorPosition p on s.PositionId=p.Id ";
         sql += " left join District dis on c.DistrictId = dis.Id";
         sql += " left join Province pro on dis.ProvinceId = pro.Id";
-        //sql += " left join Section sec on pro.SectionId = sec.Id";
         sql += " where c.IsEnable= " + IsEnable;
         if (FullName != "")
             sql += " and c.FullName like '%" + FullName + "%'";
@@ -408,6 +413,12 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
     }
     private DataTable LoadEditedCustomer(int salemenId)
     {
+        if(salemenId == 0 || salemenId == -1)
+        {
+            ObjLogin sale = (ObjLogin)Session["objLogin"];
+            salemenId = sale.Id;
+        }
+
         string strGroupIdList = GetGroupBySalemenId(salemenId);
         string strRegionIdList = SalesRegionList(strGroupIdList, salemenId);
         string strAreaIdList = SalesAreaList(strRegionIdList, salemenId);
@@ -472,19 +483,23 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
 
     private string SalesRegionList(string strGroupIdList, int salemenId)
     {
-        string SqlRegion = "select Id from Region where GroupId in (" + strGroupIdList + ") group by Id";
-        dt = U.GetList(SqlRegion);
-        string result = string.Empty;
-        for (int i = 0; i < dt.Rows.Count; i++)
+        if(!string.IsNullOrEmpty(strGroupIdList))
         {
-            if (!string.IsNullOrEmpty(dt.Rows[i][0].ToString()))
-                result += dt.Rows[i][0] + ",";
-        }
-        string sqlRegionId = GetRegionBySalemenId(salemenId);
-        if (sqlRegionId != "")
-            result += sqlRegionId;
+            string SqlRegion = "select Id from Region where GroupId in (" + strGroupIdList + ") group by Id";
+            dt = U.GetList(SqlRegion);
+            string result = string.Empty;
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(dt.Rows[i][0].ToString()))
+                    result += dt.Rows[i][0] + ",";
+            }
+            string sqlRegionId = GetRegionBySalemenId(salemenId);
+            if (sqlRegionId != "")
+                result += sqlRegionId;
 
-        return result == "" ? result : result.Substring(0, result.Length - 1);
+            return result == "" ? result : result.Substring(0, result.Length - 1);
+        }
+        return string.Empty;
     }
     private string SalesAreaList(string strRegionIdList, int salemenId)
     {
