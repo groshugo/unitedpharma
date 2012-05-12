@@ -78,4 +78,122 @@ public class UtilitiesHelpers
 
         return results;
     }
+
+    public string GetGroupBySalemenId(int salemenId)
+    {
+        var u = new Utility();
+        string sqlGroup = "select GroupId from salesgroup where SalesmenId = " + salemenId + " group by GroupId";
+        var dt = u.GetList(sqlGroup);
+        string result = string.Empty;
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            result += dt.Rows[i][0] + ",";
+        }
+        if (result == "")
+            return result;
+        else
+            return result.Substring(0, result.Length - 1);
+    }
+
+    public string SalesRegionList(string strGroupIdList, int salemenId)
+    {
+        if (!string.IsNullOrEmpty(strGroupIdList))
+        {
+            var u = new Utility();
+            string SqlRegion = "select Id from Region where GroupId in (" + strGroupIdList + ") group by Id";
+            var dt = u.GetList(SqlRegion);
+            string result = string.Empty;
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(dt.Rows[i][0].ToString()))
+                    result += dt.Rows[i][0] + ",";
+            }
+            string sqlRegionId = GetRegionBySalemenId(salemenId);
+            if (sqlRegionId != "")
+                result += sqlRegionId;
+
+            return result == "" ? result : result.Substring(0, result.Length - 1);
+        }
+        return string.Empty;
+    }
+
+    public string SalesAreaList(string strRegionIdList, int salemenId)
+    {
+        var u = new Utility();
+        string SqlRegion = "select Id from Area where RegionId in (" + strRegionIdList + ") group by Id";
+        var dt = u.GetList(SqlRegion);
+        string result = string.Empty;
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            if (!string.IsNullOrEmpty(dt.Rows[i][0].ToString()))
+                result += dt.Rows[i][0] + ",";
+        }
+        string sqlRegionId = GetAreaBySalemenId(salemenId);
+        if (sqlRegionId != "")
+            result += sqlRegionId;
+
+        return result == "" ? result : result.Substring(0, result.Length - 1);
+    }
+
+    
+
+    public string SalesLocalList(string strAreaIdList, int salemenId)
+    {
+        var u = new Utility();
+        string SqlRegion = "select Id from Local where AreaId in (" + strAreaIdList + ") group by Id";
+        var dt = u.GetList(SqlRegion);
+        string result = string.Empty;
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            if (!string.IsNullOrEmpty(dt.Rows[i][0].ToString()))
+                result += dt.Rows[i][0] + ",";
+        }
+        string sqlRegionId = GetLocalBySalemenId(salemenId);
+        if (sqlRegionId != "")
+            result += sqlRegionId;
+
+        return result == "" ? result : result.Substring(0, result.Length - 1);
+    }
+
+    private string GetRegionBySalemenId(int salemenId)
+    {
+        var u = new Utility();
+        string SqlRegion = "select RegionId from SalesRegion where salesmenId = " + salemenId + " group by RegionId";
+        var dt = u.GetList(SqlRegion);
+        string result = string.Empty;
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            result += dt.Rows[i][0] + ",";
+        }
+
+        return result;
+    }
+
+    private string GetAreaBySalemenId(int salemenId)
+    {
+        var u = new Utility();
+        string SqlRegion = "select AreaId from SalesArea where salesmenId = " + salemenId + " group by AreaId";
+        var dt = u.GetList(SqlRegion);
+        string result = string.Empty;
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            result += dt.Rows[i][0] + ",";
+        }
+
+        return result;
+    }
+
+    private string GetLocalBySalemenId(int salemenId)
+    {
+        var u = new Utility();
+        string SqlRegion = "select LocalId from SalesLocal where salesmenId = " + salemenId + " group by LocalId";
+        var dt = u.GetList(SqlRegion);
+        string result = string.Empty;
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            result += dt.Rows[i][0] + ",";
+        }
+
+        return result;
+    }
 }
