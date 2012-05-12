@@ -77,13 +77,13 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
                     cboPSS1.Visible = false;
                     litEROM.Visible = false;
                     litPSS1.Visible = false;
-                    
+
                     cboPSR1.Visible = true;
                     UtilitiesHelpers.Instance.ClearComboData(cboPSR1);
                     // Load data for PSS1
                     var psr1 = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSR1, salesmen.Id);
                     LoadListSalesmenToCombo(psr1, cboPSR1, "Select a PSR1");
-                    
+
                     HideComboBox(0);
                     break;
 
@@ -92,14 +92,14 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
                     cboPSS1.Visible = false;
                     litEROM.Visible = false;
                     litPSS1.Visible = false;
-                    
+
                     cboPSR1.Visible = false;
                     litPSR1.Visible = false;
                     UtilitiesHelpers.Instance.ClearComboData(cboPSR1);
 
                     var itemPsr1 = new RadComboBoxItem(salesmen.FullName, salesmen.Id.ToString());
                     cboPSR1.Items.Insert(0, itemPsr1);
-                    
+
                     // hide EROM2 and TROM
                     HideComboBox(0);
                     break;
@@ -130,7 +130,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
                     // Load data for PSR2
                     var psr2 = sRepo.GetSalesmenByRoleIdAndManagerId((int)SalesmenRole.PSR2, salesmen.Id);
                     LoadListSalesmenToCombo(psr2, cboPSR2, "Select a PSR2");
-                    
+
 
                     HideComboBox(2);
                     break;
@@ -234,7 +234,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
                 litPSS1.Visible = false;
                 litPSR1.Visible = false;
                 break;
-            case  2: // EROM2
+            case 2: // EROM2
                 cboTROM.Visible = false;
                 cboTPS.Visible = false;
                 cboTPR.Visible = false;
@@ -303,7 +303,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
 
         if (supervisorId == 0 || supervisorId == -1)
         {
-            ObjLogin sale = (ObjLogin) Session["objLogin"];
+            ObjLogin sale = (ObjLogin)Session["objLogin"];
             RadGrid1.DataSource = LoadEditedCustomer(sale.Id);
         }
         else
@@ -325,7 +325,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         {
             var localId = string.IsNullOrEmpty(ddlLocal.SelectedValue) ? 0 : int.Parse(ddlLocal.SelectedValue);
 
-            ObjLogin sale = (ObjLogin) Session["objLogin"];
+            ObjLogin sale = (ObjLogin)Session["objLogin"];
             RadGrid2.DataSource = LoadSaleManager(sale.Id, 1, txtFullname.Text.Trim(), txtPhoneNumber.Text.Trim(),
                 localId, txtUpiCode.Text.Trim());
         }
@@ -376,17 +376,26 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
 
     private DataTable LoadSaleManager(int salemenId, int IsEnable, string FullName, string PhoneNumber, int LocalId, string upiCode)
     {
-        if(salemenId == 0 || salemenId == 1)
+        if (salemenId == 0 || salemenId == 1)
         {
             var adm = Session["objLogin"] as ObjLogin;
             if (adm != null) salemenId = adm.Id;
         }
 
-        string strGroupIdList = GetGroupBySalemenId(salemenId);
-        string strRegionIdList = SalesRegionList(strGroupIdList, salemenId);
-        string strAreaIdList = SalesAreaList(strRegionIdList, salemenId);
-        string strLocalIdList = SalesLocalList(strAreaIdList, salemenId);
-        string sql = "select c.*, t.TypeName as CustomerTypeName, ch.ChannelName as ChannelName,d.DistrictName as DistrictName, l.LocalName as LocalName,s.FullName as SupervisorName,p.PositionName,s.Phone as supervisorPhone,dis.ProvinceId,pro.SectionId ";
+        string strGroupIdList = UtilitiesHelpers.Instance.GetGroupBySalemenId(salemenId);
+        if (string.IsNullOrEmpty(strGroupIdList)) return null;
+
+        string strRegionIdList = UtilitiesHelpers.Instance.SalesRegionList(strGroupIdList, salemenId);
+        if (string.IsNullOrEmpty(strRegionIdList)) return null;
+
+        string strAreaIdList = UtilitiesHelpers.Instance.SalesAreaList(strRegionIdList, salemenId);
+        if (string.IsNullOrEmpty(strAreaIdList)) return null;
+
+        string strLocalIdList = UtilitiesHelpers.Instance.SalesLocalList(strAreaIdList, salemenId);
+        if (string.IsNullOrEmpty(strLocalIdList)) return null;
+
+        string sql = "select c.*, t.TypeName as CustomerTypeName, ch.ChannelName as ChannelName,d.DistrictName as DistrictName, " +
+                     "l.LocalName as LocalName,s.FullName as SupervisorName,p.PositionName,s.Phone as supervisorPhone,dis.ProvinceId,pro.SectionId ";
         sql += "from Customer c left join CustomerType t on c.CustomerTypeId=t.Id";
         sql += " left join Channel ch on c.ChannelId=ch.Id left join District d on c.DistrictId=d.Id";
         sql += " left join Local l on c.LocalId=l.Id left join CustomerSupervisor s on c.Id=s.CustomerId left join SupervisorPosition p on s.PositionId=p.Id ";
@@ -410,128 +419,27 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         }
 
         return U.GetList(sql);
+
     }
+
     private DataTable LoadEditedCustomer(int salemenId)
     {
-        if(salemenId == 0 || salemenId == -1)
+        if (salemenId == 0 || salemenId == -1)
         {
             ObjLogin sale = (ObjLogin)Session["objLogin"];
             salemenId = sale.Id;
         }
 
-        string strGroupIdList = GetGroupBySalemenId(salemenId);
-        string strRegionIdList = SalesRegionList(strGroupIdList, salemenId);
-        string strAreaIdList = SalesAreaList(strRegionIdList, salemenId);
-        string strLocalIdList = SalesLocalList(strAreaIdList, salemenId);
+        //string strGroupIdList = GetGroupBySalemenId(salemenId);
+        //string strRegionIdList = SalesRegionList(strGroupIdList, salemenId);
+        //string strAreaIdList = SalesAreaList(strRegionIdList, salemenId);
+        //string strLocalIdList = SalesLocalList(strAreaIdList, salemenId);
         string sql = "select c.*, t.TypeName as CustomerTypeName, ch.ChannelName as ChannelName,d.DistrictName as DistrictName, l.LocalName as LocalName,s.FullName as SupervisorName,p.PositionName,s.Phone as supervisorPhone ";
         sql += "from Customer c left join CustomerType t on c.CustomerTypeId=t.Id";
         sql += " left join Channel ch on c.ChannelId=ch.Id left join District d on c.DistrictId=d.Id";
         sql += " left join Local l on c.LocalId=l.Id left join CustomerSupervisor s on c.Id=s.CustomerId left join SupervisorPosition p on s.PositionId=p.Id ";
         sql += "where c.Id in (select CustomerId from CustomerLog where IsApprove=0 and changeBy=" + salemenId + " group by CustomerId)";
         return U.GetList(sql);
-    }
-    private string GetGroupBySalemenId(int salemenId)
-    {
-        string SqlGroup = "select GroupId from salesgroup where SalesmenId = " + salemenId + " group by GroupId";
-        dt = U.GetList(SqlGroup);
-        string result = string.Empty;
-        for (int i = 0; i < dt.Rows.Count; i++)
-        {
-            result += dt.Rows[i][0] + ",";
-        }
-        if (result == "")
-            return result;
-        else
-            return result.Substring(0, result.Length - 1);
-    }
-    private string GetRegionBySalemenId(int salemenId)
-    {
-        string SqlRegion = "select RegionId from SalesRegion where salesmenId = " + salemenId + " group by RegionId";
-        dt = U.GetList(SqlRegion);
-        string result = string.Empty;
-        for (int i = 0; i < dt.Rows.Count; i++)
-        {
-            result += dt.Rows[i][0] + ",";
-        }
-
-        return result;
-    }
-    private string GetAreaBySalemenId(int salemenId)
-    {
-        string SqlRegion = "select AreaId from SalesArea where salesmenId = " + salemenId + " group by AreaId";
-        dt = U.GetList(SqlRegion);
-        string result = string.Empty;
-        for (int i = 0; i < dt.Rows.Count; i++)
-        {
-            result += dt.Rows[i][0] + ",";
-        }
-
-        return result;
-    }
-    private string GetLocalBySalemenId(int salemenId)
-    {
-        string SqlRegion = "select LocalId from SalesLocal where salesmenId = " + salemenId + " group by LocalId";
-        dt = U.GetList(SqlRegion);
-        string result = string.Empty;
-        for (int i = 0; i < dt.Rows.Count; i++)
-        {
-            result += dt.Rows[i][0] + ",";
-        }
-
-        return result;
-    }
-
-    private string SalesRegionList(string strGroupIdList, int salemenId)
-    {
-        if(!string.IsNullOrEmpty(strGroupIdList))
-        {
-            string SqlRegion = "select Id from Region where GroupId in (" + strGroupIdList + ") group by Id";
-            dt = U.GetList(SqlRegion);
-            string result = string.Empty;
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                if (!string.IsNullOrEmpty(dt.Rows[i][0].ToString()))
-                    result += dt.Rows[i][0] + ",";
-            }
-            string sqlRegionId = GetRegionBySalemenId(salemenId);
-            if (sqlRegionId != "")
-                result += sqlRegionId;
-
-            return result == "" ? result : result.Substring(0, result.Length - 1);
-        }
-        return string.Empty;
-    }
-    private string SalesAreaList(string strRegionIdList, int salemenId)
-    {
-        string SqlRegion = "select Id from Area where RegionId in (" + strRegionIdList + ") group by Id";
-        dt = U.GetList(SqlRegion);
-        string result = string.Empty;
-        for (int i = 0; i < dt.Rows.Count; i++)
-        {
-            if (!string.IsNullOrEmpty(dt.Rows[i][0].ToString()))
-                result += dt.Rows[i][0] + ",";
-        }
-        string sqlRegionId = GetAreaBySalemenId(salemenId);
-        if (sqlRegionId != "")
-            result += sqlRegionId;
-
-        return result == "" ? result : result.Substring(0, result.Length - 1);
-    }
-    private string SalesLocalList(string strAreaIdList, int salemenId)
-    {
-        string SqlRegion = "select Id from Local where AreaId in (" + strAreaIdList + ") group by Id";
-        dt = U.GetList(SqlRegion);
-        string result = string.Empty;
-        for (int i = 0; i < dt.Rows.Count; i++)
-        {
-            if (!string.IsNullOrEmpty(dt.Rows[i][0].ToString()))
-                result += dt.Rows[i][0] + ",";
-        }
-        string sqlRegionId = GetLocalBySalemenId(salemenId);
-        if (sqlRegionId != "")
-            result += sqlRegionId;
-
-        return result == "" ? result : result.Substring(0, result.Length - 1);
     }
 
     private void ShowErrorMessage(string message)
@@ -862,21 +770,6 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         RadGrid2.DataBind();
     }
 
-    private void LoadSalesmenToComboTROM()
-    {
-        LoadSalesmenToCombo(SalesmenRole.TROM, cboTROM, "Select a TROM");
-    }
-
-    private void LoadSalesmenToComboErom()
-    {
-        LoadSalesmenToCombo(SalesmenRole.EROM, cboEROM, "Select a EROM");
-    }
-
-    private void LoadSalesmenToComboErom2()
-    {
-        LoadSalesmenToCombo(SalesmenRole.EROM2, cboEROM2, "Select a EROM2");
-    }
-
     private void LoadSalesmenToCombo(SalesmenRole role, RadComboBox cbo, string firstItemText)
     {
         var salesmens = sRepo.GetSalesmenByRoleId((int)role);
@@ -942,17 +835,6 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
                 cboEROM2.SelectedIndex = 0;
                 break;
         }
-    }
-
-    private void FilterCustomerAndCustomerLog(int supervisorId)
-    {
-        //RadGrid2.DataSource = (supervisorId == -1 || supervisorId == 0)
-        //                              ? CRepo.GetAllViewCustomers()
-        //                              : CRepo.GetAllViewCustomersBySupervisor(supervisorId);
-        //RadGrid2.DataBind();
-
-        //gridCustomerLog.DataSource = GetCustomerLog(supervisorId);
-        //gridCustomerLog.DataBind();
     }
 
     private int GetSupervisorOfPocPos()
