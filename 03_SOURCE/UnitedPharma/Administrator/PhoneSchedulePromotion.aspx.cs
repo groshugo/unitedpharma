@@ -12,8 +12,6 @@ using System.Data;
 public partial class Administrator_PhoneSchedulePromotion : System.Web.UI.Page
 {
     SchedulePromotionRepository ScheduleRepo = new SchedulePromotionRepository();
-    UPIDataContext db = new UPIDataContext();
-    SqlConnection connection;
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!Page.IsPostBack)

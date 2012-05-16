@@ -1,4 +1,5 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Administrator/AdminFull.master" AutoEventWireup="true" CodeFile="SchedulePromotionManagement.aspx.cs" Inherits="Administrator_SchedulePromotionManagement" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Administrator/AdminFull.master" AutoEventWireup="true" CodeFile="SchedulePromotionManagement.aspx.cs" 
+Inherits="Administrator_SchedulePromotionManagement" %>
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
@@ -11,11 +12,14 @@
         <script type="text/javascript">
             <!--
             $(document).ready(function () {
-                var len = $("#ctl00_ContentPlaceHolder1_gridSchedulePromotion_ctl00_ctl07_txtSMSContent").val().length;
-                if (len > 150) {
-                    val.value = val.value.substring(0, 150);
-                } else {
-                    $('#charaterleft').text(150 - len);
+                var txtSMSContent = $("input[name*='txtSMSContent']"); //$("#ctl00_ContentPlaceHolder1_gridSchedulePromotion_ctl00_ctl07_txtSMSContent");
+                if (txtSMSContent != null && txtSMSContent.val() != null) {
+                    var len = txtSMSContent.val().length;
+                    if (len > 150) {
+                        val.value = val.value.substring(0, 150);
+                    } else {
+                        $('#charaterleft').text(150 - len);
+                    }    
                 }
             });
             function countChar(val) {
@@ -37,8 +41,15 @@
                         Phone += arg[i] + ",";
                     }
                     Phone = Phone.substring(0, Phone.length - 1);
-                    $("#ctl00_ContentPlaceHolder1_gridSchedulePromotion_ctl00_ctl07_txtPhoneNumber_text").val(Phone);
-                    document.getElementById("ContentPlaceHolder1_hdfPhoneNumbers").value = Phone;
+
+                    var txtPhoneNumber = $("input[name*='txtPhoneNumber']");
+                    if (txtPhoneNumber != null) {
+                        txtPhoneNumber.val(Phone);
+                    }
+                    var hdfPhoneNumbers = $("input[name*='hdfPhoneNumbers']");
+                    if (hdfPhoneNumbers)
+                        hdfPhoneNumbers.val(Phone);
+                    
                 }
             }
             function OpenPhoneList(Id) {

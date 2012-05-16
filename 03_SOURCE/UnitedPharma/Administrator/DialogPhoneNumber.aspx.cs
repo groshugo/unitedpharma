@@ -486,7 +486,13 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
     private List<vwSalemen> FilterSalesmen()
     {
         var fullname = txtFilterName.Text.Trim();
-        var localId = int.Parse(ddlLocal.SelectedValue);
+
+        var localId = 0;
+
+        if (ddlLocal.SelectedIndex > 0)
+        {
+            localId = int.Parse(ddlLocal.SelectedValue);
+        }
 
         return SRepo.FilterSalesmenForBrowsePhoneNumber(fullname, localId);
     }

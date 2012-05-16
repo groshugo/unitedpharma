@@ -224,7 +224,7 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
 
     protected void CustomerList_InsertCommand(object source, GridCommandEventArgs e)
     {
-        ObjLogin adm = (ObjLogin)Session["objLogin"];
+        var adm = (ObjLogin)Session["objLogin"];
         GridEditFormItem gdItem = (e.Item as GridEditFormItem);
         var editableItem = ((GridEditableItem)e.Item);
         Hashtable values = new Hashtable();
@@ -236,19 +236,32 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
                 RadComboBox ddlDistricts = gdItem["DistrictColumn"].FindControl("ddlDistricts") as RadComboBox;
                 if (int.Parse(ddlDistricts.SelectedValue) > 0)
                 {
-                    DateTime CreateDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtCreateDate")).SelectedDate.Value.Date);
-                    DateTime UpdateDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtUpdateDate")).SelectedDate.Value.Date);
+                    var createDate = DateTime.Now;
+                    var createDateControl = gdItem.FindControl("txtCreateDate") as RadDateTimePicker;
+                    if(createDateControl != null && createDateControl.SelectedDate.HasValue)
+                    {
+                        createDate = createDateControl.SelectedDate.Value;
+                    }
+
+                    var updateDate = DateTime.Now;
+                    var updateDateControl = gdItem.FindControl("txtUpdateDate") as RadDateTimePicker;
+                    if (updateDateControl != null && updateDateControl.SelectedDate.HasValue)
+                    {
+                        updateDate = updateDateControl.SelectedDate.Value;
+                    }
+
+
                     int customertype = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlCustomerType")).SelectedValue);
                     int channel = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlChannels")).SelectedValue);
                     int district = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistricts")).SelectedValue);
                     int location = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlLocation")).SelectedValue);
                     int local = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlLocation")).SelectedValue);
                     int CustomerId = CustomerRepo.InsertCustomer((string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"], (string)values["Ward"],
-                             (string)values["Phone"], (string)values["Password"], customertype, channel, district, location, CreateDate, UpdateDate, (bool)values["Status"],false);
+                             (string)values["Phone"], (string)values["Password"], customertype, channel, district, location, createDate, updateDate, (bool)values["Status"],false);
 
                     Clog.InsertCustomer((string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"],
                             (string)values["Ward"], (string)values["Phone"], (string)values["Password"], customertype, channel, district, local, 
-                            CreateDate, UpdateDate, (bool)values["Status"], CustomerId, false, 0,adm.Id, string.Empty);
+                            createDate, updateDate, (bool)values["Status"], CustomerId, false, 0,adm.Id, string.Empty);
                     Response.Redirect("CustomersPage.aspx");
                 }
                 else
@@ -286,8 +299,6 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
             GridEditableItem edititem = (GridEditableItem)e.Item;
             Hashtable values = new Hashtable();
             edititem.ExtractValues(values);
-
-           vwCustomer vCustomer = (vwCustomer) e.Item.DataItem;
 
             using (UPIDataContext db = new UPIDataContext())
             {
@@ -380,9 +391,13 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
                 txtUpdateDate.DbSelectedDate = UpdateDate;
 
                 // Note of Salesmen
-                string noteOfSalesmen = vCustomer.NoteOfSalesmen;
-                var txtNoteOfSalesmen = ((TextBox)edititem.FindControl("txtNoteOfSalesmen"));
-                txtNoteOfSalesmen.Text = noteOfSalesmen;
+                vwCustomer vCustomer = e.Item.DataItem as vwCustomer;
+                if(vCustomer != null)
+                {
+                    string noteOfSalesmen = vCustomer.NoteOfSalesmen;
+                    var txtNoteOfSalesmen = ((TextBox)edititem.FindControl("txtNoteOfSalesmen"));
+                    txtNoteOfSalesmen.Text = noteOfSalesmen;
+                }
             }
 
         }
