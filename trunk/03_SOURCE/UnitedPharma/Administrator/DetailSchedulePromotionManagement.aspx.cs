@@ -30,6 +30,8 @@ public partial class Administrator_DetailSchedulePromotionManagement : System.We
                 string sql = "SELECT a.FullName as CustomerName,a.UpiCode, a.Phone, b.FullName,s.PositionName FROM [Customer] as a LEFT JOIN [CustomerSupervisor] as b on a.Id=b.CustomerId left join [SupervisorPosition] as s on b.PositionId=s.Id where a.Phone in (" + phoneList + ")";
                 Utility utility = new Utility();
                 SchedulePhoneNumbers.DataSource = utility.GetList(sql);
+
+                Utility.SetCurrentMenu("mPromotion");
             }
        }
     }

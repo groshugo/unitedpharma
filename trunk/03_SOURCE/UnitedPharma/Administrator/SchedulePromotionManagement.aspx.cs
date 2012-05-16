@@ -61,17 +61,32 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
         var PromotionId = (int)editableItem.GetDataKeyValue("Id");
         try
         {
-            DateTime StartDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtStartDate")).SelectedDate.Value.Date);
-            DateTime EndDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtEndDate")).SelectedDate.Value.Date);
+            DateTime StartDate = DateTime.Now;
+            var StartDateControl = gdItem.FindControl("txtStartDate") as RadDatePicker;
+            if(StartDateControl != null && StartDateControl.SelectedDate.HasValue)
+            {
+                StartDate = StartDateControl.SelectedDate.Value;
+            }
+
+            DateTime EndDate = DateTime.Now;
+            var EndDateControl = gdItem.FindControl("txtEndDate") as RadDatePicker;
+            if (EndDateControl != null && EndDateControl.SelectedDate.HasValue)
+            {
+                StartDate = EndDateControl.SelectedDate.Value;
+            }
+            //DateTime StartDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtStartDate")).SelectedDate.Value.Date);
+            //DateTime EndDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtEndDate")).SelectedDate.Value.Date);
             double startdate = Utility.ConvertToUnixTimestamp(StartDate);
             double endDate = Utility.ConvertToUnixTimestamp(EndDate);
+
             if (endDate >= startdate)
             {
                 ObjLogin adm = (ObjLogin)Session["objLogin"];
                 int administratorId = adm.Id;
                 string webcontent = ((RadEditor)editableItem.FindControl("RadEditor1")).Text;
                 string SMSContent = ((TextBox)gdItem.FindControl("txtSMSContent")).Text;
-                ScheduleRepo.UpdateSchedulePromotion(PromotionId, (string)values["UpiCode"], (string)values["Title"], SMSContent, webcontent, StartDate, EndDate, administratorId, false);
+                ScheduleRepo.UpdateSchedulePromotion(PromotionId, (string)values["UpiCode"], (string)values["Title"], SMSContent, 
+                    webcontent, StartDate, EndDate, administratorId, false);
             }
             else
                 ShowErrorMessage("End date must be >= start date");
@@ -101,8 +116,23 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
         editableItem.ExtractValues(values);
         try
         {
-            DateTime StartDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtStartDate")).SelectedDate.Value.Date);
-            DateTime EndDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtEndDate")).SelectedDate.Value.Date);
+            //DateTime StartDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtStartDate")).SelectedDate.Value.Date);
+            //DateTime EndDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtEndDate")).SelectedDate.Value.Date);
+
+            DateTime StartDate = DateTime.Now;
+            var StartDateControl = gdItem.FindControl("txtStartDate") as RadDatePicker;
+            if (StartDateControl != null && StartDateControl.SelectedDate.HasValue)
+            {
+                StartDate = StartDateControl.SelectedDate.Value;
+            }
+
+            DateTime EndDate = DateTime.Now;
+            var EndDateControl = gdItem.FindControl("txtEndDate") as RadDatePicker;
+            if (EndDateControl != null && EndDateControl.SelectedDate.HasValue)
+            {
+                StartDate = EndDateControl.SelectedDate.Value;
+            }
+
             double startdate = Utility.ConvertToUnixTimestamp(StartDate);
             double endDate = Utility.ConvertToUnixTimestamp(EndDate);
             if (endDate >= startdate)
@@ -112,7 +142,8 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
                 string SMSContent = ((TextBox)gdItem.FindControl("txtSMSContent")).Text;
                 string webcontent = ((RadEditor)editableItem.FindControl("RadEditor1")).Text;
                 string PhoneNumbers = hdfPhoneNumbers.Value;
-                ScheduleRepo.InsertSchedulePromotion((string)values["UpiCode"], (string)values["Title"], SMSContent, webcontent, StartDate, EndDate, administratorId, false, PhoneNumbers);
+                ScheduleRepo.InsertSchedulePromotion((string)values["UpiCode"], (string)values["Title"], SMSContent, 
+                    webcontent, StartDate, EndDate, administratorId, false, PhoneNumbers);
             }
             else
                 ShowErrorMessage("End date must be >= start date");
@@ -171,7 +202,7 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
                 txtSMSContent.Text = smscontent;
 
                 string PhoneNumber = string.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfPhoneList")).Value) ? string.Empty : ((HiddenField)edititem.FindControl("hdfPhoneList")).Value;
-                RadTextBox txtPhoneNumber = ((RadTextBox)edititem.FindControl("txtPhoneNumber"));
+                RadTextBox txtPhoneNumber = edititem.FindControl("txtPhoneNumber") as RadTextBox;
                 txtPhoneNumber.Text = PhoneNumber;
             }
         }
