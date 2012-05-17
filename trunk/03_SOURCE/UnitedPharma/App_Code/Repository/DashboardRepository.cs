@@ -16,7 +16,7 @@ public class DashboardRepository
 
     public List<Dashboard> GetAll()
     {
-        return (from e in db.Dashboards select e).ToList(); 
+        return (from e in db.Dashboards where e.IsDeleted == false select e).ToList(); 
     }
 
     public Dashboard GetById(int id)

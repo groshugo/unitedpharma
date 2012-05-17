@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Salemans/SalesmenMaster.master" AutoEventWireup="true" CodeFile="SMSFailure.aspx.cs" Inherits="Salemans_SMSFailure" %>
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <title>SMS Failure</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentCommand" Runat="Server">
  <h3>Failure SMS</h3>

@@ -8,7 +8,6 @@ using Telerik.Web.UI;
 
 public partial class Customers_ShowPromotion : System.Web.UI.Page
 {
-    PromotionRepository repo = new PromotionRepository();
     SchedulePromotionRepository ScheduleRepo = new SchedulePromotionRepository();
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -33,7 +32,7 @@ public partial class Customers_ShowPromotion : System.Web.UI.Page
         ObjLogin cust = (ObjLogin)Session["objLogin"];
         if (cust != null)
         {
-            RadGrid1.DataSource = repo.GetPromotionForCustomer(cust.Phone);
+            RadGrid1.DataSource = ScheduleRepo.GetAllViewSchedulePromotion(cust.Phone);
         }
         else
         {

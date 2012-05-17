@@ -16,6 +16,8 @@ public partial class Customers_ViewInfo : System.Web.UI.Page
     {
         if(!IsPostBack)
         {
+            Utility.SetCurrentMenu("mViewInfo");
+
             ObjLogin cust = Session["objLogin"] as ObjLogin;
             if(cust != null)
             {

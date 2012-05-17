@@ -68,7 +68,7 @@
             </telerik:RadListBox>
         </div>
         <div style="width: 300px;float:left;">
-            Managers of this Group:<br />
+            Managers of this Region:<br />
             <telerik:RadListBox Skin="Office2007" ID="ListManagers" runat="server" Height="400px"
                 Width="300px" AllowDelete="true">
             </telerik:RadListBox>

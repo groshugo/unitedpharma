@@ -78,46 +78,55 @@ public partial class Administrator_Compose : System.Web.UI.Page
         string SMSCode = Guid.NewGuid().ToString().ToLower();
         PhoneList = hdfPhoneNumbers.Value;
         string listPhone = hdfPhoneNumbers.Value;
-        char[] separator = new char[] { ',' };
-        string[] phoneList = listPhone.Split(separator);
-        bool flag = false;
-        string PhoneNotExist = string.Empty;
-        foreach (string phone in phoneList)
+
+        if(string.IsNullOrEmpty(listPhone))
         {
-            if (SRepo.CheckSalemenByPhoneNumber(phone))
+            ShowErrorMessage("Please provide recipient to send SMS");
+        }
+        else
+        {
+            char[] separator = new char[] { ',' };
+            string[] phoneList = listPhone.Split(separator);
+            bool flag = false;
+            string PhoneNotExist = string.Empty;
+            foreach (string phone in phoneList)
             {
-                smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, PhoneList, Constant.SalemenType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
-                flag = true;
-            }
-            else
-            {
-                if (CRepo.IsExistedCustomerByPhone(phone))
+                if (SRepo.CheckSalemenByPhoneNumber(phone))
                 {
-                    smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, PhoneList, Constant.CustomerType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
+                    smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, phone, Constant.SalemenType, DateTime.Now, subject,
+                        txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
                     flag = true;
                 }
                 else
                 {
-                    if (ARepo.GetAdminByPhoneNumber(phone))
+                    if (CRepo.IsExistedCustomerByPhone(phone))
                     {
-                        smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, PhoneList, Constant.AdminType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
+                        smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, phone, Constant.CustomerType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
                         flag = true;
                     }
+                    else
+                    {
+                        if (ARepo.GetAdminByPhoneNumber(phone))
+                        {
+                            smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, phone, Constant.AdminType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
+                            flag = true;
+                        }
+                    }
+                }
+                if (flag == false)
+                {
+                    PhoneNotExist += phone + ", ";
                 }
             }
-            if (flag == false)
+            if (!string.IsNullOrEmpty(PhoneNotExist))
             {
-                PhoneNotExist += phone + ", ";
+                ShowErrorMessage(PhoneNotExist.Substring(0, PhoneNotExist.Length - 2) + " not found in database.");
             }
-        }
-        if (!string.IsNullOrEmpty(PhoneNotExist))
-        {
-            ShowErrorMessage(PhoneNotExist.Substring(0, PhoneNotExist.Length - 2) + " not found in database.");
-        }
-        else
-        {
-            //ShowErrorMessage("Send success");
-            Response.Redirect("SMSOutbox.aspx");
+            else
+            {
+                //ShowErrorMessage("Send success");
+                Response.Redirect("SMSOutbox.aspx");
+            } 
         }
     }
     private void ShowErrorMessage(string message)

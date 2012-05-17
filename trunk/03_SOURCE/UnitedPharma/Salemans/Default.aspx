@@ -3,6 +3,7 @@
 
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+    <title>SMS Inbox</title>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentCommand" runat="Server">
     <div style="float: left; height: 35px;">

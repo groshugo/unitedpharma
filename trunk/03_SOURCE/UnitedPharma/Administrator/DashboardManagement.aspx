@@ -286,7 +286,7 @@
                         <a href="javascript:void(0);" onclick="openWinViewDashboard(<%# Eval("ID") %>); return false;">View Details</a>
                     </ItemTemplate>
                 </telerik:GridTemplateColumn>
-                <telerik:GridButtonColumn ConfirmText="Delete this dashboard?" ConfirmDialogType="RadWindow"
+                <telerik:GridButtonColumn ConfirmText="Are you sure you want to delete this Dashboard?" ConfirmDialogType="RadWindow"
                     ConfirmTitle="Delete" ButtonType="ImageButton" CommandName="Delete" />
             </Columns>
             <EditFormSettings>

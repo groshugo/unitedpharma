@@ -215,21 +215,24 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
 
     protected void btnFilter_Click(object sender, EventArgs e)
     {
-        DateTime EndDate;
-        if (txtStartDate.SelectedDate == null)
-            ShowErrorMessage("Select Start date");
+        if (txtStartDate.SelectedDate == null && txtEndtDate.SelectedDate == null)
+            ShowErrorMessage("Please provide at least Start date or End Date to filter");
         else
         {
-            if (txtEndtDate.SelectedDate == null)
-                EndDate = Convert.ToDateTime("12/31/9999");
-            else
-                EndDate = txtEndtDate.SelectedDate.Value;
-            gridSchedulePromotion.DataSource = ScheduleRepo.Filter(txtStartDate.SelectedDate.Value, EndDate,int.Parse(ddlFilters.SelectedValue));
+            var startDate = txtStartDate.SelectedDate == null ? Convert.ToDateTime("1/1/1900") : txtStartDate.SelectedDate.Value;
+
+            var endDate = txtEndtDate.SelectedDate == null ? Convert.ToDateTime("12/31/9999") : txtEndtDate.SelectedDate.Value;
+
+            gridSchedulePromotion.DataSource = ScheduleRepo.Filter(startDate, endDate, int.Parse(ddlFilters.SelectedValue));
             gridSchedulePromotion.Rebind();
         }
     }
     protected void btnClear_Click(object sender, EventArgs e)
     {
+        txtStartDate.SelectedDate = null;
+        txtEndtDate.SelectedDate = null;
+        ddlFilters.SelectedIndex = 0;
+
         gridSchedulePromotion.DataSource = ScheduleRepo.GetAllViewSchedulePromotion();
     }
 
