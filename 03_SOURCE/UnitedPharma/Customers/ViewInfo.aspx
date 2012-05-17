@@ -3,6 +3,7 @@
 
 <%@ Register TagPrefix="telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI, Version=2011.1.315.0, Culture=neutral, PublicKeyToken=29ac1a93ec063d92" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+    <title>View Information</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentCommand" runat="Server">
 </asp:Content>

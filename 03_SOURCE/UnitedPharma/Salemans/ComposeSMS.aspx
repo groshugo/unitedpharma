@@ -2,6 +2,7 @@
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <title>Compose SMS</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentCommand" Runat="Server">
 <h3>Compose SMS</h3>

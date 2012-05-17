@@ -15,14 +15,14 @@ public partial class Salemans_ShowPromotion : System.Web.UI.Page
         if (!IsPostBack)
         {
             Utility.SetCurrentMenu("mPromotion");
-            RadGrid1.DataSource = SRepo.GetAll();
+            RadGrid1.DataSource = SRepo.GetAllApprovedPromotions();
             
         }
     } 
     
     protected void RadGrid1_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        RadGrid1.DataSource = SRepo.GetAll();
+        RadGrid1.DataSource = SRepo.GetAllApprovedPromotions();
     }    
 
     protected void RadGrid1_SelectedIndexChanged(object source, EventArgs e)

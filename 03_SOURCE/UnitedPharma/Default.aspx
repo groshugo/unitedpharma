@@ -120,7 +120,7 @@
             });
             $("#btnVerifyPassword  ").click(function () {
                 if ($("#txtCustPassword").val() == "") {
-                    alert('Please enter phone number!');
+                    alert('Please enter your password!');
                     return;
                 }
 

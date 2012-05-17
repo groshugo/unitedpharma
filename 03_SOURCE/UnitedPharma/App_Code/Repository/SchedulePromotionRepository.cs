@@ -19,6 +19,11 @@ public class SchedulePromotionRepository
         return (from e in db.SchedulePromotions select e).ToList();
     }
 
+    public List<SchedulePromotion> GetAllApprovedPromotions()
+    {
+        return (db.SchedulePromotions.Where(e => e.IsApprove.HasValue && e.IsApprove.Value == true)).ToList();
+    }
+
     public List<vwSchedulePromotion> GetAllViewSchedulePromotion()
     {
         return (from e in db.SchedulePromotions select new vwSchedulePromotion { 
@@ -39,7 +44,7 @@ public class SchedulePromotionRepository
 
     public List<vwSchedulePromotion> GetAllViewSchedulePromotion(string CustomerPhone)
     {
-        return (from e in db.SchedulePromotions where e.PhoneNumbers.Contains(CustomerPhone)
+        return (from e in db.SchedulePromotions where e.PhoneNumbers.Contains(CustomerPhone) && e.IsApprove == true
                 select new vwSchedulePromotion
                 {
                     Id = e.Id,
@@ -205,7 +210,8 @@ public class SchedulePromotionRepository
                         AdministratorId = e.AdministratorId,
                         AdministratorName = GetAdministratorName(e.AdministratorId),
                         IsApprove = e.IsApprove,
-                        PhoneNumbers = e.PhoneNumbers
+                        PhoneNumbers = e.PhoneNumbers,
+                        TotalPhoneNumber = TotalPhoneNumber(e.Id)
                     }).ToList();
         if(Approve==2)
             List = (from e in db.SchedulePromotions
@@ -222,7 +228,8 @@ public class SchedulePromotionRepository
                         AdministratorId = e.AdministratorId,
                         AdministratorName = GetAdministratorName(e.AdministratorId),
                         IsApprove = e.IsApprove,
-                        PhoneNumbers = e.PhoneNumbers
+                        PhoneNumbers = e.PhoneNumbers,
+                        TotalPhoneNumber = TotalPhoneNumber(e.Id)
                     }).ToList();
         if(Approve==0)
             List = (from e in db.SchedulePromotions
@@ -239,7 +246,8 @@ public class SchedulePromotionRepository
                         AdministratorId = e.AdministratorId,
                         AdministratorName = GetAdministratorName(e.AdministratorId),
                         IsApprove = e.IsApprove,
-                        PhoneNumbers = e.PhoneNumbers
+                        PhoneNumbers = e.PhoneNumbers,
+                        TotalPhoneNumber = TotalPhoneNumber(e.Id)
                     }).ToList();
         return List.ToList();
     }

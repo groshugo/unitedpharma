@@ -19,7 +19,21 @@ public partial class Administrator_PhoneSchedulePromotion : System.Web.UI.Page
             Utility.SetCurrentMenu("mAdministrator");
             int Id =Convert.ToInt32(Request.QueryString["ID"]);
             string phoneList = ScheduleRepo.GetSchedulePromotionById(Id).PhoneNumbers;
-            string sql = "SELECT a.FullName as CustomerName,a.UpiCode, a.Phone, b.FullName,s.PositionName FROM [Customer] as a LEFT JOIN [CustomerSupervisor] as b on a.Id=b.CustomerId left join SupervisorPosition as s on b.PositionId=s.Id where a.Phone in (" + phoneList+")";
+
+            string strPhoneList = string.Empty;
+            if(!string.IsNullOrEmpty(phoneList))
+            {
+                string[] listPhone = phoneList.Split(',');
+                foreach (var s in listPhone)
+                {
+                    strPhoneList += string.Format("'{0}',", s);
+                }
+                strPhoneList = strPhoneList.TrimEnd(',');
+            }
+
+            string sql = "SELECT a.FullName as CustomerName,a.UpiCode, a.Phone, b.FullName,s.PositionName " +
+                         "FROM [Customer] as a LEFT JOIN [CustomerSupervisor] as b on a.Id=b.CustomerId left join SupervisorPosition as s on " +
+                         "b.PositionId=s.Id where a.Phone in (" + strPhoneList + ")";
             Utility utility = new Utility();
             SchedulePhoneNumbers.DataSource = utility.GetList(sql);
         }

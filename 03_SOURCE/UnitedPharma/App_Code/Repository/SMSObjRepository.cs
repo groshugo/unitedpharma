@@ -51,7 +51,7 @@ public class SMSObjRepository
         return (from e in db.SmsObjs
                 where e.ReceiverNumber.Contains(Phone) && e.IsDeleted == false && e.IsSendSuccess == true
                 orderby e.Id descending
-                select new vwSMS
+                select  new vwSMS
                 {
                     Id = e.Id,
                     SMSCode = e.SMSCode,
@@ -187,6 +187,9 @@ public class SMSObjRepository
     private string GetName(int? type, string Phone)
     {
         string name = "";
+
+        if (string.IsNullOrEmpty(Phone)) return string.Empty;
+
         switch (type)
         {
             case 0: name = (from e in db.Administrators where String.Equals(e.Phone, Phone) select e.Fullname).SingleOrDefault(); break;
@@ -199,6 +202,9 @@ public class SMSObjRepository
     private int GetId(int? type, string Phone)
     {
         int Id = 0;
+        
+        if (string.IsNullOrEmpty(Phone)) return Id;
+
         switch (type)
         {
             case 0: Id = (from e in db.Administrators where String.Equals(e.Phone, Phone) select e.Id).SingleOrDefault(); break;
