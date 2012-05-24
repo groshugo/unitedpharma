@@ -116,4 +116,40 @@
   <data name="SMS_SMSReceiving_Invalid_sms_structure">
     <value xml:space="preserve">Cau truc tin nhan khong dung cu phap</value>
   </data>
+  <data name="Administrator_Default_RadGrid1_InsertCommand_Can_not_add_role">
+    <value xml:space="preserve">Can not add, please provide new name or try again or contact administrator</value>
+  </data>
+  <data name="Administrator_Default_RadGrid1_InsertCommand_Please_provide_role_name_to_add">
+    <value xml:space="preserve">Please provide role name to add</value>
+  </data>
+  <data name="Administrator_Default_RadGrid1_InsertCommand_can_not_add__please_try_again_later_or_contact_admnistrator_">
+    <value xml:space="preserve">can not add, please try again later or contact admnistrator.</value>
+  </data>
+  <data
+name="Administrator_Default_RadGrid1_DeleteCommand_can_not_delete__please_try_again_later_or_contact_admnistrator_">
+    <value xml:space="preserve">can not delete, please try again later or contact admnistrator.</value>
+  </data>
+  <data
+name="Administrator_Default_RadGrid1_UpdateCommand_can_not_update__please_try_again_later_or_contact_admnistrator_">
+    <value xml:space="preserve">can not update, please try again later or contact admnistrator.</value>
+  </data>
+  <data name="Administrator_Default_RadGrid1_UpdateCommand_Please_provide_role_name_to_update">
+    <value xml:space="preserve">Please provide role name to update</value>
+  </data>
+  <data
+name="Administrator_Default_RadGrid1_UpdateCommand_Can_not_update__please_provide_new_name_or_try_again_or_contact_administrator">
+    <value xml:space="preserve">Can not update, please provide another name or try again or contact administrator</value>
+  </data>
+  <data name="Provide_info_to_insert__please">
+    <value xml:space="preserve">Provide info to insert, please</value>
+  </data>
+  <data name="Provide_full_name_to_save__please">
+    <value xml:space="preserve">All fields are required fields</value>
+  </data>
+  <data name="Can_not_save__change_to_another_phone_numer_or_try_again_later_or_contact_administrator_">
+    <value xml:space="preserve">Can not save, change to another phone numer or UpiCode, try again later or contact administrator!</value>
+  </data>
+  <data name="Phone_number_not_valid">
+    <value xml:space="preserve">Phone number not valid</value>
+  </data>
 </root>
