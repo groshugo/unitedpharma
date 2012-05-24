@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Resources;
 using Telerik.Web.UI;
 using System.Collections;
 
@@ -34,18 +35,34 @@ public partial class Administrator_Default : System.Web.UI.Page
         var id = (int)editableItem.GetDataKeyValue("Id");
         try
         {
-            repo.Edit(id, (string)values["RoleName"]);
+            var roleName = values["RoleName"] as string;
+
+            if (roleName == null || string.IsNullOrEmpty(roleName.Trim()))
+            {
+                ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_UpdateCommand_Please_provide_role_name_to_update);
+                e.Canceled = true;
+            }
+            else
+            {
+                var result = repo.Edit(id, roleName.Trim());
+                if (!result)
+                {
+                    ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_UpdateCommand_Can_not_update__please_provide_new_name_or_try_again_or_contact_administrator);
+                    e.Canceled = true;
+                }
+            }
         }
-        catch (System.Exception)
+        catch (System.Exception ex)
         {
-            ShowErrorMessage();
+            e.Canceled = true;
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_UpdateCommand_can_not_update__please_try_again_later_or_contact_admnistrator_);
         }
 
     }
 
-    private void ShowErrorMessage()
+    private void ShowErrorMessage(string errMsg)
     {
-        RadAjaxManager1.ResponseScripts.Add(string.Format("window.radalert(\"Please enter valid data!\")"));
+        RadAjaxManager1.ResponseScripts.Add(string.Format("window.radalert(\"{0}!\")", errMsg));
     }
 
     protected void RadGrid1_InsertCommand(object source, GridCommandEventArgs e)
@@ -55,11 +72,28 @@ public partial class Administrator_Default : System.Web.UI.Page
         editableItem.ExtractValues(values);
         try
         {
-            repo.Add((string)values["RoleName"]);
+            var roleName = values["RoleName"] as string;
+
+            if (roleName == null || string.IsNullOrEmpty(roleName.Trim()))
+            {
+                ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_InsertCommand_Please_provide_role_name_to_add);
+                e.Canceled = true;
+            }
+            else
+            {
+                var result = repo.Add(roleName.Trim());
+                if(!result)
+                {
+                    ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_InsertCommand_Can_not_add_role);
+                    e.Canceled = true;
+                }
+            }
+            
         }
         catch (System.Exception)
         {
-            ShowErrorMessage();
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_InsertCommand_can_not_add__please_try_again_later_or_contact_admnistrator_);
+            e.Canceled = true;
         }
     }
     protected void RadGrid1_DeleteCommand(object source, GridCommandEventArgs e)
@@ -71,7 +105,7 @@ public partial class Administrator_Default : System.Web.UI.Page
         }
         catch (System.Exception)
         {
-            ShowErrorMessage();
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_DeleteCommand_can_not_delete__please_try_again_later_or_contact_admnistrator_);
         }
 
     }

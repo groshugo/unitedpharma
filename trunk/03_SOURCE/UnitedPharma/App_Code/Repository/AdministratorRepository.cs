@@ -44,16 +44,20 @@ public class AdministratorRepository
         return (from e in db.Administrators where String.Equals(phone, e.Phone) && String.Equals(password, e.Password) select new ObjLogin { Id = e.Id, Fullname = e.Fullname, Phone = e.Phone,AllowApprove=e.AllowApprove }).SingleOrDefault();
     }
 
-    public bool Add(string UpiCode, string Fullname, string Password, string Phone)
+    public bool Add(string upiCode, string fullname, string password, string phone)
     {
         try
         {
-            Administrator o = new Administrator();
-            o.UpiCode = UpiCode;
-            o.Fullname = Fullname;
-            o.Phone = Phone;
-            o.Password = Password;
-            o.AllowApprove = false;
+            if (!IsAdminExisted(-1, upiCode, phone)) return false;
+
+            var o = new Administrator
+            {
+                UpiCode = upiCode,
+                Fullname = fullname,
+                Phone = phone,
+                Password = password,
+                AllowApprove = false
+            };
             db.Administrators.InsertOnSubmit(o);
             db.SubmitChanges();
             return true;
@@ -64,29 +68,50 @@ public class AdministratorRepository
         }
     }
 
-    public bool Edit(int id, string UpiCode, string Fullname, string Password, string Phone)
+    public bool Edit(int id, string upiCode, string fullname, string password, string phone)
     {
         try
         {
+            if (!IsAdminExisted(id, upiCode, phone)) return false;
+
             var o = (from e in db.Administrators where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
-                o.UpiCode = UpiCode;
-                o.Fullname = Fullname;
-                o.Phone = Phone;
-                o.Password = Password;             
+                o.UpiCode = upiCode;
+                o.Fullname = fullname;
+                o.Phone = phone;
+                o.Password = password;             
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
             return false;
         }
     }
-    
+
+    private bool IsAdminExisted(int id, string upiCode, string phone)
+    {
+        if(id == -1)
+        {
+            var oForChecking = (from e in db.Administrators
+                                where (e.Phone == phone || e.UpiCode == upiCode)
+                                select e).SingleOrDefault();
+            return oForChecking == null;
+        }
+        else
+        {
+            var oForChecking = (from e in db.Administrators
+                                where e.Id != id &&
+                                      (e.Phone == phone || e.UpiCode == upiCode)
+                                select e).SingleOrDefault();
+            return oForChecking == null;
+        }
+        
+    }
+
     public bool Delete(int id)
     {
         var o = (from e in db.Administrators where e.Id == id select e).SingleOrDefault();

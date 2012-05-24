@@ -79,6 +79,12 @@ public class RolesRepository
     {
         try
         {
+            var orgRole = (from e in db.Roles where e.Id != id && e.RoleName == RoleName select e).SingleOrDefault();
+            if(orgRole != null)
+            {
+                return false;
+            }
+
             var o = (from e in db.Roles where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
