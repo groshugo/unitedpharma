@@ -65,12 +65,14 @@
             </telerik:AjaxSetting>
         </AjaxSettings>
     </telerik:RadAjaxManager>
+
     <telerik:RadAjaxLoadingPanel runat="server" Transparency="25" ID="RadAjaxLoadingPanel1" CssClass="RadAjax RadAjax_Vista">
         <div class="raDiv">
         </div>
         <div class="raColor raTransp">
         </div>
     </telerik:RadAjaxLoadingPanel>
+
     <asp:Panel ID="PanelForwardSMS" runat="server">
         <div style="padding-left:10px; padding-top:10px">
             <table>

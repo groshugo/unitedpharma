@@ -340,25 +340,11 @@
                     <ItemTemplate>
                         <asp:Label ID="lblCreateDate" runat="server" Text='<%# String.Format("{0:d}", Eval("CreateDate")) %>'></asp:Label>
                     </ItemTemplate>
-                    <EditItemTemplate>
-                        <asp:HiddenField ID="hdfCreateDate" runat="server" Value='<%# String.Format("{0:d}", Eval("CreateDate")) %>' />
-                        <telerik:RadDatePicker ID="txtCreateDate" runat="server" DateInput-ReadOnly="true">
-                            <Calendar ID="CalendarCreateDate" runat="server" RangeMinDate="1900-01-01" RangeMaxDate="2050-12-29">
-                            </Calendar>
-                        </telerik:RadDatePicker>
-                    </EditItemTemplate>
                 </telerik:GridTemplateColumn>
                 <telerik:GridTemplateColumn HeaderText="UpdateDate" Visible="false">
                     <ItemTemplate>
                         <asp:Label ID="lblUpdateDate" runat="server" Text='<%# String.Format("{0:d}", Eval("UpdateDate")) %>'></asp:Label>
                     </ItemTemplate>
-                    <EditItemTemplate>
-                        <asp:HiddenField ID="hdfUpdateDate" runat="server" Value='<%# String.Format("{0:d}", Eval("UpdateDate")) %>' />
-                        <telerik:RadDatePicker ID="txtUpdateDate" runat="server" DateInput-ReadOnly="true">
-                            <Calendar ID="CalendarUpdateDate" runat="server" RangeMinDate="1900-01-01" RangeMaxDate="2050-12-29">
-                            </Calendar>
-                        </telerik:RadDatePicker>
-                    </EditItemTemplate>
                 </telerik:GridTemplateColumn>
                 <telerik:GridTemplateColumn HeaderText="Location" UniqueName="LocationColumn" Visible="false">
                     <ItemTemplate>
@@ -390,7 +376,7 @@
                 <telerik:GridBoundColumn DataField="LocalName" HeaderText="Local" ReadOnly="true" />
                 <telerik:GridCheckBoxColumn DataField="Status" HeaderText="Status" UniqueName="Status">
                 </telerik:GridCheckBoxColumn>
-                <telerik:GridBoundColumn DataField="SupervisorName" HeaderText="Name of Salesmen" />
+                <telerik:GridBoundColumn DataField="SupervisorName" HeaderText="Supervisor Name" />
                 <telerik:GridTemplateColumn HeaderText="Note Of Salesmen">
                     <EditItemTemplate>
                         <asp:TextBox runat="server" ID="txtNoteOfSalesmen" TextMode="MultiLine" Rows="4"

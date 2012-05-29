@@ -54,7 +54,24 @@ public class AreasRepository
             return o.Id;
         }
     }
-    public int Add(string UPICode, string AreaName, string Description, int RegionId)
+    public int Add(string upiCode, string areaName, string description, int regionId)
+    {
+        try
+        {
+            if (CheckExistedArea(-1, areaName)) return -1;
+
+            var o = new Area {UpiCode = upiCode, AreaName = areaName, Description = description, RegionId = regionId};
+            db.Areas.InsertOnSubmit(o);
+            db.SubmitChanges();
+            return o.Id;
+        }
+        catch
+        {
+            return -1;
+        }
+    }
+
+    public int Import(string UPICode, string AreaName, string Description, int RegionId)
     {
         try
         {
@@ -81,6 +98,7 @@ public class AreasRepository
             return -1;
         }
     }
+
     public bool CheckExistedArea(string AreaName)
     {
         var o = (from e in db.Areas where e.AreaName.Trim().ToLower() == AreaName.Trim().ToLower() select e).Count();
@@ -94,6 +112,8 @@ public class AreasRepository
     {
         try
         {
+            if (CheckExistedArea(id, AreaName)) return false;
+
             var o = (from e in db.Areas where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {                
@@ -104,8 +124,7 @@ public class AreasRepository
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
@@ -193,5 +212,23 @@ public class AreasRepository
                 lst.AddRange(e);
         }
         return lst;
+    }
+
+    public bool CheckExistedArea(int id, string areaName)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.Areas where e.AreaName.Trim().ToLower() == areaName.Trim().ToLower() select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.Areas
+                     where e.AreaName.Trim().ToLower() == areaName.Trim().ToLower()
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
     }
 }

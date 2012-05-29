@@ -61,7 +61,7 @@ public partial class Salemans_Default : System.Web.UI.Page
 
     protected void btnClearFilter_Click(object sender, EventArgs e)
     {
-        RadGrid1.Rebind();
+        Response.Redirect("/Salemans/Default.aspx");
     }
 
     private void ShowMessage(string message)

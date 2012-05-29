@@ -189,13 +189,6 @@
                 </UpdatedControls>
             </telerik:AjaxSetting>
         </AjaxSettings>
-        <AjaxSettings>
-            <telerik:AjaxSetting AjaxControlID="ddlLocal">
-                <UpdatedControls>
-                    <telerik:AjaxUpdatedControl ControlID="RadPanel1" LoadingPanelID="RadAjaxLoadingPanel1" />
-                </UpdatedControls>
-            </telerik:AjaxSetting>
-        </AjaxSettings>
     </telerik:RadAjaxManager>
     <telerik:RadAjaxLoadingPanel runat="server" Transparency="25" ID="RadAjaxLoadingPanel1"
         CssClass="RadAjax RadAjax_Vista">
@@ -291,7 +284,7 @@
             </table>
         </div>
     </asp:Panel>
-    <div style="float: right; position: absolute; top: 5px; right: 15px">
+    <div style="float: right; position: absolute; top: 0px; right: 10px">
         <telerik:RadButton ID="btnSendSMS" runat="server" Text="Send SMS" Skin="Office2007">
         </telerik:RadButton>
         <telerik:RadButton ID="btnAbort" runat="server" Text="Abort" Skin="Office2007">

@@ -28,9 +28,16 @@ public partial class Salemans_SMSForward : System.Web.UI.Page
                         string[] phoneList = listPhone.Split(separator);
                         List<vwSMS> rs = new List<vwSMS>();
                         rs = repo.GetSMSById(Convert.ToInt32(Request.QueryString["ID"]));
-                        var result = rs.FirstOrDefault();
-                        txtTitle.Text = "FW: " + result.Subject;
-                        txtForwardContent.Text = "FW: " + result.Content;                        
+                        if (rs != null)
+                        {
+                            var result = rs.FirstOrDefault();
+                            if(result != null)
+                            {
+                                txtTitle.Text = string.Format("Fwd: {0}", result.Subject);
+                                txtForwardContent.Text = string.Format("\n---------- Forwarded message ----------\n{0}",
+                                                                       result.Content);
+                            }
+                        }
                     }
                     else
                     {
@@ -54,6 +61,13 @@ public partial class Salemans_SMSForward : System.Web.UI.Page
     }
     protected void btnSendSMS_Click(object sender, EventArgs e)
     {
+        if(string.IsNullOrEmpty(txtTitle.Text.Trim()))
+        {
+            ShowErrorMessage("Please provide title to forward");
+            txtTitle.Focus();
+            return;
+        }
+
         ObjLogin adm = (ObjLogin)Session["objLogin"];
         if (repo.CheckOwner(adm.Phone, Convert.ToInt32(Request.QueryString["ID"])))
         {

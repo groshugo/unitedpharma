@@ -42,6 +42,8 @@
             <telerik:AjaxSetting AjaxControlID="ddlGroup">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="ddlRegion" LoadingPanelID="RadAjaxLoadingPanel1" />
+                    <telerik:AjaxUpdatedControl ControlID="ddlArea" LoadingPanelID="RadAjaxLoadingPanel1" />
+                    <telerik:AjaxUpdatedControl ControlID="ddlLocal" LoadingPanelID="RadAjaxLoadingPanel1" />
                     <telerik:AjaxUpdatedControl ControlID="RadWindowManager1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
@@ -50,6 +52,7 @@
             <telerik:AjaxSetting AjaxControlID="ddlRegion">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="ddlArea" LoadingPanelID="RadAjaxLoadingPanel1" />
+                    <telerik:AjaxUpdatedControl ControlID="ddlLocal" LoadingPanelID="RadAjaxLoadingPanel1" />
                     <telerik:AjaxUpdatedControl ControlID="RadWindowManager1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>

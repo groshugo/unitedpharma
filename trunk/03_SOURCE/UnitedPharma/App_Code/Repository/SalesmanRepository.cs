@@ -56,68 +56,67 @@ public class SalesmanRepository
     {
         return (from e in db.Salesmens where e.FullName.Trim().ToLower() == FullName.Trim().ToLower() select e.Id).SingleOrDefault();
     }
-    public bool Add(string UpiCode, string FullName, string Phone, int RoleId, int SmsQuota, DateTime ExpiredDate,
+    public bool Add(string upiCode, string fullName, string phone, int roleId, int smsQuota, DateTime expiredDate,
         int groupId, int regionId, int areaId, int localId)
     {
         try
         {
-            if (CheckExistedSalesmen(FullName) == false)
+            if (CheckExistedSalemen(-1, upiCode, phone)) return false;
+
+            var o = new Salesmen
+                        {
+                            UpiCode = upiCode,
+                            FullName = fullName,
+                            Phone = phone,
+                            RoleId = roleId,
+                            SmsQuota = smsQuota,
+                            ExpiredDate = expiredDate
+                        };
+            db.Salesmens.InsertOnSubmit(o);
+            db.SubmitChanges();
+
+            int salesMenId = o.Id;
+            if (groupId != 0)
             {
-                Salesmen o = new Salesmen();
-                o.UpiCode = UpiCode;
-                o.FullName = FullName;
-                o.Phone = Phone;
-                o.RoleId = RoleId;
-                o.SmsQuota = SmsQuota;
-                o.ExpiredDate = ExpiredDate;
-                db.Salesmens.InsertOnSubmit(o);
+                // insert Group to SaleGroup
+                SalesGroup salesGroup = new SalesGroup();
+                salesGroup.GroupId = groupId;
+                salesGroup.SalesmenId = salesMenId;
+                db.SalesGroups.InsertOnSubmit(salesGroup);
                 db.SubmitChanges();
-
-                int salesMenId = o.Id;
-                if(groupId != 0)
-                {
-                    // insert Group to SaleGroup
-                    SalesGroup salesGroup = new SalesGroup();
-                    salesGroup.GroupId = groupId;
-                    salesGroup.SalesmenId = salesMenId;
-                    db.SalesGroups.InsertOnSubmit(salesGroup);
-                    db.SubmitChanges();
-                }
-
-                if(regionId != 0)
-                {
-                    // insert region
-                    SalesRegion salesRegion = new SalesRegion();
-                    salesRegion.SalesmenId = salesMenId;
-                    salesRegion.RegionId = regionId;
-                    db.SalesRegions.InsertOnSubmit(salesRegion);
-                    db.SubmitChanges();
-                }
-
-                if (areaId != 0)
-                {
-                    // insert area
-                    SalesArea salesArea = new SalesArea();
-                    salesArea.SalesmenId = salesMenId;
-                    salesArea.AreaId = areaId;
-                    db.SalesAreas.InsertOnSubmit(salesArea);
-                    db.SubmitChanges();
-                }
-
-                if (localId != 0)
-                {
-                    // insert area
-                    SalesLocal salesLocal = new SalesLocal();
-                    salesLocal.SalesmenId = salesMenId;
-                    salesLocal.LocalId = localId;
-                    db.SalesLocals.InsertOnSubmit(salesLocal);
-                    db.SubmitChanges();
-                }
-
-                return true;
             }
-            else
-                return false;
+
+            if (regionId != 0)
+            {
+                // insert region
+                SalesRegion salesRegion = new SalesRegion();
+                salesRegion.SalesmenId = salesMenId;
+                salesRegion.RegionId = regionId;
+                db.SalesRegions.InsertOnSubmit(salesRegion);
+                db.SubmitChanges();
+            }
+
+            if (areaId != 0)
+            {
+                // insert area
+                SalesArea salesArea = new SalesArea();
+                salesArea.SalesmenId = salesMenId;
+                salesArea.AreaId = areaId;
+                db.SalesAreas.InsertOnSubmit(salesArea);
+                db.SubmitChanges();
+            }
+
+            if (localId != 0)
+            {
+                // insert area
+                SalesLocal salesLocal = new SalesLocal();
+                salesLocal.SalesmenId = salesMenId;
+                salesLocal.LocalId = localId;
+                db.SalesLocals.InsertOnSubmit(salesLocal);
+                db.SubmitChanges();
+            }
+
+            return true;
         }
         catch
         {
@@ -125,13 +124,13 @@ public class SalesmanRepository
         }
     }
 
-    public bool Add(string UpiCode, string FullName, string Phone, int RoleId, int SmsQuota, DateTime ExpiredDate, int localId)
+    public bool Add(string upiCode, string fullName, string phone, int roleId, int smsQuota, DateTime expiredDate, int localId)
     {
-        return Add(UpiCode, FullName, Phone, RoleId, SmsQuota, ExpiredDate, 0, 0, 0, localId);
+        return Add(upiCode, fullName, phone, roleId, smsQuota, expiredDate, 0, 0, 0, localId);
     }
-    public bool Add(string UpiCode, string FullName, string Phone, int RoleId, int SmsQuota, DateTime ExpiredDate)
+    public bool Add(string upiCode, string fullName, string phone, int roleId, int smsQuota, DateTime expiredDate)
     {
-        return Add(UpiCode, FullName, Phone, RoleId, SmsQuota, ExpiredDate, 0, 0, 0, 0);
+        return Add(upiCode, fullName, phone, roleId, smsQuota, expiredDate, 0, 0, 0, 0);
     }
 
     public bool CheckExistedSalesmen(string FullName)
@@ -143,25 +142,27 @@ public class SalesmanRepository
             return false;
     }
 
-    public bool Edit(int id, string UpiCode, string FullName, string Phone, int RoleId, int SmsQuota, DateTime ExpiredDate)
+    public bool Edit(int id, string upiCode, string fullName, string phone, int roleId, int smsQuota, DateTime expiredDate)
     {
-        return Edit(id, UpiCode, FullName, Phone, RoleId, SmsQuota, ExpiredDate, 0, 0, 0, 0);
+        return Edit(id, upiCode, fullName, phone, roleId, smsQuota, expiredDate, 0, 0, 0, 0);
     }
 
-    public bool Edit(int id, string UpiCode, string FullName, string Phone, int RoleId, int SmsQuota, DateTime ExpiredDate, 
+    public bool Edit(int id, string upiCode, string fullName, string phone, int roleId, int smsQuota, DateTime expiredDate, 
         int groupId, int regionId, int areaId, int localId)
     {
         try
         {
+            if (CheckExistedSalemen(id, upiCode, phone)) return false;
+
             var o = (from e in db.Salesmens where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
-                o.UpiCode = UpiCode;
-                o.FullName = FullName;
-                o.Phone = Phone;
-                o.RoleId = RoleId;
-                o.SmsQuota = SmsQuota;
-                o.ExpiredDate = ExpiredDate;
+                o.UpiCode = upiCode;
+                o.FullName = fullName;
+                o.Phone = phone;
+                o.RoleId = roleId;
+                o.SmsQuota = smsQuota;
+                o.ExpiredDate = expiredDate;
                 db.SubmitChanges();
 
                 int salesMenId = id;
@@ -210,8 +211,7 @@ public class SalesmanRepository
 
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
@@ -927,5 +927,27 @@ public class SalesmanRepository
         {
             return -1;
         }
+    }
+
+    public bool CheckExistedSalemen(int id, string upiCode, string phoneNumber)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.Salesmens
+                     where string.Compare(e.UpiCode.Trim(), upiCode.Trim(), StringComparison.OrdinalIgnoreCase) == 0
+                     || string.Compare(e.Phone.Trim(), phoneNumber.Trim(), StringComparison.OrdinalIgnoreCase) == 0
+                      select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.Salesmens
+                     where (string.Compare(e.UpiCode.Trim(), upiCode.Trim(), StringComparison.OrdinalIgnoreCase) == 0
+                     || string.Compare(e.Phone.Trim(), phoneNumber.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
     }
 }

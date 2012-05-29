@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using Resources;
 using Telerik.Web.UI;
 using System.Collections;
@@ -47,7 +42,7 @@ public partial class Administrator_Default : System.Web.UI.Page
                 var result = repo.Edit(id, roleName.Trim());
                 if (!result)
                 {
-                    ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_UpdateCommand_Can_not_update__please_provide_new_name_or_try_again_or_contact_administrator);
+                    ShowErrorMessage("Role name must be unique, please try again with the another name");
                     e.Canceled = true;
                 }
             }
@@ -84,7 +79,7 @@ public partial class Administrator_Default : System.Web.UI.Page
                 var result = repo.Add(roleName.Trim());
                 if(!result)
                 {
-                    ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_InsertCommand_Can_not_add_role);
+                    ShowErrorMessage("Role name must be unique, please try again with the another name");
                     e.Canceled = true;
                 }
             }

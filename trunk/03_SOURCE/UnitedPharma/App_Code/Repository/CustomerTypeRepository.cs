@@ -48,21 +48,18 @@ public class CustomerTypeRepository
             return o.Id;
         }
     }
-    public bool Add(string UpiCode, string TypeName)
+    public bool Add(string upiCode, string typeName)
     {
         try
         {
-            if (CheckExistedCustomerType(TypeName) == false)
-            {
-                CustomerType o = new CustomerType();
-                o.UpiCode = UpiCode;
-                o.TypeName = TypeName;
-                db.CustomerTypes.InsertOnSubmit(o);
-                db.SubmitChanges();
-                return true;
-            }
-            else
-                return false;
+            if (CheckExistedType(-1, typeName)) return false;
+
+            var o = new CustomerType();
+            o.UpiCode = upiCode;
+            o.TypeName = typeName;
+            db.CustomerTypes.InsertOnSubmit(o);
+            db.SubmitChanges();
+            return true;
         }
         catch
         {
@@ -77,20 +74,21 @@ public class CustomerTypeRepository
         else
             return false;
     }
-    public bool Edit(int id, string UpiCode, string TypeName)
+    public bool Edit(int id, string upiCode, string typeName)
     {
         try
         {
+            if (CheckExistedType(id, typeName)) return false;
+
             var o = (from e in db.CustomerTypes where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
-                o.UpiCode = UpiCode;
-                o.TypeName = TypeName;               
+                o.UpiCode = upiCode;
+                o.TypeName = typeName;               
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
@@ -118,5 +116,21 @@ public class CustomerTypeRepository
             return false;
     }
 
-    
+    public bool CheckExistedType(int id, string typeName)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.CustomerTypes where e.TypeName.Trim().ToLower() == typeName.Trim().ToLower() select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.CustomerTypes
+                     where e.TypeName.Trim().ToLower() == typeName.Trim().ToLower()
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
+    }
 }

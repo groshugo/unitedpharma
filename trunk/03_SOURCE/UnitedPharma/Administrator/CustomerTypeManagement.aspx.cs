@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Resources;
 using Telerik.Web.UI;
 using System.Collections;
 
@@ -30,22 +31,48 @@ public partial class Administrator_CustomerTypeManagement : System.Web.UI.Page
         var editableItem = ((GridEditableItem)e.Item);
         Hashtable values = new Hashtable();
         editableItem.ExtractValues(values);
-        var CustomerTypeId = (int)editableItem.GetDataKeyValue("Id");
+        var customerTypeId = (int)editableItem.GetDataKeyValue("Id");
 
         try
         {
-            repo.Edit(CustomerTypeId, (string)values["UpiCode"], (string)values["TypeName"]);
+            var typeName = values["TypeName"] as string;
+            var upiCode = values["UpiCode"] as string;
+
+            if (string.IsNullOrEmpty(typeName) && string.IsNullOrEmpty(typeName) && string.IsNullOrEmpty(typeName) && string.IsNullOrEmpty(upiCode))
+            {
+                ShowErrorMessage(Pharma.Provide_info_to_insert__please);
+                e.Canceled = true;
+            }
+            else
+            {
+                if (upiCode == null || string.IsNullOrEmpty(upiCode.Trim())
+                    || typeName == null || string.IsNullOrEmpty(typeName.Trim()))
+                {
+                    ShowErrorMessage(Pharma.Provide_full_name_to_save__please);
+                    e.Canceled = true;
+                }
+                else
+                {
+                    var result = repo.Edit(customerTypeId, upiCode, typeName);
+                    if (!result)
+                    {
+                        ShowErrorMessage("UPI code and Customer Type are unique, please change to another one.");
+                        e.Canceled = true;
+                    }
+                }
+            }
         }
         catch (System.Exception)
         {
-            ShowErrorMessage();
+            ShowErrorMessage(Pharma.can_not_save__try_again_later_or_contact_administrator);
+            e.Canceled = true;
         }
 
     }
 
-    private void ShowErrorMessage()
+    private void ShowErrorMessage(string errMsg)
     {
-        RadAjaxManager1.ResponseScripts.Add(string.Format("window.radalert(\"Please enter valid data!\")"));
+        RadAjaxManager1.ResponseScripts.Add(string.Format("window.radalert(\"{0}\")", errMsg));
     }
 
     protected void RadGrid1_InsertCommand(object source, GridCommandEventArgs e)
@@ -55,11 +82,37 @@ public partial class Administrator_CustomerTypeManagement : System.Web.UI.Page
         editableItem.ExtractValues(values);
         try
         {
-            repo.Add((string)values["UpiCode"], (string)values["TypeName"]);
+            var typeName = values["TypeName"] as string;
+            var upiCode = values["UpiCode"] as string;
+
+            if (string.IsNullOrEmpty(typeName) && string.IsNullOrEmpty(typeName) && string.IsNullOrEmpty(typeName) && string.IsNullOrEmpty(upiCode))
+            {
+                ShowErrorMessage(Pharma.Provide_info_to_insert__please);
+                e.Canceled = true;
+            }
+            else
+            {
+                if (upiCode == null || string.IsNullOrEmpty(upiCode.Trim())
+                    || typeName == null || string.IsNullOrEmpty(typeName.Trim()))
+                {
+                    ShowErrorMessage(Pharma.Provide_full_name_to_save__please);
+                    e.Canceled = true;
+                }
+                else
+                {
+                    var result = repo.Add(upiCode, typeName);
+                    if (!result)
+                    {
+                        ShowErrorMessage("UPI code and Customer Type are unique, please change to another one.");
+                        e.Canceled = true;
+                    }
+                }
+            }
         }
         catch (System.Exception)
         {
-            ShowErrorMessage();
+            ShowErrorMessage(Pharma.can_not_save__try_again_later_or_contact_administrator);
+            e.Canceled = true;
         }
     }
 
@@ -72,7 +125,7 @@ public partial class Administrator_CustomerTypeManagement : System.Web.UI.Page
         }
         catch (System.Exception)
         {
-            ShowErrorMessage();
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_DeleteCommand_can_not_delete__please_try_again_later_or_contact_admnistrator_);
         }
 
     }

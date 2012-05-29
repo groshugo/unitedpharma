@@ -96,10 +96,10 @@ public partial class Administrator_ImportCustomers : System.Web.UI.Page
                                                                 ws.Rows[i].Cells[24].Value.ToString());
 
                             // Add Group - Region - Area - Local
-                            var groupId = GRepo.Add("", vmMasterItem.Group, "");
-                            var regionId = RegionRepo.Add("", vmMasterItem.Region, "", groupId);
-                            var areaId = AreaRepo.Add("", vmMasterItem.Area, "", regionId);
-                            var localId = LocalRepo.Add("", vmMasterItem.Local, "", areaId);
+                            var groupId = GRepo.Import("", vmMasterItem.Group, "");
+                            var regionId = RegionRepo.Import("", vmMasterItem.Region, "", groupId);
+                            var areaId = AreaRepo.Import("", vmMasterItem.Area, "", regionId);
+                            var localId = LocalRepo.Import("", vmMasterItem.Local, "", areaId);
 
                             // Add section
                             var sectionId = sectionRepo.Import(vmMasterItem.Area);

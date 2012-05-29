@@ -139,22 +139,53 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
         int LocalId = (ddlLocal.Items.Count > 0) ? int.Parse(ddlLocal.SelectedValue) : 0;
 
         string sql = string.Empty;
-        sql = "select s.*,r.RoleName from salesmen s left join salesgroup sg on s.Id=sg.salesmenId left join salesregion sr on s.Id=sr.SalesmenId";
-        sql += " left join salesArea sa on s.Id=sa.salesmenId left join salesLocal sl on s.Id=sl.SalesmenId left join Role r on s.RoleId=r.Id where s.Id>0 ";
+
+        var groupJoinString = string.Empty;
+        var groupWhereString = string.Empty;
         if (GroupId > 0)
-            sql += " and sg.GroupId=" + GroupId;
+        {
+            groupJoinString += " left join salesgroup sg on s.Id=sg.salesmenId ";
+            groupWhereString= " and sg.GroupId=" + GroupId + " ";
+        }
+
+        var regionJoinString = string.Empty;
+        var regionWhereString = string.Empty;
         if (RegionId > 0)
-            sql += " and sr.RegionId=" + RegionId;
+        {
+            regionJoinString += " left join salesregion sr on s.Id=sr.SalesmenId ";
+            regionWhereString = " and sr.RegionId=" + RegionId + " ";
+        }
+
+        var areaJoinString = string.Empty;
+        var areaWhereString = string.Empty;
         if (AreaId > 0)
-            sql += " and sa.AreaId=" + AreaId;
+        {
+            areaJoinString += " left join salesArea sa on s.Id=sa.salesmenId ";
+            areaWhereString = " and sa.AreaId=" + AreaId + " ";
+        }
+
+        var localJoinString = string.Empty;
+        var localWhereString = string.Empty;
         if (LocalId > 0)
-            sql += " and sl.LocalId=" + LocalId;
+        {
+            localJoinString += " left join salesLocal sl on s.Id=sl.SalesmenId ";
+            localWhereString = " and sl.LocalId=" + LocalId + " ";
+        }
+
+        sql = "select s.*,r.RoleName from salesmen s " + groupJoinString + regionJoinString + areaJoinString +
+              localJoinString + " left join Role r on s.RoleId=r.Id where s.Id > 0 " + groupWhereString +
+              regionWhereString + areaWhereString + localWhereString;
+
         if (txtFullName.Text.Trim() != "")
             sql += " and s.FullName like '%" + txtFullName.Text.Trim() + "%'";
         if (txtPhoneNumber.Text.Trim() != "")
             sql += " and s.Phone like '%" + txtPhoneNumber.Text.Trim() + "%'";
+        
+
         if (txtRoleName.Text.Trim() != "")
             sql += " and r.RoleName like '%" + txtRoleName.Text.Trim() + "%'";
+
+        
 
         dt = U.GetList(sql);
         RadGrid1.DataSource = null;
@@ -175,39 +206,85 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
         var Salesmen = sRepo.GetById(SalesmenId);
         if (Salesmen != null)
         {
-            if (checkValid.phoneFormat((string)values["Phone"]))
+            try
             {
-                if (gdItem != null)
+                var upiCode = values["UpiCode"] as string;
+                var phoneNumber = values["Phone"] as string;
+                var fullName = values["FullName"] as string;
+
+                if (phoneNumber == null || string.IsNullOrEmpty(phoneNumber.Trim()) ||
+                    upiCode == null || string.IsNullOrEmpty(upiCode.Trim()) ||
+                    fullName == null || string.IsNullOrEmpty(fullName.Trim()))
                 {
-                    var expDate = gdItem.FindControl("txtExpiredDate") as RadDateTimePicker;
-                    var expDateValue = DateTime.Now;
-                    if (expDate != null && expDate.SelectedDate.HasValue)
-                    {
-                        expDateValue = expDate.SelectedDate.Value;
-                    }
-
-                    var cboRole = gdItem.FindControl("ddlRoles") as RadComboBox;
-                    int roleId = 0;
-                    if (cboRole != null)
-                    {
-                        roleId = int.Parse(cboRole.SelectedValue);
-                    }
-
-                    int smsQuota = 0;
-                    var txtQuota = gdItem.FindControl("txtSmsQuota") as RadNumericTextBox;
-                    if (txtQuota != null)
-                    {
-                        smsQuota = int.Parse(txtQuota.Text.Trim());
-                    }
-
-                    sRepo.Edit(SalesmenId, (string)values["UpiCode"], (string)values["FullName"], (string)values["Phone"],
-                    roleId, smsQuota, expDateValue);
+                    ShowErrorMessage("Full name, UPI Code and Phone number are required fields");
+                    e.Canceled = true;
+                    return;
                 }
 
+                if (checkValid.phoneFormat(phoneNumber))
+                {
+                    var expiredDate = DateTime.Now.AddDays(7);
 
+                    var txtExpiredDate = (RadDatePicker)gdItem.FindControl("txtExpiredDate");
+                    if (txtExpiredDate != null)
+                    {
+                        if (txtExpiredDate.SelectedDate != null) expiredDate = txtExpiredDate.SelectedDate.Value;
+                    }
+
+                    var role = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlRoles")).SelectedValue);
+
+                    var smsQuota = 0;
+                    var txtSmsQuota = (RadNumericTextBox)gdItem.FindControl("txtSmsQuota");
+                    if (txtSmsQuota != null && !string.IsNullOrEmpty(txtSmsQuota.Text.Trim()))
+                    {
+                        smsQuota = int.Parse(txtSmsQuota.Text);
+                    }
+
+                   
+                    if (UtilitiesHelpers.Instance.IsRepRole(role))
+                    {
+                        var groupVal = ((RadComboBox)gdItem.FindControl("ddlGroupAddNew")).SelectedValue;
+                        var groupId = Convert.ToInt32(string.IsNullOrEmpty(groupVal) ? "0" : groupVal);
+
+                        var regionVal = ((RadComboBox)gdItem.FindControl("ddlRegionAddNew")).SelectedValue;
+                        var regionId = Convert.ToInt32(string.IsNullOrEmpty(regionVal) ? "0" : regionVal);
+
+                        var areaVal = ((RadComboBox)gdItem.FindControl("ddlAreaAddNew")).SelectedValue;
+                        var areaId = Convert.ToInt32(string.IsNullOrEmpty(areaVal) ? "0" : areaVal);
+
+                        var localVal = ((RadComboBox)gdItem.FindControl("ddlLocalAddNew")).SelectedValue;
+                        var localId = Convert.ToInt32(string.IsNullOrEmpty(localVal) ? "0" : localVal);
+
+                        var result = sRepo.Edit(SalesmenId, upiCode, fullName, phoneNumber, role, smsQuota, expiredDate,
+                            groupId, regionId, areaId, localId);
+                        if (!result)
+                        {
+                            ShowErrorMessage("Phone number and UPI Code are unique, please choose another one.");
+                            e.Canceled = true;
+                        }
+                    }
+                    else
+                    {
+                        var result = sRepo.Edit(SalesmenId, upiCode, fullName, phoneNumber, role, smsQuota, expiredDate,
+                            0, 0, 0, 0);
+                        if (!result)
+                        {
+                            ShowErrorMessage("Phone number and UPI Code are unique, please choose another one.");
+                            e.Canceled = true;
+                        }
+                    }
+                }
+                else
+                {
+                    ShowErrorMessage("Phone number is not valid");
+                    e.Canceled = true;
+                }
             }
-            else
-                ShowErrorMessage("Phone number is not valid");
+            catch (System.Exception ex)
+            {
+                ShowErrorMessage(ex.Message);
+                e.Canceled = true;
+            }
         }
     }
     private void ShowErrorMessage(string message)
@@ -222,40 +299,83 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
         editableItem.ExtractValues(values);
         try
         {
-            if (checkValid.phoneFormat((string)values["Phone"]))
+            var upiCode = values["UpiCode"] as string;
+            var phoneNumber = values["Phone"] as string;
+            var fullName = values["FullName"] as string;
+
+            if(phoneNumber == null || string.IsNullOrEmpty(phoneNumber.Trim()) ||
+                upiCode == null || string.IsNullOrEmpty(upiCode.Trim()) ||
+                fullName == null || string.IsNullOrEmpty(fullName.Trim()))
             {
-                DateTime ExpiredDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtExpiredDate")).SelectedDate.Value.Date);
-                int role = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlRoles")).SelectedValue);
-                int SmsQuota = Convert.ToInt32(((RadNumericTextBox)gdItem.FindControl("txtSmsQuota")).Text);
+                ShowErrorMessage("Full name, UPI Code and Phone number are required fields");
+                e.Canceled = true;
+                return;
+            }
 
-                if(UtilitiesHelpers.Instance.IsRepRole(role))
+            if (checkValid.phoneFormat(phoneNumber))
+            {
+                var expiredDate = DateTime.Now.AddDays(7);
+
+                var txtExpiredDate = (RadDatePicker) gdItem.FindControl("txtExpiredDate");
+                if(txtExpiredDate != null)
                 {
-                    string groupVal = ((RadComboBox)gdItem.FindControl("ddlGroupAddNew")).SelectedValue;
-                    int groupId = Convert.ToInt32(string.IsNullOrEmpty(groupVal) ? "0" : groupVal);
-                    string regionVal = ((RadComboBox)gdItem.FindControl("ddlRegionAddNew")).SelectedValue;
-                    int regionId = Convert.ToInt32(string.IsNullOrEmpty(regionVal) ? "0" : regionVal);
-                    string areaVal = ((RadComboBox)gdItem.FindControl("ddlAreaAddNew")).SelectedValue;
-                    int areaId = Convert.ToInt32(string.IsNullOrEmpty(areaVal) ? "0" : areaVal);
-                    string localVal = ((RadComboBox)gdItem.FindControl("ddlLocalAddNew")).SelectedValue;
-                    int localId = Convert.ToInt32(string.IsNullOrEmpty(localVal) ? "0" : localVal);
+                    if (txtExpiredDate.SelectedDate != null) expiredDate = txtExpiredDate.SelectedDate.Value;
+                }
+                
+                var role = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlRoles")).SelectedValue);
 
-                    sRepo.Add((string)values["UpiCode"], (string)values["FullName"], (string)values["Phone"], role, SmsQuota, ExpiredDate,
+                var smsQuota = 0;
+                var txtSmsQuota = (RadNumericTextBox) gdItem.FindControl("txtSmsQuota");
+                if (txtSmsQuota != null && !string.IsNullOrEmpty(txtSmsQuota.Text.Trim()))
+                {
+                    smsQuota = int.Parse(txtSmsQuota.Text);
+                }
+
+                if (UtilitiesHelpers.Instance.IsRepRole(role))
+                {
+                    var groupVal = ((RadComboBox)gdItem.FindControl("ddlGroupAddNew")).SelectedValue;
+                    var groupId = Convert.ToInt32(string.IsNullOrEmpty(groupVal) ? "0" : groupVal);
+
+                    var regionVal = ((RadComboBox)gdItem.FindControl("ddlRegionAddNew")).SelectedValue;
+                    var regionId = Convert.ToInt32(string.IsNullOrEmpty(regionVal) ? "0" : regionVal);
+                    
+                    var areaVal = ((RadComboBox)gdItem.FindControl("ddlAreaAddNew")).SelectedValue;
+                    var areaId = Convert.ToInt32(string.IsNullOrEmpty(areaVal) ? "0" : areaVal);
+                    
+                    var localVal = ((RadComboBox)gdItem.FindControl("ddlLocalAddNew")).SelectedValue;
+                    var localId = Convert.ToInt32(string.IsNullOrEmpty(localVal) ? "0" : localVal);
+
+                    var result  = sRepo.Add(upiCode, fullName, phoneNumber, role, smsQuota, expiredDate,
                         groupId, regionId, areaId, localId);
+                    if(!result)
+                    {
+                        ShowErrorMessage("Phone number and UPI Code are unique, please choose another one.");
+                        e.Canceled = true;
+                    }
                 }
                 else
                 {
-                    sRepo.Add((string)values["UpiCode"], (string)values["FullName"], (string)values["Phone"], role, SmsQuota, ExpiredDate,
+                    var result = sRepo.Add(upiCode, fullName, phoneNumber, role, smsQuota, expiredDate,
                         0, 0, 0, 0);
+                    if (!result)
+                    {
+                        ShowErrorMessage("Phone number and UPI Code are unique, please choose another one.");
+                        e.Canceled = true;
+                    }
                 }
             }
             else
+            {
                 ShowErrorMessage("Phone number is not valid");
+                e.Canceled = true;
+            }
         }
         catch (System.Exception ex)
         {
             ShowErrorMessage(ex.Message);
+            e.Canceled = true;
         }
-        RadGrid1.Rebind();
+        //RadGrid1.Rebind();
     }
     protected void RadGrid1_DeleteCommand(object source, GridCommandEventArgs e)
     {
@@ -320,8 +440,87 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
                         ddlGroupAddNew.DataTextField = "GroupName";
                         ddlGroupAddNew.DataValueField = "Id";
                         ddlGroupAddNew.DataBind();
+
+                        //
+                        if (vwSalesmen != null)
+                        {
+                            var salesmenId = vwSalesmen.Id;
+
+                            var sql = string.Format("Select distinct GroupId  FROM [UPI].[dbo].[SalesGroup] where SalesmenId={0}",
+                                                    salesmenId);
+                            var utils = new Utility();
+                            var groupDt = utils.GetList(sql);
+                            if (groupDt != null && groupDt.Rows.Count == 1)
+                            {
+                                var groupId = groupDt.Rows[0]["GroupId"].ToString();
+                                ddlGroupAddNew.SelectedValue = groupId;
+
+                                var region = regionRepo.GetRegionByGroupId(int.Parse(groupId));
+                                var ddlRegionAddNew = ((RadComboBox)edititem.FindControl("ddlRegionAddNew"));
+                                if (region != null && ddlRegionAddNew != null)
+                                {
+                                    ddlRegionAddNew.DataSource = region;
+                                    ddlRegionAddNew.DataTextField = "RegionName";
+                                    ddlRegionAddNew.DataValueField = "Id";
+                                    ddlRegionAddNew.DataBind();
+
+                                    sql = string.Format("Select distinct RegionId  FROM [Salesregion] where SalesmenId={0}",
+                                                    salesmenId);
+                                    var regionDt = utils.GetList(sql);
+                                    if (regionDt != null && regionDt.Rows.Count >0)
+                                    {
+                                        var regionId = regionDt.Rows[0]["RegionId"].ToString();
+                                        ddlRegionAddNew.SelectedValue = regionId;
+
+                                        var area = areaRepo.GetAreaByRegionId(int.Parse(regionId));
+                                        var ddlAreaAddNew = ((RadComboBox)edititem.FindControl("ddlAreaAddNew"));
+                                        if (area != null && ddlAreaAddNew != null)
+                                        {
+                                            ddlAreaAddNew.DataSource = area;
+                                            ddlAreaAddNew.DataTextField = "AreaName";
+                                            ddlAreaAddNew.DataValueField = "Id";
+                                            ddlAreaAddNew.DataBind();
+
+                                            sql = string.Format("Select distinct AreaId  FROM [SalesArea] where SalesmenId={0}",
+                                                            salesmenId);
+                                            var areaDt = utils.GetList(sql);
+                                            if (areaDt != null && areaDt.Rows.Count > 0)
+                                            {
+                                                var areaId = areaDt.Rows[0]["AreaId"].ToString();
+                                                ddlAreaAddNew.SelectedValue = areaId;
+
+                                                var local = localRepo.GetLocalByAreaId(int.Parse(areaId));
+                                                var ddlLocalAddNew = ((RadComboBox)edititem.FindControl("ddlLocalAddNew"));
+                                                if (local != null && ddlLocalAddNew != null)
+                                                {
+                                                    ddlLocalAddNew.DataSource = local;
+                                                    ddlLocalAddNew.DataTextField = "LocalName";
+                                                    ddlLocalAddNew.DataValueField = "Id";
+                                                    ddlLocalAddNew.DataBind();
+
+                                                    sql = string.Format("Select distinct LocalId  FROM [SalesLocal] where SalesmenId={0}",
+                                                                    salesmenId);
+                                                    var localDt = utils.GetList(sql);
+                                                    if (localDt != null && localDt.Rows.Count > 0)
+                                                    {
+                                                        var localId = localDt.Rows[0]["LocalId"].ToString();
+                                                        ddlLocalAddNew.SelectedValue = localId;
+                                                    }
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+                                
+                            }
+                        }
                     }
                 }
+
+                
+                
+
             }
         }
     }
@@ -380,18 +579,25 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
         GridEditableItem editedItem = (o as RadComboBox).NamingContainer as GridEditableItem;
 
         var regionCombo = ((RadComboBox)editedItem.FindControl("ddlRegionAddNew"));
-        if (regionCombo != null && e.Value != "0")
+        if (regionCombo != null)
         {
-            var region = regionRepo.GetRegionByGroupId(int.Parse(e.Value));
-            if (region != null)
+            if(e.Value != "0")
             {
-                regionCombo.DataSource = region;
-                regionCombo.DataTextField = "RegionName";
-                regionCombo.DataValueField = "Id";
-                regionCombo.DataBind();
+                var region = regionRepo.GetRegionByGroupId(int.Parse(e.Value));
+                if (region != null)
+                {
+                    regionCombo.DataSource = region;
+                    regionCombo.DataTextField = "RegionName";
+                    regionCombo.DataValueField = "Id";
+                    regionCombo.DataBind();
 
-                RadComboBoxItem item = new RadComboBoxItem("Select a region", "0");
-                regionCombo.Items.Insert(0, item);
+                    RadComboBoxItem item = new RadComboBoxItem("Select a region", "0");
+                    regionCombo.Items.Insert(0, item);
+                }
+            }
+            else
+            {
+                regionCombo.Items.Clear();
             }
         }
 

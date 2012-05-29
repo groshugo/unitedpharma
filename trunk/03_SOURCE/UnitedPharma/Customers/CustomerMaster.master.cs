@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Telerik.Web.UI;
 using Telerik.Web.UI.Calendar;
 
 public partial class Customers_CustomerMaster : System.Web.UI.MasterPage
@@ -14,7 +15,11 @@ public partial class Customers_CustomerMaster : System.Web.UI.MasterPage
         {            
             switch (System.IO.Path.GetFileName(Page.Request.FilePath).ToLower())
             {
-                case "smscalendar.aspx": RadPanelBar1.Items[1].Expanded = true; break;
+                case "smscalendar.aspx": 
+                    RadPanelBar1.Items[1].Expanded = true;
+                    
+                    
+                    break;
                 case "smscontact.aspx": RadPanelBar1.Items[2].Expanded = true; break;
                 default: RadPanelBar1.Items[0].Expanded = true; break;
             }
@@ -27,8 +32,8 @@ public partial class Customers_CustomerMaster : System.Web.UI.MasterPage
 
     protected void SelectedDateChange(object sender, SelectedDatesEventArgs e)
     {
-        string strDate = e.SelectedDates[e.SelectedDates.Count - 1].Date.ToShortDateString().Replace("/", "");
-        Response.Redirect("~/Customers/SMSCalendar.aspx?dt=" + strDate);
+        string strDate = e.SelectedDates[e.SelectedDates.Count - 1].Date.ToShortDateString();
+        Response.Redirect(string.Format("~/Customers/SMSCalendar.aspx?dt={0}&dt1={1}", strDate.Replace("/", ""), strDate));
     }
 
     protected void RadPanelBar1_ItemClick(object sender, Telerik.Web.UI.RadPanelBarEventArgs e)
@@ -42,6 +47,37 @@ public partial class Customers_CustomerMaster : System.Web.UI.MasterPage
             case "Calendar": Response.Redirect("~/Customers/SMSCalendar.aspx"); Session.Contents.Remove("SMSDate"); break;
             case "Contacts":
             case "My Contacts": Response.Redirect("~/Customers/SMSContact.aspx"); break;            
+        }
+    }
+
+   protected void RadPanelBar1_ItemCreated(object sender, RadPanelBarEventArgs e)
+    {
+        var radPanel = ((RadPanelBar)sender).FindItemByText("Calendar");
+        if (radPanel != null)
+        {
+            var cal1 = radPanel.FindControl("Calendar1") as RadCalendar;
+            if (cal1 != null)
+            {
+                var currentDateString = Request.QueryString["dt1"];
+                if (!string.IsNullOrEmpty(currentDateString))
+                {
+                    try
+                    {
+                        var dateArr = currentDateString.Split('/');
+                        var year = int.Parse(dateArr[2]);
+                        var month = int.Parse(dateArr[0]);
+                        var day = int.Parse(dateArr[1]);
+
+                        var currentDate = new DateTime(year, month, day);
+
+                        cal1.SelectedDate = currentDate;
+                    }
+                    catch (Exception)
+                    {
+                        // write log
+                    }
+                }
+            }
         }
     }
 }

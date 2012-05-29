@@ -9,7 +9,6 @@ using System.Data;
 
 public partial class Salemans_ComposeSMS : System.Web.UI.Page
 {
-    string PhoneList = string.Empty;
     #region Declare repository
     CustomersRepository CusRepo = new CustomersRepository();
     SalesmanRepository SRepo = new SalesmanRepository();
@@ -76,31 +75,40 @@ public partial class Salemans_ComposeSMS : System.Web.UI.Page
         AdministratorRepository ARepo = new AdministratorRepository();
         ObjLogin adm = (ObjLogin)Session["objLogin"];
         string SMSCode = Guid.NewGuid().ToString().ToLower();
-        PhoneList = hdfPhoneNumbers.Value;
+       
         string listPhone = hdfPhoneNumbers.Value;
+        if (string.IsNullOrEmpty(listPhone))
+        {
+            ShowErrorMessage("Please provide recipient to send");
+            return;
+        }
+
         char[] separator = new char[] { ',' };
         string[] phoneList = listPhone.Split(separator);
         bool flag = false;
         string PhoneNotExist = string.Empty;
+
+        
+
         foreach (string phone in phoneList)
         {
             if (SRepo.CheckSalemenByPhoneNumber(phone))
             {
-                smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, PhoneList, Constant.SalemenType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
+                smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, phone, Constant.SalemenType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue));
                 flag = true;
             }
             else
             {
                 if (CRepo.IsExistedCustomerByPhone(phone))
                 {
-                    smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, PhoneList, Constant.CustomerType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
+                    smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, phone, Constant.CustomerType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue));
                     flag = true;
                 }
                 else
                 {
                     if (ARepo.GetAdminByPhoneNumber(phone))
                     {
-                        smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, PhoneList, Constant.AdminType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue.ToString()));
+                        smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, phone, Constant.AdminType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue));
                         flag = true;
                     }
                 }
@@ -110,6 +118,7 @@ public partial class Salemans_ComposeSMS : System.Web.UI.Page
                 PhoneNotExist += phone + ", ";
             }
         }
+
         if (!string.IsNullOrEmpty(PhoneNotExist))
         {
             ShowErrorMessage(PhoneNotExist.Substring(0, PhoneNotExist.Length - 2) + " not found in database.");

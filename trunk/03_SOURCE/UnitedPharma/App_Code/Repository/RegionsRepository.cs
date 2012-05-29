@@ -64,22 +64,41 @@ public class RegionsRepository
         }
         return result.Substring(0, result.Length - 1);
     }
-    public int Add(string UPICode, string RegionName, string Description, int GroupId)
+
+    public int Add(string upiCode, string regionName, string description, int groupId)
     {
         try
         {
-            if (CheckExist(RegionName) == false)
+            if (CheckExistedRegion(-1, regionName)) return -1;
+
+            var o = new Region
+                        {UpiCode = upiCode, RegionName = regionName, Description = description, GroupId = groupId};
+            db.Regions.InsertOnSubmit(o);
+            db.SubmitChanges();
+            return o.Id;
+        }
+        catch
+        {
+            return -1;
+        }
+    }
+
+    public int Import(string upiCode, string regionName, string description, int groupId)
+    {
+        try
+        {
+            if (CheckExist(regionName) == false)
             {
                 Region o = new Region();
-                o.UpiCode = UPICode;
-                o.RegionName = RegionName;
-                o.Description = Description;
-                o.GroupId = GroupId;
+                o.UpiCode = upiCode;
+                o.RegionName = regionName;
+                o.Description = description;
+                o.GroupId = groupId;
                 db.Regions.InsertOnSubmit(o);
                 db.SubmitChanges();
                 return o.Id;
             }
-            var region = (from r in db.Regions where r.RegionName == RegionName select r).SingleOrDefault();
+            var region = (from r in db.Regions where r.RegionName == regionName select r).SingleOrDefault();
 
             if (region != null) return region.Id;
 
@@ -90,6 +109,7 @@ public class RegionsRepository
             return -1;
         }
     }
+
     public bool CheckExist(string RegionName)
     {
         var o = (from e in db.Regions where e.RegionName.Trim().ToLower() == RegionName.Trim().ToLower() select e).Count();
@@ -98,22 +118,23 @@ public class RegionsRepository
         else
             return false;
     }
-    public bool Edit(int id, string UPICode, string RegionName, string Description, int GroupId)
+    public bool Edit(int id, string upiCode, string regionName, string description, int groupId)
     {
         try
         {
+            if (CheckExistedRegion(id, regionName)) return false;
+
             var o = (from e in db.Regions where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
-                o.RegionName = RegionName;
-                o.UpiCode = UPICode;                
-                o.Description = Description;
-                o.GroupId = GroupId;
+                o.RegionName = regionName;
+                o.UpiCode = upiCode;                
+                o.Description = description;
+                o.GroupId = groupId;
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
@@ -207,6 +228,24 @@ public class RegionsRepository
                 lst.AddRange(e);
         }
         return lst;
+    }
+
+    public bool CheckExistedRegion(int id, string regionName)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.Regions where e.RegionName.Trim().ToLower() == regionName.Trim().ToLower() select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.Regions
+                     where e.RegionName.Trim().ToLower() == regionName.Trim().ToLower()
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
     }
 
 }

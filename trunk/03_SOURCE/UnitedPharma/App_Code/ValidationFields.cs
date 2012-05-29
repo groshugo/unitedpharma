@@ -17,7 +17,7 @@ public class ValidationFields
 	}
     public bool phoneFormat(string phoneNumber)
     {
-        return Regex.IsMatch(phoneNumber, "^([0]{1}[1-9]{1}[0-9]{8})|([0]{1}[1-9]{1}[0-9]{9})$");
+        return phoneNumber.Length >= 10 && phoneNumber.All(c => c >= '0' && c <= '9');
     }
 }
 

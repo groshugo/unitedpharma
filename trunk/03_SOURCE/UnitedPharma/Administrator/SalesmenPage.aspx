@@ -261,7 +261,7 @@
                         <telerik:RadComboBox ID="ddlLocalAddNew" runat="server" AutoPostBack="true"></telerik:RadComboBox>
                     </EditItemTemplate>                    
                 </telerik:GridTemplateColumn>
-                <telerik:GridButtonColumn ConfirmText="Delete this saleman?" ConfirmDialogType="RadWindow"
+                <telerik:GridButtonColumn ConfirmText="Are you sure you want to delete this salesman?" ConfirmDialogType="RadWindow"
                     ConfirmTitle="Delete" ButtonType="ImageButton" CommandName="Delete" />
             </Columns>
             <EditFormSettings>

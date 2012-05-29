@@ -46,7 +46,10 @@ public partial class Customers_Default : System.Web.UI.Page
     protected void RadGrid1_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
         ObjLogin cust = (ObjLogin)Session["objLogin"];
-        RadGrid1.DataSource = FRepo.GetInboxSMS(cust.Phone);
+
+        int typeFilter = Convert.ToInt32(cbFilterType.SelectedValue);
+
+        RadGrid1.DataSource = FRepo.FilterInboxSMS(typeFilter, txtFilterValue.Text.Trim(), cust.Phone);// FRepo.GetInboxSMS(cust.Phone);
     }
 
     protected void RadGrid1_ItemDataBound(object sender, GridItemEventArgs e)
@@ -71,7 +74,7 @@ public partial class Customers_Default : System.Web.UI.Page
 
     protected void btnClearFilter_Click(object sender, EventArgs e)
     {
-        RadGrid1.Rebind();
+        Response.Redirect("/Customers/Default.aspx");
     }
 
     private void ShowMessage(string message)

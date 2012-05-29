@@ -256,7 +256,7 @@
                         Password</label>
                 </div>
                 <div class="field">
-                    <input type="text" tabindex="1" name="login" id="txtCustPassword" class="text" />
+                    <input type="password" tabindex="1" name="login" id="txtCustPassword" class="text" />
                 </div>
             </div>
             <div class="group" id="Div5">

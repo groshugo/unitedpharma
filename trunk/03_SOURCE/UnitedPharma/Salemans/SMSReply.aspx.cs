@@ -7,7 +7,8 @@ using System.Web.UI.WebControls;
 
 public partial class Salemans_SMSReply : System.Web.UI.Page
 {
-    SMSObjRepository repo = new SMSObjRepository();
+    private SMSObjRepository repo = new SMSObjRepository();
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (Request.QueryString["ID"] != null)
@@ -17,7 +18,7 @@ public partial class Salemans_SMSReply : System.Web.UI.Page
                 Utility.SetCurrentMenu("mSms");
                 try
                 {
-                    ObjLogin adm = (ObjLogin)Session["objLogin"];
+                    ObjLogin adm = (ObjLogin) Session["objLogin"];
                     if (repo.CheckOwner(adm.Phone, Convert.ToInt32(Request.QueryString["ID"])))
                     {
                         List<vwSMS> rs = new List<vwSMS>();
@@ -25,10 +26,9 @@ public partial class Salemans_SMSReply : System.Web.UI.Page
                         var result = rs.FirstOrDefault();
                         txtPhoneNumber.Text = result.SenderPhone;
 
-                        if (result.Subject.Substring(0, 3).ToUpper().Equals("RE:") == false && result.Subject.Substring(0, 4).ToUpper().Equals("RE :") == false)
-                            txtTitle.Text = "RE: " + result.Subject;
-                        else
-                            txtTitle.Text = result.Subject;
+                        txtTitle.Text = string.Format("Re: {0}", result.Subject);
+
+                        txtReplyContent.Text = string.Format("\n-----------\n{0}", result.Content);
                     }
                     else
                     {
@@ -54,11 +54,21 @@ public partial class Salemans_SMSReply : System.Web.UI.Page
 
     protected void btnSendSMS_Click(object sender, EventArgs e)
     {
-        List<vwSMS> rs = new List<vwSMS>();
-        ObjLogin sale = (ObjLogin)Session["objLogin"];
-        rs = repo.GetSMSById(Convert.ToInt32(Request.QueryString["ID"]));
-        var result = rs.FirstOrDefault();
-        repo.InsertSMS(result.SMSCode, (int)result.Id, sale.Phone, Constant.SalemenType, txtPhoneNumber.Text, (int)result.SenderType, DateTime.Now, txtTitle.Text, txtReplyContent.Text, true, false, false, (int)result.SmsTypeId, (int)result.PromotionId);
-        Response.Redirect("Default.aspx");
+        if (string.IsNullOrEmpty(txtTitle.Text.Trim()))
+        {
+            txtTitle.Focus();
+        }
+        else
+        {
+            List<vwSMS> rs = new List<vwSMS>();
+            ObjLogin sale = (ObjLogin) Session["objLogin"];
+            rs = repo.GetSMSById(Convert.ToInt32(Request.QueryString["ID"]));
+            var result = rs.FirstOrDefault();
+            repo.InsertSMS(result.SMSCode, (int) result.Id, sale.Phone, Constant.SalemenType, txtPhoneNumber.Text,
+                           (int) result.SenderType, DateTime.Now, txtTitle.Text, txtReplyContent.Text, true, false,
+                           false, (int) result.SmsTypeId, (int) result.PromotionId);
+            Response.Redirect("Default.aspx");
+        }
     }
+
 }

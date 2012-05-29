@@ -56,10 +56,10 @@ public partial class Administrator_AdministratorManagement : System.Web.UI.Page
                 {
                     if (checkValid.phoneFormat(phone))
                     {
-                        var result = repo.Edit(id, (string)values["UpiCode"], (string)values["Fullname"], (string)values["Password"], (string)values["Phone"]);
+                        var result = repo.Edit(id, upiCode, fullname, password, phone);
                         if (!result)
                         {
-                            ShowErrorMessage(Pharma.Can_not_save__change_to_another_phone_numer_or_try_again_later_or_contact_administrator_);
+                            ShowErrorMessage("UPI Code and Phone number must be unique, please try again with the another one");
                             e.Canceled = true;
                         }
                     }
@@ -116,7 +116,7 @@ public partial class Administrator_AdministratorManagement : System.Web.UI.Page
                         var result = repo.Add(upiCode, fullname, password, phone);
                         if (!result)
                         {
-                            ShowErrorMessage(Pharma.Can_not_save__change_to_another_phone_numer_or_try_again_later_or_contact_administrator_);
+                            ShowErrorMessage("UPI Code and Phone number must be unique, please try again with the another one");
                             e.Canceled = true;
                         }
                     }

@@ -321,16 +321,15 @@ public class SMSObjRepository
     public List<vwSMS> FilterInboxSMS(int typeFilter, string value, string Phone)
     {
         var lstSMS = GetInboxSMS(Phone);
-        if (typeFilter == 0) //From
+        switch (typeFilter)
         {
-            return (from sms in lstSMS where sms.SenderName.ToLower().Contains(value.ToLower()) select sms).ToList();
+            case 0:
+                return (from sms in lstSMS where sms.SenderName != null && sms.SenderName.ToLower().Contains(value.ToLower()) select sms).ToList();
+            case 1:
+                return (from sms in lstSMS where sms.SenderPhone != null && sms.SenderPhone.ToLower().Contains(value.ToLower()) select sms).ToList();
+            default:
+                return (from sms in lstSMS where sms.Subject != null && sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
         }
-        else if (typeFilter == 1)//Phone
-        {
-            return (from sms in lstSMS where sms.SenderPhone.ToLower().Contains(value.ToLower()) select sms).ToList();
-        }
-        else
-            return (from sms in lstSMS where sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
     }
 
     public List<vwSMS> FilterOutboxSMS(int typeFilter, string value, string Phone)

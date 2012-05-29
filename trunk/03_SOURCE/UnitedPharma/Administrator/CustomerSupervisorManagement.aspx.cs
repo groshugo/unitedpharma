@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Resources;
 using Telerik.Web.UI;
 using System.Collections;
 
@@ -36,14 +37,40 @@ public partial class Administrator_CustomerSupervisorManagement : System.Web.UI.
         {
             try
             {
-                if (checkvalid.phoneFormat((string)values["Phone"]))
-                    superviorRepo.UpdateCustomerSupervisor(SuperviorId, (string)values["FullName"], (string)values["Address"], (string)values["Street"], (string)values["Ward"], (string)values["Phone"], Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlCustomer")).SelectedValue), Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistrict")).SelectedValue), Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlPosition")).SelectedValue));
+                var phone = values["Phone"] as string;
+                var fullName = values["FullName"] as string;
+
+                if (phone == null || string.IsNullOrEmpty(phone.Trim()) || fullName == null || string.IsNullOrEmpty(fullName.Trim()))
+                {
+                    ShowErrorMessage("Full name and phone number are required fields");
+                    e.Canceled = true;
+                }
                 else
-                    ShowErrorMessage("Phone number is not valid.");
+                {
+                    if (checkvalid.phoneFormat(phone))
+                    {
+                        var result = superviorRepo.UpdateCustomerSupervisor(SuperviorId, fullName, (string)values["Address"], (string)values["Street"],
+                            (string)values["Ward"], phone, Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlCustomer")).SelectedValue),
+                            Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistrict")).SelectedValue),
+                            Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlPosition")).SelectedValue));
+                        if (!result)
+                        {
+                            ShowErrorMessage("Phone number is unique, please choose another one.");
+                            e.Canceled = true;
+                        }
+                    }
+                    else
+                    {
+                        ShowErrorMessage("Phone number is not valid.");
+                        e.Canceled = true;
+                    }
+                }
+
             }
             catch (System.Exception)
             {
-                ShowErrorMessage("Error");
+                ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_UpdateCommand_can_not_update__please_try_again_later_or_contact_admnistrator_);
+                e.Canceled = true;
             }
         }
     }
@@ -59,16 +86,43 @@ public partial class Administrator_CustomerSupervisorManagement : System.Web.UI.
         var editableItem = ((GridEditableItem)e.Item);
         Hashtable values = new Hashtable();
         editableItem.ExtractValues(values);
+        
         try
         {
-            if (checkvalid.phoneFormat((string)values["Phone"]))
-                superviorRepo.InsertCustomerSupervisor((string)values["FullName"], (string)values["Address"], (string)values["Street"], (string)values["Ward"], (string)values["Phone"], Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlCustomer")).SelectedValue), Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistrict")).SelectedValue), Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlPosition")).SelectedValue));
+            var phone = values["Phone"] as string;
+            var fullName = values["FullName"] as string;
+
+            if (phone == null || string.IsNullOrEmpty(phone.Trim()) || fullName == null || string.IsNullOrEmpty(fullName.Trim()))
+            {
+                ShowErrorMessage("Full name and phone number are required fields");
+                e.Canceled = true;
+            }
             else
-                ShowErrorMessage("Phone number is not valid.");
+            {
+                if (checkvalid.phoneFormat(phone))
+                {
+                    var result = superviorRepo.InsertCustomerSupervisor((string)values["FullName"], (string)values["Address"], (string)values["Street"], 
+                        (string)values["Ward"], phone, Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlCustomer")).SelectedValue), 
+                        Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistrict")).SelectedValue), 
+                        Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlPosition")).SelectedValue));
+                    if (!result)
+                    {
+                        ShowErrorMessage("Phone number is unique, please choose another one.");
+                        e.Canceled = true;
+                    }
+                }
+                else
+                {
+                    ShowErrorMessage("Phone number is not valid.");
+                    e.Canceled = true;
+                }
+            }
+
         }
         catch (System.Exception)
         {
-            ShowErrorMessage("Error");
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_InsertCommand_can_not_add__please_try_again_later_or_contact_admnistrator_);
+            e.Canceled = true;
         }
     }
 

@@ -75,7 +75,8 @@ public partial class Customers_ViewDetailSMS : System.Web.UI.Page
     }
     protected void btnBack_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/Customers/Default.aspx");
+        var sourceFalg = Request.QueryString["T"] ?? "1";
+        Response.Redirect(sourceFalg == "0" ? "~/Customers/SMSOutbox.aspx" : "~/Customers/Default.aspx");
     }
 
     private bool CanSendSmsToday(string phone)
