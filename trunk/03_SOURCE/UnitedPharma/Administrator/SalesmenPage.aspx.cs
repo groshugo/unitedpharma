@@ -661,26 +661,51 @@ public partial class Administrator_SalesmenPage : System.Web.UI.Page
     }
     protected void ddlGroup_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        ddlRegion.Enabled = true;
-        ddlArea.Enabled = false;
-        ddlLocal.Enabled = false;
-        ListRegion();
-        RadGrid1.MasterTableView.SortExpressions.Clear();
-        RadGrid1.MasterTableView.Rebind();
-        GetFilterData();
+        if(e.Value == "0")
+        {
+            ddlRegion.Items.Clear();
+            ddlArea.Items.Clear();
+            ddlLocal.Items.Clear();
+        }
+        else
+        {
+            ddlRegion.Enabled = true;
+            ddlArea.Enabled = false;
+            ddlLocal.Enabled = false;
+            ListRegion();
+            RadGrid1.MasterTableView.SortExpressions.Clear();
+            RadGrid1.MasterTableView.Rebind();
+            GetFilterData();    
+        }
+        
     }
     protected void ddlRegion_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        ddlArea.Enabled = true;
-        ddlLocal.Enabled = false;
-        ListArea();
-        GetFilterData();
+        if (e.Value == "0")
+        {
+            ddlArea.Items.Clear();
+            ddlLocal.Items.Clear();
+        }
+        else
+        {
+            ddlArea.Enabled = true;
+            ddlLocal.Enabled = false;
+            ListArea();
+            GetFilterData();
+        }
     }
     protected void ddlArea_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        ddlLocal.Enabled = true;
-        ListLocal();
-        GetFilterData();
+        if (e.Value == "0")
+        {
+            ddlLocal.Items.Clear();
+        }
+        else
+        {
+            ddlLocal.Enabled = true;
+            ListLocal();
+            GetFilterData();
+        }
     }
     protected void ddlLocal_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {

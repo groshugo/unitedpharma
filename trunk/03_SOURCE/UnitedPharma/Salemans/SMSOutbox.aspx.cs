@@ -49,7 +49,7 @@ public partial class Salemans_SMSOutbox : System.Web.UI.Page
 
     protected void btnClearFilter_Click(object sender, EventArgs e)
     {
-        RadGrid1.Rebind();
+        Response.Redirect("/Salemans/SMSOutbox.aspx");
     }
 
     private void ShowMessage(string message)

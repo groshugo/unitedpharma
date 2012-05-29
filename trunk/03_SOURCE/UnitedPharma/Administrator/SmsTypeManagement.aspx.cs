@@ -55,7 +55,7 @@ public partial class Administrator_SmsTypeManagement : System.Web.UI.Page
                     var result = repo.Edit(id, smsName, syntax);
                     if (!result)
                     {
-                        ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_UpdateCommand_can_not_update__please_try_again_later_or_contact_admnistrator_);
+                        ShowErrorMessage("SMS Type and Syntax are unique, please choose another one.");
                         e.Canceled = true;
                     }
                 }
