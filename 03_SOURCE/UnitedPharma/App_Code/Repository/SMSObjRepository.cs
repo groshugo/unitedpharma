@@ -334,17 +334,16 @@ public class SMSObjRepository
 
     public List<vwSMS> FilterOutboxSMS(int typeFilter, string value, string Phone)
     {
-        var lstSMS = GetOutboxSMS(Phone);
-        if (typeFilter == 0) //From
+        var lstSms = GetOutboxSMS(Phone);
+        switch (typeFilter)
         {
-            return (from sms in lstSMS where sms.ReceiverName.ToLower().Contains(value.ToLower()) select sms).ToList();
+            case 0:
+                return (from sms in lstSms where sms.ReceiverName != null && sms.ReceiverName.ToLower().Contains(value.ToLower()) select sms).ToList();
+            case 1:
+                return (from sms in lstSms where sms.ReceiverPhone != null && sms.ReceiverPhone.ToLower().Contains(value.ToLower()) select sms).ToList();
+            default:
+                return (from sms in lstSms where sms.Subject != null && sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
         }
-        else if (typeFilter == 1)//Phone
-        {
-            return (from sms in lstSMS where sms.ReceiverPhone.ToLower().Contains(value.ToLower()) select sms).ToList();
-        }
-        else
-            return (from sms in lstSMS where sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
     }
 
     public List<vwSMS> FilterDeletedSMS(int typeFilter, string value, string Phone)
@@ -352,14 +351,14 @@ public class SMSObjRepository
         var lstSMS = GetDeletedSMS(Phone);
         if (typeFilter == 0) //From
         {
-            return (from sms in lstSMS where sms.SenderName.ToLower().Contains(value.ToLower()) select sms).ToList();
+            return (from sms in lstSMS where sms.SenderName != null && sms.SenderName.ToLower().Contains(value.ToLower()) select sms).ToList();
         }
         else if (typeFilter == 1) //To
         {
-            return (from sms in lstSMS where sms.ReceiverName.ToLower().Contains(value.ToLower()) select sms).ToList();
+            return (from sms in lstSMS where sms.ReceiverName != null && sms.ReceiverName.ToLower().Contains(value.ToLower()) select sms).ToList();
         }
         else
-            return (from sms in lstSMS where sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
+            return (from sms in lstSMS where sms.Subject != null && sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
     }
 
     public List<vwSMS> FilterInboxSMSByDate(int typeFilter, string value, string Phone)
@@ -367,14 +366,14 @@ public class SMSObjRepository
         var lstSMS = GetInboxSMS(Phone);
         if (typeFilter == 0) //From
         {
-            return (from sms in lstSMS where sms.SenderName.ToLower().Contains(value.ToLower()) select sms).ToList();
+            return (from sms in lstSMS where sms.SenderName != null && sms.SenderName.ToLower().Contains(value.ToLower()) select sms).ToList();
         }
         else if (typeFilter == 1)//Phone
         {
-            return (from sms in lstSMS where sms.SenderPhone.ToLower().Contains(value.ToLower()) select sms).ToList();
+            return (from sms in lstSMS where sms.SenderPhone != null && sms.SenderPhone.ToLower().Contains(value.ToLower()) select sms).ToList();
         }
         else
-            return (from sms in lstSMS where sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
+            return (from sms in lstSMS where sms.Subject != null && sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
     }
 
     public List<vwContact> FileterMyContact(string t, int typeFilter, string value, int userType, int id)
@@ -391,8 +390,8 @@ public class SMSObjRepository
         }
         switch (typeFilter)
         {
-            case 0: lstRs = (from e in lstContact where e.FullName.Contains(value) select e).ToList(); break;
-            case 1: lstRs = (from e in lstContact where e.Phone.Contains(value) select e).ToList(); break;
+            case 0: lstRs = (from e in lstContact where e.FullName != null && e.FullName.Contains(value) select e).ToList(); break;
+            case 1: lstRs = (from e in lstContact where e.Phone != null && e.Phone.Contains(value) select e).ToList(); break;
         }
         return lstRs;
     }
@@ -405,7 +404,7 @@ public class SMSObjRepository
             rs.Add(sms);
             if (sms.SmsParentId != 0)
             {
-                GetListParentSMS((int)sms.SmsParentId, rs);
+                if (sms.SmsParentId != null) GetListParentSMS((int)sms.SmsParentId, rs);
             }
         }
     }
@@ -426,8 +425,8 @@ public class SMSObjRepository
 
     public bool CheckOwner(string Phone, int SmsId)
     {
-        var o = (from e in db.SmsObjs where (String.Equals(e.SenderNumber, Phone) || e.ReceiverNumber.Contains(Phone)) && e.Id == SmsId select e).SingleOrDefault();
-        return (o == null) ? false : true;
+        var o = (from e in db.SmsObjs where e.ReceiverNumber != null && (e.SenderNumber != null && ((String.Equals(e.SenderNumber, Phone) || e.ReceiverNumber.Contains(Phone)) && e.Id == SmsId)) select e).SingleOrDefault();
+        return o != null;
     }
 
     public void SetIsRead(int smsId)

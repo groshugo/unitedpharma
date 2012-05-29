@@ -116,8 +116,8 @@
                 <h3>
                     List of Salesmen</h3>
                 <telerik:RadGrid ID="SalesManager" runat="server" Skin="Office2007" AllowMultiRowSelection="true"
-                    AutoGenerateColumns="false" Width="100%" AllowPaging="true" PageSize="10">
-                    <PagerStyle Visible="true" />
+                    AutoGenerateColumns="false" Width="100%" AllowPaging="true" PageSize="10" OnNeedDataSource="SalesManager_NeedDataSource">
+                    <PagerStyle Mode="NextPrevAndNumeric" />
                     <MasterTableView>
                         <Columns>
                             <telerik:GridBoundColumn DataField="UpiCode" HeaderText="UpiCode" />
@@ -132,8 +132,8 @@
                 <h3 style="text-align: right">
                     List of Supervisors</h3>
                 <telerik:RadGrid ID="SupervisorManager" runat="server" Skin="Office2007" AllowMultiRowSelection="true"
-                    AutoGenerateColumns="false" Width="100%" AllowPaging="true" PageSize="10">
-                    <PagerStyle Visible="true" />
+                    AutoGenerateColumns="false" Width="100%" AllowPaging="true" PageSize="10" OnNeedDataSource="SupervisorManager_NeedDataSource">
+                    <PagerStyle Mode="NextPrevAndNumeric" />
                     <MasterTableView>
                         <Columns>
                             <telerik:GridBoundColumn DataField="FullName" HeaderText="Supervisor" />

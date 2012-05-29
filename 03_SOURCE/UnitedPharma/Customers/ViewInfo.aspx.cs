@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Telerik.Web.UI;
 
 public partial class Customers_ViewInfo : System.Web.UI.Page
 {
@@ -22,27 +23,27 @@ public partial class Customers_ViewInfo : System.Web.UI.Page
             if(cust != null)
             {
                 int customerID = cust.Id;
-                var Select = CRepo.GetCustomersByID(customerID);
-                lblUpi.Text = Select.UpiCode;
-                lblCustomerName.Text = Select.FullName;
-                lblPhoneNumber.Text = Select.Phone;
-                lblAddress.Text = Select.Address + ", " + Select.Street + ", " + Select.Ward;
-                lblCustomerType.Text = Select.CustomerTypeName;
-                lblChannel.Text = Select.ChannelName;
-                lblDistrict.Text = Select.DistrictName;
-                lblLocal.Text = Select.LocalName;
-                lblCreateDate.Text = string.Format("{0:d}", Select.CreateDate);
-                lblUpdateDate.Text = string.Format("{0:d}", Select.UpdateDate);
-                lblStatus.Text = (Select.Status == true) ? "Active" : "Closed";
-                chkEnable.Checked = Convert.ToBoolean(Select.IsEnable);
+                var select = CRepo.GetCustomersByID(customerID);
+                lblUpi.Text = select.UpiCode;
+                lblCustomerName.Text = select.FullName;
+                lblPhoneNumber.Text = select.Phone;
+                lblAddress.Text = select.Address + @", " + select.Street + @", " + select.Ward;
+                lblCustomerType.Text = select.CustomerTypeName;
+                lblChannel.Text = select.ChannelName;
+                lblDistrict.Text = select.DistrictName;
+                lblLocal.Text = select.LocalName;
+                lblCreateDate.Text = string.Format("{0:d}", select.CreateDate);
+                lblUpdateDate.Text = string.Format("{0:d}", select.UpdateDate);
+                lblStatus.Text = (select.Status == true) ? "Active" : "Closed";
+                chkEnable.Checked = Convert.ToBoolean(select.IsEnable);
 
-                LoadSaleManager(Convert.ToInt32(Select.LocalId));
+                LoadSaleManager(Convert.ToInt32(select.LocalId));
                 LoadSupervisorManager(customerID);
             }
         }
     }
 
-    private void LoadSaleManager(int LocalId)
+    private void LoadSaleManager(int LocalId, bool bindFalg = true)
     {
         AreasRepository Arepo = new AreasRepository();
         RegionsRepository RRepo = new RegionsRepository();
@@ -60,7 +61,9 @@ public partial class Customers_ViewInfo : System.Web.UI.Page
             SalesmenIdList += SalesLocalList(LocalId);
         string sql = "Select s.*, r.RoleName from salesmen s left join role r on s.RoleId=r.Id where s.id in (" + SalesmenIdList + ")";
         SalesManager.DataSource = U.GetList(sql);
-        SalesManager.Rebind();
+        
+        if (bindFalg)
+            SalesManager.Rebind();
     }
     private string GetAreaByLocalId(int LocalId)
     {
@@ -165,5 +168,26 @@ public partial class Customers_ViewInfo : System.Web.UI.Page
     {
         CustomerSuperviorRepository CRepo = new CustomerSuperviorRepository();
         SupervisorManager.DataSource = CRepo.GetCustomerSupervisorById(CustomerId);
+    }
+
+    protected void SalesManager_NeedDataSource(object sender, GridNeedDataSourceEventArgs e)
+    {
+        var cust = Session["objLogin"] as ObjLogin;
+        if (cust != null)
+        {
+            var customerId = cust.Id;
+            var select = CRepo.GetCustomersByID(customerId);
+            LoadSaleManager(Convert.ToInt32(select.LocalId), false);
+        }
+    }
+
+    protected void SupervisorManager_NeedDataSource(object sender, GridNeedDataSourceEventArgs e)
+    {
+        var cust = Session["objLogin"] as ObjLogin;
+        if (cust != null)
+        {
+            var customerId = cust.Id;
+            LoadSupervisorManager(customerId);
+        }
     }
 }

@@ -563,7 +563,10 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         }
         else
         {
-            ddlRegion.Enabled = false;
+            ddlRegion.Items.Clear();
+            // Clear the Area and Local drop down
+            ddlArea.Items.Clear();
+            ddlLocal.Items.Clear();
         }
     }
     protected void ddlRegion_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
@@ -576,7 +579,11 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
             ddlLocal.Items.Clear();
         }
         else
-            ddlArea.Enabled = false;
+        {
+            ddlArea.Items.Clear();
+            ddlLocal.Items.Clear();
+        }
+            
     }
     protected void ddlArea_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
@@ -586,7 +593,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
             ddlLocal.Enabled = true;
         }
         else
-            ddlLocal.Enabled = false;
+            ddlLocal.Items.Clear();
     }
     protected void btnFilter_Click(object sender, EventArgs e)
     {
