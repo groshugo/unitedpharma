@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Resources;
 using Telerik.Web.UI;
 using System.Collections;
 
@@ -37,19 +38,52 @@ public partial class Administrator_RegionManagement : System.Web.UI.Page
     }
     protected void RadGrid1_UpdateCommand(object source, GridCommandEventArgs e)
     {
-        GridEditFormItem gdItem = (e.Item as GridEditFormItem);
+        var gdItem = (e.Item as GridEditFormItem);
         var editableItem = ((GridEditableItem)e.Item);
-        Hashtable values = new Hashtable();
+        var values = new Hashtable();
         editableItem.ExtractValues(values);
 
         var id = (int)editableItem.GetDataKeyValue("Id");
+        
         try
         {
-            rrepo.Edit(id, (string)values["UpiCode"], (string)values["RegionName"], (string)values["Description"], Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlGroup")).SelectedValue));
+            var upiCode = values["UpiCode"] as string;
+            var regionName = values["RegionName"] as string;
+            var description = values["Description"] as string;
+
+            if (string.IsNullOrEmpty(regionName) && string.IsNullOrEmpty(upiCode))
+            {
+                ShowErrorMessage(Pharma.Provide_info_to_insert__please);
+                e.Canceled = true;
+            }
+            else
+            {
+                if (upiCode == null || string.IsNullOrEmpty(upiCode.Trim())
+                    || regionName == null || string.IsNullOrEmpty(regionName.Trim()))
+                {
+                    ShowErrorMessage(Pharma.Provide_full_name_to_save__please);
+                    e.Canceled = true;
+                }
+                else
+                {
+                    var cboGroup = gdItem.FindControl("ddlGroup") as RadComboBox;
+                    if (cboGroup != null)
+                    {
+                        var result = rrepo.Edit(id, upiCode, regionName, description ?? string.Empty, int.Parse(cboGroup.SelectedValue));
+                        if (!result)
+                        {
+                            ShowErrorMessage("Region name is unique, please choose another one.");
+                            e.Canceled = true;
+                        }
+                    }
+
+                }
+            }
         }
-        catch (Exception ex)
+        catch (System.Exception ex)
         {
-            ShowErrorMessage(ex.Message);
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_UpdateCommand_can_not_update__please_try_again_later_or_contact_admnistrator_);
+            e.Canceled = true;
         }
     }
 
@@ -60,20 +94,53 @@ public partial class Administrator_RegionManagement : System.Web.UI.Page
 
     protected void RadGrid1_InsertCommand(object source, GridCommandEventArgs e)
     {
-        GridEditFormItem gdItem = (e.Item as GridEditFormItem);
+        var gdItem = (e.Item as GridEditFormItem);
         var editableItem = ((GridEditableItem)e.Item);
-        Salesmen S = new Salesmen();
-        Hashtable values = new Hashtable();
+        var values = new Hashtable();
         editableItem.ExtractValues(values);
+
         try
         {
-            rrepo.Add((string)values["UpiCode"], (string)values["RegionName"], (string)values["Description"], Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlGroup")).SelectedValue));
+            var upiCode = values["UpiCode"] as string;
+            var regionName = values["RegionName"] as string;
+            var description = values["Description"] as string;
+
+            if (string.IsNullOrEmpty(regionName) && string.IsNullOrEmpty(upiCode))
+            {
+                ShowErrorMessage(Pharma.Provide_info_to_insert__please);
+                e.Canceled = true;
+            }
+            else
+            {
+                if (upiCode == null || string.IsNullOrEmpty(upiCode.Trim())
+                    || regionName == null || string.IsNullOrEmpty(regionName.Trim()))
+                {
+                    ShowErrorMessage(Pharma.Provide_full_name_to_save__please);
+                    e.Canceled = true;
+                }
+                else
+                {
+                    var cboGroup = gdItem.FindControl("ddlGroup") as RadComboBox;
+                    if (cboGroup != null)
+                    {
+                        var result = rrepo.Add(upiCode, regionName, description ?? string.Empty, int.Parse(cboGroup.SelectedValue));
+                        if (result == -1)
+                        {
+                            ShowErrorMessage("Region name is unique, please choose another one.");
+                            e.Canceled = true;
+                        }
+                    }
+                    
+                }
+            }
         }
         catch (System.Exception ex)
         {
-            ShowErrorMessage(ex.Message);
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_InsertCommand_can_not_add__please_try_again_later_or_contact_admnistrator_);
+            e.Canceled = true;
         }
     }
+
     protected void RadGrid1_DeleteCommand(object source, GridCommandEventArgs e)
     {
         var id = (int)((GridDataItem)e.Item).GetDataKeyValue("Id");

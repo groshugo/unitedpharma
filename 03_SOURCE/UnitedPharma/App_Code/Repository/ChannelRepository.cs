@@ -91,25 +91,16 @@ public class ChannelRepository
         }
     }
 
-    public bool Insert(string UPICode, string ChannelName, int? ParentChannelId)
+    public bool Insert(string upiCode, string channelName, int parentChannelId)
     {
         try
         {
-            if (CheckExistedChannel(ChannelName) == false)
-            {
-                Channel o = new Channel();
-                o.UpiCode = UPICode;
-                o.ChannelName = ChannelName;
-                if (ParentChannelId != null)
-                {
-                    o.ParentChannelId = ParentChannelId;
-                }
-                db.Channels.InsertOnSubmit(o);
-                db.SubmitChanges();
-                return true;
-            }
-            else
-                return false;
+            if (CheckExistedChannel(-1, channelName)) return false;
+
+            var o = new Channel {UpiCode = upiCode, ChannelName = channelName, ParentChannelId = parentChannelId};
+            db.Channels.InsertOnSubmit(o);
+            db.SubmitChanges();
+            return true;
         }
         catch
         {
@@ -124,24 +115,22 @@ public class ChannelRepository
         else
             return false;
     }
-    public bool Update(int id, string UPICode, string ChannelName, int? ParentChannelId)
+    public bool Update(int id, string upiCode, string channelName, int parentChannelId)
     {
         try
         {
+            if (CheckExistedChannel(id, channelName)) return false;
+
             var o = (from e in db.Channels where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
-                o.UpiCode = UPICode;
-                o.ChannelName = ChannelName;
-                if (ParentChannelId != null)
-                {
-                    o.ParentChannelId = ParentChannelId;
-                }
+                o.UpiCode = upiCode;
+                o.ChannelName = channelName;
+                o.ParentChannelId = parentChannelId;
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
@@ -172,42 +161,55 @@ public class ChannelRepository
     public List<cbChannel> GetListParentChannel(int channelID)
     {
         List<cbChannel> lst = new List<cbChannel>();
-        cbChannel first = new cbChannel();
-        first.Id = 0;
-        first.ChannelName = Constant.UNDEFINE;
-        lst.Add(first);
-        List<int> lstChildId = new List<int>();
-        GetListChildChannelId(channelID, lstChildId);
-        //channel don't have child channel
-        if (lstChildId.Count == 0)
-        {
-            var lstChannel = (from e in db.Channels where e.Id != channelID select e).ToList();
-            if (lstChannel.Count > 0)
-            {
-                foreach (Channel c in lstChannel)
-                {
-                    cbChannel item = new cbChannel();
-                    item.Id = c.Id;
-                    item.ChannelName = c.ChannelName;
-                    lst.Add(item);
-                }
 
-            }
-        }
-        else // channel have child, and child channel can't show in parent channel combobox
+        var lstChannel = (from e in db.Channels where e.Id != channelID select e).ToList();
+        if (lstChannel.Count > 0)
         {
-            var lstChannel = (from e in db.Channels where !lstChildId.Contains(e.Id) && e.Id != channelID select e).ToList();
-            if (lstChannel.Count > 0)
+            foreach (Channel c in lstChannel)
             {
-                foreach (Channel c in lstChannel)
-                {
-                    cbChannel item = new cbChannel();
-                    item.Id = c.Id;
-                    item.ChannelName = c.ChannelName;
-                    lst.Add(item);
-                }
+                cbChannel item = new cbChannel();
+                item.Id = c.Id;
+                item.ChannelName = c.ChannelName;
+                lst.Add(item);
             }
         }
+
+        //cbChannel first = new cbChannel();
+        //first.Id = 0;
+        //first.ChannelName = Constant.UNDEFINE;
+        //lst.Add(first);
+        //List<int> lstChildId = new List<int>();
+        //GetListChildChannelId(channelID, lstChildId);
+        ////channel don't have child channel
+        //if (lstChildId.Count == 0)
+        //{
+        //    var lstChannel = (from e in db.Channels where e.Id != channelID select e).ToList();
+        //    if (lstChannel.Count > 0)
+        //    {
+        //        foreach (Channel c in lstChannel)
+        //        {
+        //            cbChannel item = new cbChannel();
+        //            item.Id = c.Id;
+        //            item.ChannelName = c.ChannelName;
+        //            lst.Add(item);
+        //        }
+
+        //    }
+        //}
+        //else // channel have child, and child channel can't show in parent channel combobox
+        //{
+        //    var lstChannel = (from e in db.Channels where !lstChildId.Contains(e.Id) && e.Id != channelID select e).ToList();
+        //    if (lstChannel.Count > 0)
+        //    {
+        //        foreach (Channel c in lstChannel)
+        //        {
+        //            cbChannel item = new cbChannel();
+        //            item.Id = c.Id;
+        //            item.ChannelName = c.ChannelName;
+        //            lst.Add(item);
+        //        }
+        //    }
+        //}
         return lst;
     }
 
@@ -231,6 +233,24 @@ public class ChannelRepository
             return true;
         else
             return false;
+
+    }
+
+    public bool CheckExistedChannel(int id, string channelName)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.Channels where e.ChannelName.Trim().ToLower() == channelName.Trim().ToLower() select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.Channels
+                     where e.ChannelName.Trim().ToLower() == channelName.Trim().ToLower()
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
 
     }
 }

@@ -11,6 +11,10 @@
             function openWin(id) {
                 var oWnd = radopen("ViewDetailDashboard.aspx?Id=" + id, "RadWindow1");
             }
+            function closeRadWindow() {
+                window.location.reload();
+                //$find("<%= RadAjaxManager1.ClientID %>").ajaxRequest();
+            }  
             -->
         </script>
     </telerik:RadCodeBlock>
@@ -28,7 +32,7 @@
         ReloadOnShow="true" runat="server" Skin="Office2007" EnableShadow="true">
         <Windows>
             <telerik:RadWindow ID="RadWindow1" runat="server" Behaviors="Close" Width="600" Height="400"
-                NavigateUrl="ViewDetailDashboard.aspx">
+                NavigateUrl="ViewDetailDashboard.aspx" OnClientClose="closeRadWindow">
             </telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>

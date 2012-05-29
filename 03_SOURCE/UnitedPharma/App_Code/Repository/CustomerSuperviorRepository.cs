@@ -9,10 +9,10 @@ using System.Web;
 public class CustomerSuperviorRepository
 {
     private UPIDataContext db;
-	public CustomerSuperviorRepository()
-	{
+    public CustomerSuperviorRepository()
+    {
         db = new UPIDataContext();
-	}
+    }
     public List<CustomerSupervisor> GetAll()
     {
         return (from e in db.CustomerSupervisors select e).ToList();
@@ -20,36 +20,25 @@ public class CustomerSuperviorRepository
 
     public List<vwCustomerSupervior> GetAllViewSupervior()
     {
-        try
+        return (db.CustomerSupervisors.Select(a => new { a, district = a.District }).Where(@t => @t.district != null).Select(@t => @t.a.Customer != null ? 
+            new vwCustomerSupervior
         {
-            var e = (from a in db.CustomerSupervisors
-                     select new vwCustomerSupervior
-                     {
-                         Id = a.Id,
-                         FullName = a.FullName,
-                         Address = a.Address,
-                         Street = a.Street,
-                         Ward = a.Ward,
-                         Phone = a.Phone,
-                         CustomerId = a.CustomerId,
-                         CustomerName = a.Customer.FullName,
-                         DistrictId = a.DistrictId,
-                         CustomerTypeId = a.Customer.CustomerTypeId,
-                         DistrictName = a.District.DistrictName,
-                         SectionId = a.District.Province.SectionId,
-                         ProvinceId = a.District.ProvinceId,
-                         PositionId = a.PositionId,
-                         PositionName = a.SupervisorPosition.PositionName
-                     }).ToList();
-            if (e != null)
-                return e;
-            else
-                return null;
-        }
-        catch
-        {
-            return null;
-        }
+            Id = @t.a.Id,
+            FullName = @t.a.FullName,
+            Address = @t.a.Address,
+            Street = @t.a.Street,
+            Ward = @t.a.Ward,
+            Phone = @t.a.Phone,
+            CustomerId = @t.a.CustomerId,
+            CustomerName = @t.a.Customer.FullName,
+            DistrictId = @t.a.DistrictId,
+            CustomerTypeId = @t.a.Customer.CustomerTypeId,
+            DistrictName = @t.district.DistrictName,
+            SectionId = @t.district.Province.SectionId,
+            ProvinceId = @t.district.ProvinceId,
+            PositionId = @t.a.PositionId,
+            PositionName = @t.a.SupervisorPosition.PositionName
+        } : null)).ToList();
     }
 
     public CustomerSupervisor GetCustomerSuperviorById(int id)
@@ -59,29 +48,37 @@ public class CustomerSuperviorRepository
 
     public List<vwCustomerSupervior> GetCustomerSupervisorById(int customerId)
     {
-        return (from e in db.CustomerSupervisors where e.CustomerId == customerId select new vwCustomerSupervior { 
-            Id=e.Id,
-            FullName=e.FullName,
-            Address =e.Address+", "+e.Street+", "+e.Ward,
-            Phone=e.Phone,
-            DistrictName=e.District.DistrictName,
-            PositionName = e.SupervisorPosition.PositionName
-        }).ToList();
+        return (from e in db.CustomerSupervisors
+                where e.CustomerId == customerId
+                select new vwCustomerSupervior
+                {
+                    Id = e.Id,
+                    FullName = e.FullName,
+                    Address = e.Address + ", " + e.Street + ", " + e.Ward,
+                    Phone = e.Phone,
+                    DistrictName = e.District.DistrictName,
+                    PositionName = e.SupervisorPosition.PositionName
+                }).ToList();
     }
 
-    public bool InsertCustomerSupervisor(string FullName, string Address, string Street, string Ward, string Phone, int CustomerId, int DistrictId, int PositionId)
+    public bool InsertCustomerSupervisor(string fullName, string address, string street, string ward, string phone, 
+        int customerId, int districtId, int positionId)
     {
         try
         {
-            CustomerSupervisor o = new CustomerSupervisor();
-            o.FullName = FullName;
-            o.Address = Address;
-            o.Street = Street;
-            o.Ward = Ward;
-            o.Phone = Phone;
-            o.CustomerId = CustomerId;
-            o.DistrictId = DistrictId;
-            o.PositionId = PositionId;
+            if (CheckExistedSuporvisor(-1, phone)) return false;
+
+            var o = new CustomerSupervisor
+                        {
+                            FullName = fullName,
+                            Address = address,
+                            Street = street,
+                            Ward = ward,
+                            Phone = phone,
+                            CustomerId = customerId,
+                            DistrictId = districtId,
+                            PositionId = positionId
+                        };
             db.CustomerSupervisors.InsertOnSubmit(o);
             db.SubmitChanges();
             return true;
@@ -92,10 +89,32 @@ public class CustomerSuperviorRepository
         }
     }
 
+    public bool CheckExistedSuporvisor(int id, string phone)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.CustomerSupervisors
+                     where string.Compare(e.Phone, phone.Trim(), StringComparison.OrdinalIgnoreCase) == 0
+                     select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.CustomerSupervisors
+                     where (string.Compare(e.Phone, phone.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
+    }
+
     public bool UpdateCustomerSupervisor(int id, string FullName, string Address, string Street, string Ward, string Phone, int CustomerId, int DistrictId, int PositionId)
     {
         try
         {
+            if (CheckExistedSuporvisor(id, Phone)) return false;
+
             var o = (from e in db.CustomerSupervisors where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
@@ -110,8 +129,7 @@ public class CustomerSuperviorRepository
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {

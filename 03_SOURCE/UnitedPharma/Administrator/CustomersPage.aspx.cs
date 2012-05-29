@@ -56,6 +56,8 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
                    ? string.Format("join CustomerLog cusLog on cusLog.CustomerId=c.Id where c.Id='{0}'", supervisorId)
                    : string.Format("join CustomerLog cusLog on cusLog.CustomerId=c.Id");
 
+        sql += " order by c.CreateDate desc";
+
         Utility U = new Utility();
         return U.GetList(sql);
     }
@@ -176,10 +178,13 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
         var editableItem = ((GridEditableItem)e.Item);
         Hashtable values = new Hashtable();
         editableItem.ExtractValues(values);
-        var CustomerId = (int)editableItem.GetDataKeyValue("Id");
-        var _customer = CustomerRepo.GetCustomerById(CustomerId);
-        string phoneNumber=((string)values["Phone"] ==null) ? "" : (string)values["Phone"];
-        if (_customer != null)
+        
+        var customerId = (int)editableItem.GetDataKeyValue("Id");
+        var customer = CustomerRepo.GetCustomerById(customerId);
+        
+        string phoneNumber=(string)values["Phone"] ?? "";
+
+        if (customer != null)
         {
             try
             {
@@ -188,31 +193,34 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
                     RadComboBox ddlDistricts = gdItem["DistrictColumn"].FindControl("ddlDistricts") as RadComboBox;
                     if (int.Parse(ddlDistricts.SelectedValue) > 0)
                     {
-                        DateTime CreateDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtCreateDate")).SelectedDate.Value.Date);
-                        DateTime UpdateDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtUpdateDate")).SelectedDate.Value.Date);
-                        int customerType = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlCustomerType")).SelectedValue);
-                        int channel = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlChannels")).SelectedValue);
-                        int district = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistricts")).SelectedValue);
-                        int local = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlLocation")).SelectedValue);
-                        string password = ((string)values["Password"] == null) ? "" : (string)values["Password"];
+                        var createDate = DateTime.Now;
+                        var updateDate = DateTime.Now;
 
-                        string noteOfSalesmen = ((TextBox)gdItem.FindControl("txtNoteOfSalesmen")).Text;
+                        var customerType = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlCustomerType")).SelectedValue);
+                        var channel = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlChannels")).SelectedValue);
+                        var district = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistricts")).SelectedValue);
+                        var local = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlLocation")).SelectedValue);
+                        var password = (string)values["Password"] ?? "";
 
-                        //CustomerRepo.UpdateCustomer(CustomerId, (string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"],
-                        //    (string)values["Ward"], (string)values["Phone"], (string)values["Password"], customerType, channel, district, local, CreateDate, UpdateDate, (bool)values["Status"]);
+                        var noteOfSalesmen = ((TextBox)gdItem.FindControl("txtNoteOfSalesmen")).Text;
+
                         Clog.InsertCustomer((string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"],
-                            (string)values["Ward"], phoneNumber, password, customerType, channel, district, local, CreateDate, UpdateDate, 
-                            (bool)values["Status"], CustomerId, false, 0, adm.Id, noteOfSalesmen);
-                        CustomerRepo.SetEnableOfCustomer(CustomerId, false);
+                            (string)values["Ward"], phoneNumber, password, customerType, channel, district, local, createDate, updateDate,
+                            (bool)values["Status"], customerId, false, 0, adm.Id, noteOfSalesmen);
+                        CustomerRepo.SetEnableOfCustomer(customerId, false);
                         Response.Redirect("CustomersPage.aspx");
                     }
                 }
                 else
+                {
                     ShowErrorMessage("Phone number is not valid");
+                    e.Canceled = true;
+                }
             }
             catch (System.Exception ex)
             {
                 ShowErrorMessage(ex.Message);
+                e.Canceled = true;
             }
         }
     }
@@ -231,50 +239,73 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
         editableItem.ExtractValues(values);
         try
         {
-            if (checkvalid.phoneFormat((string)values["Phone"]))
+            var upiCode = values["UpiCode"] as string;
+            var fullName = values["FullName"] as string;
+            var phoneNumber = values["Phone"] as string;
+
+            if(string.IsNullOrEmpty(upiCode) || string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(phoneNumber))
+            {
+                ShowErrorMessage("Please provide UPI Code, Full Name and Phone number");
+                e.Canceled = true;
+                return;
+            }
+
+            if (phoneNumber != null && checkvalid.phoneFormat(phoneNumber))
             {
                 RadComboBox ddlDistricts = gdItem["DistrictColumn"].FindControl("ddlDistricts") as RadComboBox;
                 if (int.Parse(ddlDistricts.SelectedValue) > 0)
                 {
                     var createDate = DateTime.Now;
-                    var createDateControl = gdItem.FindControl("txtCreateDate") as RadDateTimePicker;
-                    if(createDateControl != null && createDateControl.SelectedDate.HasValue)
-                    {
-                        createDate = createDateControl.SelectedDate.Value;
-                    }
-
                     var updateDate = DateTime.Now;
-                    var updateDateControl = gdItem.FindControl("txtUpdateDate") as RadDateTimePicker;
-                    if (updateDateControl != null && updateDateControl.SelectedDate.HasValue)
-                    {
-                        updateDate = updateDateControl.SelectedDate.Value;
-                    }
-
 
                     int customertype = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlCustomerType")).SelectedValue);
                     int channel = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlChannels")).SelectedValue);
                     int district = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlDistricts")).SelectedValue);
                     int location = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlLocation")).SelectedValue);
                     int local = Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlLocation")).SelectedValue);
-                    int CustomerId = CustomerRepo.InsertCustomer((string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"], (string)values["Ward"],
-                             (string)values["Phone"], (string)values["Password"], customertype, channel, district, location, createDate, updateDate, (bool)values["Status"],false);
 
-                    Clog.InsertCustomer((string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"],
-                            (string)values["Ward"], (string)values["Phone"], (string)values["Password"], customertype, channel, district, local, 
-                            createDate, updateDate, (bool)values["Status"], CustomerId, false, 0,adm.Id, string.Empty);
-                    Response.Redirect("CustomersPage.aspx");
+                    var noteOfSalesmen = string.Empty;
+                    var txtNoteOfsales = gdItem.FindControl("txtNoteOfSalesmen") as TextBox;
+                    if(txtNoteOfsales != null)
+                    {
+                        noteOfSalesmen = txtNoteOfsales.Text.Trim();
+                    }
+
+                    //var supervisorName = values["SupervisorName"] as string;
+
+                    int CustomerId = CustomerRepo.InsertCustomer(upiCode.Trim(), fullName.Trim(), (string)values["Address"], 
+                        (string)values["Street"], (string)values["Ward"],
+                             phoneNumber, (string)values["Password"], customertype, channel, district, location, createDate, updateDate, (bool)values["Status"], false);
+
+                    if (CustomerId > 0)
+                    {
+                        Clog.InsertCustomer(upiCode.Trim(), fullName.Trim(), (string)values["Address"], (string)values["Street"],
+                               (string)values["Ward"], phoneNumber, (string)values["Password"], customertype, channel, district, local,
+                               createDate, updateDate, (bool)values["Status"], CustomerId, false, 0, adm.Id, noteOfSalesmen);
+                        Response.Redirect("CustomersPage.aspx");
+                    }
+                    else
+                    {
+                        ShowErrorMessage("UPI Code and phone number are unique, please choose another one.");
+                        e.Canceled = true;
+                    }
                 }
                 else
                 {
                     ShowErrorMessage("Select a district");
+                    e.Canceled = true;
                 }
             }
             else
+            {
                 ShowErrorMessage("Phone number is not valid");
+                e.Canceled = true;
+            }
         }
         catch (System.Exception)
         {
             ShowErrorMessage("Error");
+            e.Canceled = true;
         }
     }
 
@@ -383,20 +414,13 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
                 ddlLocation.DataBind();
                 ddlLocation.SelectedValue = localIndex;
 
-                string CreateDate = String.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfCreateDate")).Value) ? string.Empty : ((HiddenField)edititem.FindControl("hdfCreateDate")).Value;
-                string UpdateDate = String.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfUpdateDate")).Value) ? string.Empty : ((HiddenField)edititem.FindControl("hdfUpdateDate")).Value;
-                RadDatePicker txtCreateDate = ((RadDatePicker)edititem.FindControl("txtCreateDate"));
-                txtCreateDate.DbSelectedDate = CreateDate;
-                RadDatePicker txtUpdateDate = ((RadDatePicker)edititem.FindControl("txtUpdateDate"));
-                txtUpdateDate.DbSelectedDate = UpdateDate;
-
                 // Note of Salesmen
                 vwCustomer vCustomer = e.Item.DataItem as vwCustomer;
                 if(vCustomer != null)
                 {
                     string noteOfSalesmen = vCustomer.NoteOfSalesmen;
                     var txtNoteOfSalesmen = ((TextBox)edititem.FindControl("txtNoteOfSalesmen"));
-                    txtNoteOfSalesmen.Text = noteOfSalesmen;
+                    if (txtNoteOfSalesmen != null) txtNoteOfSalesmen.Text = noteOfSalesmen;
                 }
             }
 

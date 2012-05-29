@@ -47,20 +47,16 @@ public class SectionRepository
             return o.Id;
         }
     }
-    public bool Add(string SectionName)
+    public bool Add(string sectionName)
     {
         try
         {
-            if (CheckExisted(SectionName) == false)
-            {
-                Section o = new Section();
-                o.SectionName = SectionName;
-                db.Sections.InsertOnSubmit(o);
-                db.SubmitChanges();
-                return true;
-            }
-            else
-                return false;
+            if(CheckExistedSection(-1, sectionName)) return false;
+
+            var o = new Section {SectionName = sectionName};
+            db.Sections.InsertOnSubmit(o);
+            db.SubmitChanges();
+            return true;
         }
         catch
         {
@@ -75,19 +71,20 @@ public class SectionRepository
         else
             return false;
     }
-    public bool Edit(int id, string SectionName)
+    public bool Edit(int id, string sectionName)
     {
         try
         {
+            if (CheckExistedSection(id, sectionName)) return false;
+
             var o = (from e in db.Sections where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
-                o.SectionName = SectionName;                
+                o.SectionName = sectionName;                
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
@@ -137,5 +134,23 @@ public class SectionRepository
         {
             return -1;
         }
+    }
+
+    public bool CheckExistedSection(int id, string sectionName)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.Sections where e.SectionName.Trim().ToLower() == sectionName.Trim().ToLower() select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.Sections
+                     where e.SectionName.Trim().ToLower() == sectionName.Trim().ToLower()
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
     }
 }

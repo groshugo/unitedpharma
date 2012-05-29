@@ -23,6 +23,7 @@ public class CustomersRepository
         var viewAllProerties = (from c in db.Customers
                                 from cS in db.CustomerSupervisors.Where(j => j.CustomerId == c.Id).DefaultIfEmpty()
                                 where c.IsEnable==true
+                                orderby c.CreateDate descending 
                                 select new vwCustomer
                                 {
                                     Id = c.Id,
@@ -60,6 +61,7 @@ public class CustomersRepository
         var viewAllProerties = (from c in db.Customers
                                 join cS in db.CustomerSupervisors on c.Id equals cS.CustomerId
                                 where c.IsEnable == true && cS.Id == supervisorId
+                                orderby c.CreateDate descending 
                                 select new vwCustomer
                                 {
                                     Id = c.Id,
@@ -195,27 +197,32 @@ public class CustomersRepository
         return CustomerOfArea.ToList();
     }
 
-    public int InsertCustomer(string UPICode, string FullName, string Address, string Street, string Ward, string Phone, string Password, int CustomerTypeId, int ChannelId,
-        int DistrictId, int LocalId, DateTime CreateDate, DateTime UpdateDate, bool Status, bool IsEnable)
+    public int InsertCustomer(string upiCode, string fullName, string address, string street, string ward, string phone, string password, 
+        int customerTypeId, int channelId,
+        int districtId, int localId, DateTime createDate, DateTime updateDate, bool status, bool isEnable)
     {
         try
         {
-            Customer o = new Customer();
-            o.UpiCode = UPICode;
-            o.FullName = FullName;
-            o.Address = Address;
-            o.Street = Street;
-            o.Ward = Ward;
-            o.Phone = Phone;
-            o.Password = Password;
-            o.CustomerTypeId = CustomerTypeId;
-            o.ChannelId = ChannelId;
-            o.DistrictId = DistrictId;
-            o.LocalId = LocalId;
-            o.CreateDate = CreateDate;
-            o.UpdateDate = UpdateDate;
-            o.Status = Status;
-            o.IsEnable = IsEnable;
+            if (CheckExistedCustomer(-1, upiCode, phone)) return 0;
+
+            var o = new Customer
+                        {
+                            UpiCode = upiCode,
+                            FullName = fullName,
+                            Address = address,
+                            Street = street,
+                            Ward = ward,
+                            Phone = phone,
+                            Password = password,
+                            CustomerTypeId = customerTypeId,
+                            ChannelId = channelId,
+                            DistrictId = districtId,
+                            LocalId = localId,
+                            CreateDate = createDate,
+                            UpdateDate = updateDate,
+                            Status = status,
+                            IsEnable = isEnable
+                        };
             db.Customers.InsertOnSubmit(o);
             db.SubmitChanges();
             return o.Id;
@@ -450,7 +457,8 @@ public class CustomersRepository
         var viewAllProerties = (from c in db.Customers
                                 where c.IsEnable == true  
                                         && (upiCode == string.Empty || c.UpiCode.Contains(upiCode))
-                                        && (fullname == string.Empty || c.FullName.Contains(fullname)) 
+                                        && (fullname == string.Empty || c.FullName.Contains(fullname))
+                                orderby c.CreateDate descending 
                                 select new vwCustomer
                                 {
                                     Id = c.Id,
@@ -592,5 +600,24 @@ public class CustomersRepository
         {
             return false;
         }
+    }
+
+    public bool CheckExistedCustomer(int id, string upiCode, string phoneNumber)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.Customers where e.UpiCode.Trim().ToLower() == upiCode.Trim().ToLower() 
+                     || e.Phone == phoneNumber select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.Customers
+                     where (e.UpiCode.Trim().ToLower() == upiCode.Trim().ToLower() || e.Phone == phoneNumber)
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
     }
 }

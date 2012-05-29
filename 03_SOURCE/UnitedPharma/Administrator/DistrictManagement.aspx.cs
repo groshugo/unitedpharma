@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Resources;
 using Telerik.Web.UI;
 using System.Collections;
 
@@ -43,6 +44,35 @@ public partial class Administrator_DistrictManagement : System.Web.UI.Page
         {
             ShowErrorMessage(ex.Message);
         }
+
+        try
+        {
+            var districtName = values["DistrictName"] as string;
+
+            if (districtName == null || string.IsNullOrEmpty(districtName.Trim()))
+            {
+                ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_UpdateCommand_Please_provide_role_name_to_update);
+                e.Canceled = true;
+            }
+            else
+            {
+                var cboProvince = gdItem.FindControl("ddlProvince") as RadComboBox;
+                if (cboProvince != null)
+                {
+                    var result = dRepo.Edit(id, districtName.Trim(), int.Parse(cboProvince.SelectedValue));
+                    if (!result)
+                    {
+                        ShowErrorMessage("District name is unique, please choose another one.");
+                        e.Canceled = true;
+                    }
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            e.Canceled = true;
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_UpdateCommand_can_not_update__please_try_again_later_or_contact_admnistrator_);
+        }
     }
 
     private void ShowErrorMessage(string message)
@@ -52,17 +82,38 @@ public partial class Administrator_DistrictManagement : System.Web.UI.Page
 
     protected void RadGrid1_InsertCommand(object source, GridCommandEventArgs e)
     {
-        GridEditFormItem gdItem = (e.Item as GridEditFormItem);
-        var editableItem = ((GridEditableItem)e.Item);        
-        Hashtable values = new Hashtable();
+        var gdItem = (e.Item as GridEditFormItem);
+        var editableItem = ((GridEditableItem)e.Item);
+        var values = new Hashtable();
         editableItem.ExtractValues(values);
+
         try
         {
-            dRepo.Add((string)values["DistrictName"], Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlProvince")).SelectedValue));
+            var districtName = values["DistrictName"] as string;
+
+            if (districtName == null || string.IsNullOrEmpty(districtName.Trim()))
+            {
+                ShowErrorMessage(Pharma.Provide_full_name_to_save__please);
+                e.Canceled = true;
+            }
+            else
+            {
+                var cboSection = gdItem.FindControl("ddlProvince") as RadComboBox;
+                if (cboSection != null)
+                {
+                    var result = dRepo.Add(districtName, int.Parse(cboSection.SelectedValue));
+                    if (!result)
+                    {
+                        ShowErrorMessage("District name is unique, please choose another one.");
+                        e.Canceled = true;
+                    }
+                }
+            }
         }
         catch (System.Exception ex)
         {
-            ShowErrorMessage(ex.Message);
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_InsertCommand_can_not_add__please_try_again_later_or_contact_admnistrator_);
+            e.Canceled = true;
         }
     }
 
@@ -111,7 +162,7 @@ public partial class Administrator_DistrictManagement : System.Web.UI.Page
         GridEditableItem editedItem = (o as RadComboBox).NamingContainer as GridEditableItem;
         RadComboBox ddlProvince = editedItem["ProvinceColumn"].FindControl("ddlProvince") as RadComboBox;
         ddlProvince.DataSource = pRepo.GetProvinceBySectionId(Convert.ToInt32(e.Value));
-        ddlProvince.DataBind();        
+        ddlProvince.DataBind();
     }
-    
+
 }

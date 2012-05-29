@@ -4,12 +4,13 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Resources;
 using Telerik.Web.UI;
 using System.Collections;
 
 public partial class Administrator_ProvinceManagement : System.Web.UI.Page
 {
-    SectionRepository sRepo = new SectionRepository();
+    SectionRepository sectionRepo = new SectionRepository();
     ProvincesRepository pRepo = new ProvincesRepository();
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -28,19 +29,40 @@ public partial class Administrator_ProvinceManagement : System.Web.UI.Page
 
     protected void RadGrid1_UpdateCommand(object source, GridCommandEventArgs e)
     {
-        GridEditFormItem gdItem = (e.Item as GridEditFormItem);
+        var gdItem = (e.Item as GridEditFormItem);
         var editableItem = ((GridEditableItem)e.Item);
-        Hashtable values = new Hashtable();
+        var values = new Hashtable();
         editableItem.ExtractValues(values);
 
         var id = (int)editableItem.GetDataKeyValue("Id");
+
         try
         {
-            pRepo.Edit(id, (string)values["ProvinceName"], Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlSection")).SelectedValue));
+            var provinceName = values["ProvinceName"] as string;
+
+            if (provinceName == null || string.IsNullOrEmpty(provinceName.Trim()))
+            {
+                ShowErrorMessage(Pharma.Provide_full_name_to_save__please);
+                e.Canceled = true;
+            }
+            else
+            {
+                var cboSection = gdItem.FindControl("ddlSection") as RadComboBox;
+                if (cboSection != null)
+                {
+                    var result = pRepo.Edit(id, provinceName, int.Parse(cboSection.SelectedValue));
+                    if (!result)
+                    {
+                        ShowErrorMessage("Province name is unique, please choose another one.");
+                        e.Canceled = true;
+                    }
+                }
+            }
         }
-        catch (Exception ex)
+        catch (System.Exception ex)
         {
-            ShowErrorMessage(ex.Message);
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_UpdateCommand_can_not_update__please_try_again_later_or_contact_admnistrator_);
+            e.Canceled = true;
         }
     }
 
@@ -51,17 +73,38 @@ public partial class Administrator_ProvinceManagement : System.Web.UI.Page
 
     protected void RadGrid1_InsertCommand(object source, GridCommandEventArgs e)
     {
-        GridEditFormItem gdItem = (e.Item as GridEditFormItem);
+        var gdItem = (e.Item as GridEditFormItem);
         var editableItem = ((GridEditableItem)e.Item);        
-        Hashtable values = new Hashtable();
+        var values = new Hashtable();
         editableItem.ExtractValues(values);
+
         try
         {
-            pRepo.Add((string)values["ProvinceName"], Convert.ToInt32(((RadComboBox)gdItem.FindControl("ddlSection")).SelectedValue));
+            var provinceName = values["ProvinceName"] as string;
+
+            if (provinceName == null || string.IsNullOrEmpty(provinceName.Trim()))
+            {
+                ShowErrorMessage(Pharma.Provide_full_name_to_save__please);
+                e.Canceled = true;
+            }
+            else
+            {
+                var cboSection = gdItem.FindControl("ddlSection") as RadComboBox;
+                if (cboSection != null)
+                {
+                    var result = pRepo.Add(provinceName, int.Parse(cboSection.SelectedValue));
+                    if (!result)
+                    {
+                        ShowErrorMessage("Province name is unique, please choose another one.");
+                        e.Canceled = true;
+                    }
+                }
+            }
         }
         catch (System.Exception ex)
         {
-            ShowErrorMessage(ex.Message);
+            ShowErrorMessage(Pharma.Administrator_Default_RadGrid1_InsertCommand_can_not_add__please_try_again_later_or_contact_admnistrator_);
+            e.Canceled = true;
         }
     }
 
@@ -87,7 +130,7 @@ public partial class Administrator_ProvinceManagement : System.Web.UI.Page
             edititem.ExtractValues(values);
             string sId = String.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfSectionId")).Value) ? "0" : ((HiddenField)edititem.FindControl("hdfSectionId")).Value;
             RadComboBox ddlSection = ((RadComboBox)edititem.FindControl("ddlSection"));
-            ddlSection.DataSource = sRepo.GetAll();
+            ddlSection.DataSource = sectionRepo.GetAll();
             ddlSection.DataTextField = "SectionName";
             ddlSection.DataValueField = "Id";
             ddlSection.DataBind();

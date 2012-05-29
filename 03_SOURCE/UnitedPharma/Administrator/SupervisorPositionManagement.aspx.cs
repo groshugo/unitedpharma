@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Resources;
 using Telerik.Web.UI;
 using System.Collections;
 
@@ -32,14 +33,30 @@ public partial class Administrator_SupervisorPositionManagement : System.Web.UI.
         Hashtable values = new Hashtable();
         editableItem.ExtractValues(values);
 
-        int id = (int)editableItem.GetDataKeyValue("Id");
+        var id = (int)editableItem.GetDataKeyValue("Id");
         try
         {
-            repo.Edit(id, (string)values["PositionName"]);
+            var posName = values["PositionName"] as string;
+
+            if (posName == null || string.IsNullOrEmpty(posName.Trim()))
+            {
+                ShowErrorMessage(Pharma.Please_provide_role_name_to_update);
+                e.Canceled = true;
+            }
+            else
+            {
+                var result = repo.Edit(id, posName.Trim());
+                if (!result)
+                {
+                    ShowErrorMessage("Position Name is unique, please choose another name.");
+                    e.Canceled = true;
+                }
+            }
         }
         catch (Exception ex)
         {
             ShowErrorMessage(ex.Message);
+            e.Canceled = true;
         }
     }
 
@@ -50,18 +67,32 @@ public partial class Administrator_SupervisorPositionManagement : System.Web.UI.
 
     protected void RadGrid1_InsertCommand(object source, GridCommandEventArgs e)
     {
-        GridEditFormItem gdItem = (e.Item as GridEditFormItem);
         var editableItem = ((GridEditableItem)e.Item);
-        Salesmen S = new Salesmen();
         Hashtable values = new Hashtable();
         editableItem.ExtractValues(values);
         try
         {
-            repo.Add((string)values["PositionName"]);
+            var posName = values["PositionName"] as string;
+
+            if (posName == null || string.IsNullOrEmpty(posName.Trim()))
+            {
+                ShowErrorMessage(Pharma.Please_provide_name_to_add);
+                e.Canceled = true;
+            }
+            else
+            {
+                var result = repo.Add(posName.Trim());
+                if (!result)
+                {
+                    ShowErrorMessage("Position Name is unique, please choose another name.");
+                    e.Canceled = true;
+                }
+            }
         }
         catch (System.Exception ex)
         {
             ShowErrorMessage(ex.Message);
+            e.Canceled = true;
         }
     }
 

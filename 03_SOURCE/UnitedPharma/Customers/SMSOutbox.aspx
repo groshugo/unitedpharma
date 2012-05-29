@@ -23,7 +23,7 @@
             Filter:
             <telerik:RadComboBox runat="server" ID="cbFilterType" Skin="Office2007">
                 <Items>
-                    <telerik:RadComboBoxItem Value="0" Text="By From" />
+                    <telerik:RadComboBoxItem Value="0" Text="By To" />
                     <telerik:RadComboBoxItem Value="1" Text="By Phone" />
                     <telerik:RadComboBoxItem Value="2" Text="By Subject" />
                 </Items>

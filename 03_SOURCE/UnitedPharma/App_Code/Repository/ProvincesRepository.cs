@@ -54,21 +54,16 @@ public class ProvincesRepository
             return o.Id;
         }
     }
-    public bool Add( string ProvinceName, int SectionId)
+    public bool Add( string provinceName, int sectionId)
     {
         try
         {
-            if (CheckExisted(ProvinceName) == false)
-            {
-                Province o = new Province();
-                o.ProvinceName = ProvinceName;
-                o.SectionId = SectionId;
-                db.Provinces.InsertOnSubmit(o);
-                db.SubmitChanges();
-                return true;
-            }
-            else
-                return false;
+            if (CheckExistedProvince(-1, provinceName)) return false;
+
+            var o = new Province {ProvinceName = provinceName, SectionId = sectionId};
+            db.Provinces.InsertOnSubmit(o);
+            db.SubmitChanges();
+            return true;
         }
         catch
         {
@@ -83,20 +78,21 @@ public class ProvincesRepository
         else
             return false;
     }
-    public bool Edit(int id, string ProvinceName, int SectionId)
+    public bool Edit(int id, string provinceName, int sectionId)
     {
         try
         {
+            if (CheckExistedProvince(id, provinceName)) return false;
+
             var o = (from e in db.Provinces where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
-                o.ProvinceName = ProvinceName;
-                o.SectionId = SectionId;
+                o.ProvinceName = provinceName;
+                o.SectionId = sectionId;
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
@@ -151,5 +147,23 @@ public class ProvincesRepository
         {
             return -1;
         }
+    }
+
+    public bool CheckExistedProvince(int id, string provinceName)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.Provinces where e.ProvinceName.Trim().ToLower() == provinceName.Trim().ToLower() select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.Provinces
+                     where e.ProvinceName.Trim().ToLower() == provinceName.Trim().ToLower()
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
     }
 }

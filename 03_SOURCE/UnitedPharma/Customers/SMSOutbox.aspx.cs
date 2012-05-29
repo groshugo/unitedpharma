@@ -46,7 +46,7 @@ public partial class Customers_SMSOutbox : System.Web.UI.Page
 
     protected void btnClearFilter_Click(object sender, EventArgs e)
     {
-        RadGrid1.Rebind();
+        Response.Redirect("/Customers/SMSOutbox.aspx");
     }
 
     private void ShowMessage(string message)

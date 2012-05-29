@@ -54,21 +54,16 @@ public class DistrictsRepository
             return o.Id;
         }
     }
-    public bool Add(string DistrictName, int ProvinceId)
+    public bool Add(string districtName, int provinceId)
     {
         try
         {
-            if (CheckExisted(DistrictName) == false)
-            {
-                District o = new District();
-                o.DistrictName = DistrictName;
-                o.ProvinceId = ProvinceId;
-                db.Districts.InsertOnSubmit(o);
-                db.SubmitChanges();
-                return true;
-            }
-            else
-                return false;
+            if(CheckExistedDistrict(-1, districtName)) return false;
+
+            var o = new District {DistrictName = districtName, ProvinceId = provinceId};
+            db.Districts.InsertOnSubmit(o);
+            db.SubmitChanges();
+            return true;
         }
         catch
         {
@@ -83,20 +78,21 @@ public class DistrictsRepository
         else
             return false;
     }
-    public bool Edit(int id, string DistrictName, int ProvinceId)
+    public bool Edit(int id, string districtName, int provinceId)
     {
         try
         {
+            if (CheckExistedDistrict(id, districtName)) return false;
+
             var o = (from e in db.Districts where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
-                o.DistrictName = DistrictName;
-                o.ProvinceId = ProvinceId;
+                o.DistrictName = districtName;
+                o.ProvinceId = provinceId;
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
@@ -152,5 +148,23 @@ public class DistrictsRepository
         {
             return -1;
         }
+    }
+
+    public bool CheckExistedDistrict(int id, string districtName)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.Districts where e.DistrictName.Trim().ToLower() == districtName.Trim().ToLower() select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.Districts
+                     where e.DistrictName.Trim().ToLower() == districtName.Trim().ToLower()
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
     }
 }

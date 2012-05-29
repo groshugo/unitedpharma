@@ -50,25 +50,18 @@ public class GroupsRepository
             return o.Id;
         }
     }
-    public int Add(string UPICode, string GroupName, string Description)
+
+    public int Add(string upiCode, string groupName, string description)
     {
         try
         {
-            var g = GetByName(GroupName);
+            if (CheckExistedGroup(-1, groupName)) return -1;
 
-            if(g == null)
-            {
-                Group o = new Group();
-                o.UpiCode = UPICode;
-                o.GroupName = GroupName;
-                o.Description = Description;
-                db.Groups.InsertOnSubmit(o);
-                db.SubmitChanges();
+            var o = new Group { UpiCode = upiCode, GroupName = groupName, Description = description };
+            db.Groups.InsertOnSubmit(o);
+            db.SubmitChanges();
 
-                return o.Id;
-            }
-            
-            return g.Id;
+            return o.Id;
         }
         catch
         {
@@ -84,21 +77,22 @@ public class GroupsRepository
         else
             return false;
     }
-    public bool Edit(int id, string UPICode, string GroupName, string Description)
+    public bool Edit(int id, string upiCode, string groupName, string description)
     {
         try
         {
+            if(CheckExistedGroup(id, groupName)) return false;
+
             var o = (from e in db.Groups where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
-                o.GroupName = GroupName;
-                o.UpiCode = UPICode;                
-                o.Description = Description;                
+                o.GroupName = groupName;
+                o.UpiCode = upiCode;                
+                o.Description = description;                
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
@@ -186,5 +180,46 @@ public class GroupsRepository
         if (groupName == null) throw new ArgumentNullException("groupName");
 
         return (from e in db.Groups where e.GroupName == groupName select e).SingleOrDefault();
+    }
+
+    public bool CheckExistedGroup(int id, string groupName)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.Groups where e.GroupName.Trim().ToLower() == groupName.Trim().ToLower() select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.Groups
+                     where e.GroupName.Trim().ToLower() == groupName.Trim().ToLower()
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
+    }
+
+    public int Import(string upiCode, string groupName, string description)
+    {
+        try
+        {
+            var g = GetByName(groupName);
+
+            if (g == null)
+            {
+                var o = new Group { UpiCode = upiCode, GroupName = groupName, Description = description };
+                db.Groups.InsertOnSubmit(o);
+                db.SubmitChanges();
+
+                return o.Id;
+            }
+
+            return g.Id;
+        }
+        catch
+        {
+            return -1;
+        }
     }
 }

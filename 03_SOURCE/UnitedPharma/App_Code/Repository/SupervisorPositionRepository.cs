@@ -20,12 +20,13 @@ public class SupervisorPositionRepository
     }
    
 
-    public bool Add(string PositionName)
+    public bool Add(string positionName)
     {
         try
         {
-            SupervisorPosition o = new SupervisorPosition();
-            o.PositionName = PositionName;
+            if (CheckExistedPosition(-1, positionName)) return false;
+
+            var o = new SupervisorPosition {PositionName = positionName};
             db.SupervisorPositions.InsertOnSubmit(o);
             db.SubmitChanges();
             return true;
@@ -36,14 +37,16 @@ public class SupervisorPositionRepository
         }
     }
 
-    public bool Edit(int id, string PositionName)
+    public bool Edit(int id, string positionName)
     {
         try
         {
+            if (CheckExistedPosition(id, positionName)) return false;
+
             var o = (from e in db.SupervisorPositions where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {
-                o.PositionName = PositionName;                
+                o.PositionName = positionName;                
                 db.SubmitChanges();
                 return true;
             }
@@ -76,5 +79,19 @@ public class SupervisorPositionRepository
             return false;
     }
 
-    
+    public bool CheckExistedPosition(int id, string posName)
+    {
+        if(id == -1)
+        {
+            var o = (from e in db.SupervisorPositions where e.PositionName.Trim().ToLower() == posName.Trim().ToLower() select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.SupervisorPositions where e.PositionName.Trim().ToLower() == posName.Trim().ToLower() 
+                     && e.Id != id select e).Count();
+            return o > 0;
+        }
+        
+    }
 }

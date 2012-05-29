@@ -80,7 +80,7 @@
                         </telerik:RadComboBox>
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>
-                <telerik:GridButtonColumn ConfirmText="Delete this supervior?" ConfirmDialogType="RadWindow"
+                <telerik:GridButtonColumn ConfirmText="Are your sure you want to delete this supervisor?" ConfirmDialogType="RadWindow"
                     ConfirmTitle="Delete" ButtonType="ImageButton" CommandName="Delete" />
             </Columns>
             <EditFormSettings>

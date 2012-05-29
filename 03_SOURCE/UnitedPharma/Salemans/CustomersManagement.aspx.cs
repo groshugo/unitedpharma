@@ -44,6 +44,8 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
                 {
                     DeterminePocPos(salesmen);
                 }
+
+                Session["IsClickedFilterButton"] = "0";
             }
         }
         else
@@ -326,8 +328,17 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
             var localId = string.IsNullOrEmpty(ddlLocal.SelectedValue) ? 0 : int.Parse(ddlLocal.SelectedValue);
 
             ObjLogin sale = (ObjLogin)Session["objLogin"];
-            RadGrid2.DataSource = LoadSaleManager(sale.Id, 1, txtFullname.Text.Trim(), txtPhoneNumber.Text.Trim(),
+
+            var isClickFilterButton = Session["IsClickedFilterButton"] as string;
+            if(isClickFilterButton == "1")
+            {
+                RadGrid2.DataSource = LoadSaleManager(sale.Id, 1, txtFullname.Text.Trim(), txtPhoneNumber.Text.Trim(),
                 localId, txtUpiCode.Text.Trim());
+            }
+            else
+            {
+                RadGrid2.DataSource = LoadSaleManager(sale.Id, 1, string.Empty, string.Empty, localId, string.Empty);
+            }
         }
         else
         {
@@ -545,6 +556,10 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
             ObjLogin sale = (ObjLogin)Session["objLogin"];
             ddlRegion.Enabled = true;
             RegionList(int.Parse(ddlGroup.SelectedValue.ToString()));
+
+            // Clear the Area and Local drop down
+            ddlArea.Items.Clear();
+            ddlLocal.Items.Clear();
         }
         else
         {
@@ -557,6 +572,8 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         {
             AreaList(int.Parse(ddlRegion.SelectedValue.ToString()));
             ddlArea.Enabled = true;
+
+            ddlLocal.Items.Clear();
         }
         else
             ddlArea.Enabled = false;
@@ -584,6 +601,9 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
 
         RadGrid2.DataSource = LoadSaleManager(sale.Id, 1, txtFullname.Text.Trim(), phone, LocalId, txtUpiCode.Text.Trim());
         RadGrid2.DataBind();
+
+        //
+        Session["IsClickedFilterButton"] = "1";
     }
     protected void btnClear_Click(object sender, EventArgs e)
     {

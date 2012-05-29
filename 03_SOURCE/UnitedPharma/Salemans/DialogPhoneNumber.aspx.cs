@@ -667,18 +667,59 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
     {
         GetFilterData();
         rebindGrid();
+
+        var region = regionRepo.GetRegionByGroupId(int.Parse(e.Value));
+        if (region != null)
+        {
+            ddlRegion.DataSource = region;
+            ddlRegion.DataTextField = "RegionName";
+            ddlRegion.DataValueField = "Id";
+            ddlRegion.DataBind();
+
+            var item = new RadComboBoxItem("Select a region", "0");
+            ddlRegion.Items.Insert(0, item);
+
+            ddlArea.Items.Clear();
+            ddlLocal.Items.Clear();
+        }
     }
 
     private void ddlRegion_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
         GetFilterData();
         rebindGrid();
+
+        var area = areaRepo.GetAreaByRegionId(int.Parse(e.Value));
+        if (area != null)
+        {
+            ddlArea.DataSource = area;
+            ddlArea.DataTextField = "AreaName";
+            ddlArea.DataValueField = "Id";
+            ddlArea.DataBind();
+
+            var item = new RadComboBoxItem("Select a area", "0");
+            ddlArea.Items.Insert(0, item);
+
+            ddlLocal.Items.Clear();
+        }
     }
 
     private void ddlArea_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
         GetFilterData();
         rebindGrid();
+
+        var local = localRepo.GetLocalByAreaId(int.Parse(e.Value));
+        if (local != null)
+        {
+            ddlLocal.DataSource = local;
+            ddlLocal.DataTextField = "LocalName";
+            ddlLocal.DataValueField = "Id";
+            ddlLocal.DataBind();
+
+            var item = new RadComboBoxItem("Select a local", "0");
+            ddlLocal.Items.Insert(0, item);
+        }
     }
 
     private void ddlLocal_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)

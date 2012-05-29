@@ -55,22 +55,35 @@ public class LocalsRepository
             return o.Id;
         }
     }
-    public int Add(string UPICode, string LocalName, string Description, int AreaId)
+    public int Add(string upiCode, string localName, string description, int areaId)
     {
         try
         {
-            if (CheckExisted(LocalName) == false)
+            if (CheckExistedLocal(-1, localName)) return -1;
+
+            var o = new Local {UpiCode = upiCode, LocalName = localName, Description = description, AreaId = areaId};
+            db.Locals.InsertOnSubmit(o);
+            db.SubmitChanges();
+            return o.Id;
+        }
+        catch
+        {
+            return -1;
+        }
+    }
+
+    public int Import(string upiCode, string localName, string description, int areaId)
+    {
+        try
+        {
+            if (CheckExisted(localName) == false)
             {
-                Local o = new Local();
-                o.UpiCode = UPICode;
-                o.LocalName = LocalName;
-                o.Description = Description;
-                o.AreaId = AreaId;
+                var o = new Local {UpiCode = upiCode, LocalName = localName, Description = description, AreaId = areaId};
                 db.Locals.InsertOnSubmit(o);
                 db.SubmitChanges();
                 return o.Id;
             }
-            var local = (from l in db.Locals where l.LocalName == LocalName select l).SingleOrDefault();
+            var local = (from l in db.Locals where l.LocalName == localName select l).SingleOrDefault();
 
             if (local != null) return local.Id;
 
@@ -81,31 +94,33 @@ public class LocalsRepository
             return -1;
         }
     }
-    public bool CheckExisted(string LocalName)
+
+    public bool CheckExisted(string localName)
     {
-        var o = (from e in db.Locals where e.LocalName.Trim().ToLower() == LocalName.Trim().ToLower() select e).Count();
+        var o = (from e in db.Locals where e.LocalName.Trim().ToLower() == localName.Trim().ToLower() select e).Count();
         if (o > 0)
             return true;
         else
             return false;
     }
 
-    public bool Edit(int id, string UPICode, string LocalName, string Description, int AreaId)
+    public bool Edit(int id, string upiCode, string localName, string description, int areaId)
     {
         try
         {
+            if (CheckExistedLocal(id, localName)) return false;
+
             var o = (from e in db.Locals where e.Id == id select e).SingleOrDefault();
             if (o != null)
             {                
-                o.UpiCode = UPICode;
-                o.LocalName = LocalName;
-                o.Description = Description;
-                o.AreaId = AreaId;
+                o.UpiCode = upiCode;
+                o.LocalName = localName;
+                o.Description = description;
+                o.AreaId = areaId;
                 db.SubmitChanges();
                 return true;
             }
-            else
-                return false;
+            return false;
         }
         catch
         {
@@ -189,5 +204,23 @@ public class LocalsRepository
                 where s.Id == saleId
                 select l;
         return a.ToList();
+    }
+
+    public bool CheckExistedLocal(int id, string localName)
+    {
+        if (id == -1)
+        {
+            var o = (from e in db.Locals where e.LocalName.Trim().ToLower() == localName.Trim().ToLower() select e).Count();
+            return o > 0;
+        }
+        else
+        {
+            var o = (from e in db.Locals
+                     where e.LocalName.Trim().ToLower() == localName.Trim().ToLower()
+                         && e.Id != id
+                     select e).Count();
+            return o > 0;
+        }
+
     }
 }

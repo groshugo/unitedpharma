@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Telerik.Web.UI;
 
 public partial class Administrator_AllowApprove : System.Web.UI.Page
 {
@@ -31,31 +32,26 @@ public partial class Administrator_AllowApprove : System.Web.UI.Page
     }
     protected void btnUpdateFunction_Click(object sender, EventArgs e)
     {
-        int change = ListBoxFunctionUpdate.ClientChanges.Count();
-        string AdminIDList = string.Empty;
-        for (int i = 0; i < change; i++)
+        Utility utility = new Utility();
+
+        var sql = "update Administrator set AllowApprove=0";
+        utility.SetList(sql);
+
+        var adminIdList = string.Empty;
+        // get the current setting for Allow Approve 
+        foreach (RadListBoxItem item in ListBoxFunctionUpdate.Items)
         {
-            AdminIDList += ListBoxFunctionUpdate.ClientChanges[i].Item.Value + ",";
+            if (item.Value != null) adminIdList += string.Format("{0},", item.Value);
         }
-        AdminIDList = AdminIDList.Substring(0, AdminIDList.Length - 1);
-        if (AdminIDList != "")
+
+        if (!string.IsNullOrEmpty(adminIdList))
         {
-            string sql = "update Administrator set AllowApprove=1 where Id in (" + AdminIDList + ")";
-            Utility utility = new Utility();
-            utility.SetList(sql);
-        }
-        AdminIDList = string.Empty;
-        int unchange = ListBoxFunctions.ClientChanges.Count();
-        for (int j = 0; j < unchange; j++)
-        {
-            AdminIDList += ListBoxFunctions.ClientChanges[j].Item.Value + ",";
-        }
-        AdminIDList = AdminIDList.Substring(0, AdminIDList.Length - 1);
-        if (AdminIDList != "")
-        {
-            string sql = "update Administrator set AllowApprove=0 where Id in (" + AdminIDList + ")";
-            Utility utility = new Utility();
-            utility.SetList(sql);
+            adminIdList = adminIdList.Substring(0, adminIdList.Length - 1);
+            if (adminIdList != "")
+            {
+                sql = "update Administrator set AllowApprove=1 where Id in (" + adminIdList + ")";
+                utility.SetList(sql);
+            }
         }
     }
 }

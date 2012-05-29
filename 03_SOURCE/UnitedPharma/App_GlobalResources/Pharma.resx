@@ -120,7 +120,7 @@
     <value xml:space="preserve">Can not add, please provide new name or try again or contact administrator</value>
   </data>
   <data name="Administrator_Default_RadGrid1_InsertCommand_Please_provide_role_name_to_add">
-    <value xml:space="preserve">Please provide role name to add</value>
+    <value xml:space="preserve">Please provide name to add</value>
   </data>
   <data name="Administrator_Default_RadGrid1_InsertCommand_can_not_add__please_try_again_later_or_contact_admnistrator_">
     <value xml:space="preserve">can not add, please try again later or contact admnistrator.</value>
@@ -134,7 +134,7 @@ name="Administrator_Default_RadGrid1_UpdateCommand_can_not_update__please_try_ag
     <value xml:space="preserve">can not update, please try again later or contact admnistrator.</value>
   </data>
   <data name="Administrator_Default_RadGrid1_UpdateCommand_Please_provide_role_name_to_update">
-    <value xml:space="preserve">Please provide role name to update</value>
+    <value xml:space="preserve">Please provide name to update</value>
   </data>
   <data
 name="Administrator_Default_RadGrid1_UpdateCommand_Can_not_update__please_provide_new_name_or_try_again_or_contact_administrator">
@@ -151,5 +151,14 @@ name="Administrator_Default_RadGrid1_UpdateCommand_Can_not_update__please_provid
   </data>
   <data name="Phone_number_not_valid">
     <value xml:space="preserve">Phone number not valid</value>
+  </data>
+  <data name="Please_provide_name_to_add">
+    <value xml:space="preserve">Please provide name to add</value>
+  </data>
+  <data name="Please_provide_role_name_to_update">
+    <value xml:space="preserve">Please provide name to edit</value>
+  </data>
+  <data name="can_not_save__try_again_later_or_contact_administrator">
+    <value xml:space="preserve">can not save, try again later or contact administrator</value>
   </data>
 </root>

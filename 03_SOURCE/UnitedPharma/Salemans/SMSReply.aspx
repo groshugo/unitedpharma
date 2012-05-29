@@ -28,11 +28,22 @@
                     $('#charaterleft').text(150 - len);
                 }
             };
+
+            function ValidateBeforeSend(e) {
+                var txtTitle = $("#<%=txtTitle.ClientID %>");
+                if (txtTitle) {
+                    if (txtTitle.val() == '') {
+                        alert('Please provide title to send');
+                        return false;
+                    }
+                }
+            };
             -->
         </script>
     </telerik:RadCodeBlock>
     <h3 style="padding-left:10px">Reply SMS</h3>
     <telerik:RadFormDecorator ID="FormDecorator1" runat="server" DecoratedControls="all" Skin="Office2007"></telerik:RadFormDecorator>
+
     <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="RadAjaxLoadingPanel1">
         <AjaxSettings>
             <telerik:AjaxSetting AjaxControlID="btnSendSMS">
@@ -42,12 +53,14 @@
             </telerik:AjaxSetting>
         </AjaxSettings>
     </telerik:RadAjaxManager>
+
     <telerik:RadAjaxLoadingPanel runat="server" Transparency="25" ID="RadAjaxLoadingPanel1" CssClass="RadAjax RadAjax_Vista">
         <div class="raDiv">
         </div>
         <div class="raColor raTransp">
         </div>
     </telerik:RadAjaxLoadingPanel>
+
     <asp:Panel ID="PanelReplySMS" runat="server">
         <div style="padding-left:10px; padding-top:10px">
             <table>
@@ -72,7 +85,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <asp:Button ID="btnSendSMS" runat="server" Text="Send" OnClick="btnSendSMS_Click" />
+                        <asp:Button ID="btnSendSMS" runat="server" Text="Send" OnClick="btnSendSMS_Click" OnClientClick="ValidateBeforeSend()" />
                         <asp:Button ID="btnAbort" runat="server" Text ="Cancel" OnClick="btnAbort_Click" />
                     </td>
                 </tr>

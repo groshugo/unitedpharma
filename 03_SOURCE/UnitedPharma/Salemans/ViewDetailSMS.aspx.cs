@@ -77,6 +77,15 @@ public partial class Salemans_ViewDetailSMS : System.Web.UI.Page
     }
     protected void btnBack_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/Salemans/Default.aspx");
+        var parentFlag = Request.QueryString["T"] ?? "1";
+        if(parentFlag == "0")
+        {
+            Response.Redirect("~/Salemans/SMSOutbox.aspx");
+        }
+        else
+        {
+            Response.Redirect("~/Salemans/Default.aspx");    
+        }
+        
     }
 }

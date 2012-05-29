@@ -24,10 +24,9 @@ public partial class Customers_SMSReply : System.Web.UI.Page
                         rs = repo.GetSMSById(Convert.ToInt32(Request.QueryString["ID"]));
                         var result = rs.FirstOrDefault();
                         txtPhoneNumber.Text = result.SenderPhone;
-                        if (!result.Subject.Contains("RE:"))
-                            txtTitle.Text = "RE: " + result.Subject;
-                        else
-                            txtTitle.Text = result.Subject;
+                        txtTitle.Text = string.Format("Re: {0}", result.Subject);
+
+                        txtReplyContent.Text = string.Format("\n-----------\n{0}", result.Content);
                     }
                     else
                     {

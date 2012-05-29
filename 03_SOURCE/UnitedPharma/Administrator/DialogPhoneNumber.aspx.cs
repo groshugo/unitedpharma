@@ -375,6 +375,9 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
 
             var item = new RadComboBoxItem("Select a region", "0");
             ddlRegion.Items.Insert(0, item);
+
+            ddlArea.Items.Clear();
+            ddlLocal.Items.Clear();
         }
     }
 
@@ -390,6 +393,8 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
 
             var item = new RadComboBoxItem("Select a area", "0");
             ddlArea.Items.Insert(0, item);
+
+            ddlLocal.Items.Clear();
         }
     }
 
