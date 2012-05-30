@@ -61,7 +61,7 @@ public class SalesmanRepository
     {
         try
         {
-            if (CheckExistedSalemen(-1, upiCode, phone)) return false;
+            if (CheckExistedSalemen(-1, phone)) return false;
 
             var o = new Salesmen
                         {
@@ -152,7 +152,7 @@ public class SalesmanRepository
     {
         try
         {
-            if (CheckExistedSalemen(id, upiCode, phone)) return false;
+            if (CheckExistedSalemen(id, phone)) return false;
 
             var o = (from e in db.Salesmens where e.Id == id select e).SingleOrDefault();
             if (o != null)
@@ -841,6 +841,7 @@ public class SalesmanRepository
         return (from a in db.Salesmens
                 where a.RoleId == roleId
                     && a.SalesmenManagerId == managerId
+                orderby a.RoleId
                 select new vwSalemen
                 {
                     Id = a.Id,
@@ -929,21 +930,19 @@ public class SalesmanRepository
         }
     }
 
-    public bool CheckExistedSalemen(int id, string upiCode, string phoneNumber)
+    public bool CheckExistedSalemen(int id, string phoneNumber)
     {
         if (id == -1)
         {
             var o = (from e in db.Salesmens
-                     where string.Compare(e.UpiCode.Trim(), upiCode.Trim(), StringComparison.OrdinalIgnoreCase) == 0
-                     || string.Compare(e.Phone.Trim(), phoneNumber.Trim(), StringComparison.OrdinalIgnoreCase) == 0
+                     where string.Compare(e.Phone.Trim(), phoneNumber.Trim(), StringComparison.OrdinalIgnoreCase) == 0
                       select e).Count();
             return o > 0;
         }
         else
         {
             var o = (from e in db.Salesmens
-                     where (string.Compare(e.UpiCode.Trim(), upiCode.Trim(), StringComparison.OrdinalIgnoreCase) == 0
-                     || string.Compare(e.Phone.Trim(), phoneNumber.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
+                     where (string.Compare(e.Phone.Trim(), phoneNumber.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
                          && e.Id != id
                      select e).Count();
             return o > 0;

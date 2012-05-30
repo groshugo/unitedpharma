@@ -235,17 +235,18 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
 
     protected void btnFilter_Click(object sender, EventArgs e)
     {
-        if (txtStartDate.SelectedDate == null && txtEndtDate.SelectedDate == null)
-            ShowErrorMessage("Please provide at least Start date or End Date to filter");
-        else
+        var startDate = txtStartDate.SelectedDate == null ? Convert.ToDateTime("1/1/1900") : txtStartDate.SelectedDate.Value;
+
+        var endDate = txtEndtDate.SelectedDate == null ? Convert.ToDateTime("12/31/9999") : txtEndtDate.SelectedDate.Value;
+
+        if(startDate > endDate)
         {
-            var startDate = txtStartDate.SelectedDate == null ? Convert.ToDateTime("1/1/1900") : txtStartDate.SelectedDate.Value;
-
-            var endDate = txtEndtDate.SelectedDate == null ? Convert.ToDateTime("12/31/9999") : txtEndtDate.SelectedDate.Value;
-
-            gridSchedulePromotion.DataSource = ScheduleRepo.Filter(startDate, endDate, int.Parse(ddlFilters.SelectedValue));
-            gridSchedulePromotion.Rebind();
+            ShowErrorMessage("From date must less than to date");
+            return;
         }
+
+        gridSchedulePromotion.DataSource = ScheduleRepo.Filter(startDate, endDate, int.Parse(ddlFilters.SelectedValue));
+        gridSchedulePromotion.Rebind();
     }
     protected void btnClear_Click(object sender, EventArgs e)
     {
