@@ -39,6 +39,8 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
 
             // Load EROM2 to combo
             LoadSalesmenToComboErom2();
+
+            Session["IsFilterClickedAdminCustomer"] = "0";
         }
     }
 
@@ -120,19 +122,20 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
         string upiCode = txtUpiCode.Text.Trim();
         string fullname = txtFullName.Text.Trim();
 
-        if(!string.IsNullOrEmpty(upiCode) || !string.IsNullOrEmpty(fullname))
-        {
-            CustomerList.DataSource = CustomerRepo.FilterCustomers(upiCode, fullname);
-            CustomerList.DataBind();
-        }
+        CustomerList.DataSource = CustomerRepo.FilterCustomers(upiCode, fullname);
+        CustomerList.DataBind();
+
+        Session["IsFilterClickedAdminCustomer"] = "1";
     }
 
     protected void CustomerList_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        string upiCode = txtUpiCode.Text.Trim();
-        string fullname = txtFullName.Text.Trim();
+        var upiCode = txtUpiCode.Text.Trim();
+        var fullname = txtFullName.Text.Trim();
 
-        if (!string.IsNullOrEmpty(upiCode) || !string.IsNullOrEmpty(fullname))
+        var isFilterClicked = Session["IsFilterClickedAdminCustomer"] as string;
+
+        if (isFilterClicked != null && isFilterClicked == "1")
         {
             CustomerList.DataSource = CustomerRepo.FilterCustomers(upiCode, fullname);
         }
@@ -182,14 +185,32 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
         var customerId = (int)editableItem.GetDataKeyValue("Id");
         var customer = CustomerRepo.GetCustomerById(customerId);
         
-        string phoneNumber=(string)values["Phone"] ?? "";
-
         if (customer != null)
         {
             try
             {
+                var upiCode = values["UpiCode"] as string;
+                var fullName = values["FullName"] as string;
+                var phoneNumber = values["Phone"] as string;
+
+                if (string.IsNullOrEmpty(upiCode) || string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(phoneNumber))
+                {
+                    ShowErrorMessage("Please provide UPI Code, Full Name and Phone number");
+                    e.Canceled = true;
+                    return;
+                }
+
                 if (checkvalid.phoneFormat(phoneNumber))
                 {
+
+                    var result = CustomerRepo.CheckExistedCustomer(customerId, phoneNumber);
+                    if(result)
+                    {
+                        ShowErrorMessage("Phone number is unique, please choose another one.");
+                        e.Canceled = true;
+                        return;
+                    }
+
                     RadComboBox ddlDistricts = gdItem["DistrictColumn"].FindControl("ddlDistricts") as RadComboBox;
                     if (int.Parse(ddlDistricts.SelectedValue) > 0)
                     {
@@ -204,7 +225,7 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
 
                         var noteOfSalesmen = ((TextBox)gdItem.FindControl("txtNoteOfSalesmen")).Text;
 
-                        Clog.InsertCustomer((string)values["UpiCode"], (string)values["FullName"], (string)values["Address"], (string)values["Street"],
+                        Clog.InsertCustomer(upiCode.Trim(), fullName.Trim(), (string)values["Address"], (string)values["Street"],
                             (string)values["Ward"], phoneNumber, password, customerType, channel, district, local, createDate, updateDate,
                             (bool)values["Status"], customerId, false, 0, adm.Id, noteOfSalesmen);
                         CustomerRepo.SetEnableOfCustomer(customerId, false);

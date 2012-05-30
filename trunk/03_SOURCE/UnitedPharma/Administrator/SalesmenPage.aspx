@@ -196,7 +196,7 @@
     <telerik:RadGrid runat="server" ID="RadGrid1" AutoGenerateColumns="false" AllowPaging="true"
         OnNeedDataSource="RadGrid1_NeedDataSource" OnUpdateCommand="RadGrid1_UpdateCommand"
         OnDeleteCommand="RadGrid1_DeleteCommand" OnInsertCommand="RadGrid1_InsertCommand"
-        Skin="Office2007" OnItemDataBound="RadGrid1_ItemDataBound" PageSize="50">
+        Skin="Office2007" OnItemDataBound="RadGrid1_ItemDataBound" PageSize="20">
         <MasterTableView DataKeyNames="Id" CommandItemDisplay="Top" InsertItemPageIndexAction="ShowItemOnCurrentPage"
             EditMode="EditForms" EditFormSettings-EditColumn-ButtonType="ImageButton">
             <Columns>

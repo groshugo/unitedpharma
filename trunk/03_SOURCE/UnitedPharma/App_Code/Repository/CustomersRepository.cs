@@ -203,7 +203,7 @@ public class CustomersRepository
     {
         try
         {
-            if (CheckExistedCustomer(-1, upiCode, phone)) return 0;
+            if (CheckExistedCustomer(-1, phone)) return 0;
 
             var o = new Customer
                         {
@@ -602,18 +602,17 @@ public class CustomersRepository
         }
     }
 
-    public bool CheckExistedCustomer(int id, string upiCode, string phoneNumber)
+    public bool CheckExistedCustomer(int id, string phoneNumber)
     {
         if (id == -1)
         {
-            var o = (from e in db.Customers where e.UpiCode.Trim().ToLower() == upiCode.Trim().ToLower() 
-                     || e.Phone == phoneNumber select e).Count();
+            var o = (from e in db.Customers where e.Phone == phoneNumber select e).Count();
             return o > 0;
         }
         else
         {
             var o = (from e in db.Customers
-                     where (e.UpiCode.Trim().ToLower() == upiCode.Trim().ToLower() || e.Phone == phoneNumber)
+                     where (e.Phone == phoneNumber)
                          && e.Id != id
                      select e).Count();
             return o > 0;
