@@ -17,8 +17,6 @@ public partial class Customers_CustomerMaster : System.Web.UI.MasterPage
             {
                 case "smscalendar.aspx": 
                     RadPanelBar1.Items[1].Expanded = true;
-                    
-                    
                     break;
                 case "smscontact.aspx": RadPanelBar1.Items[2].Expanded = true; break;
                 default: RadPanelBar1.Items[0].Expanded = true; break;
@@ -32,8 +30,8 @@ public partial class Customers_CustomerMaster : System.Web.UI.MasterPage
 
     protected void SelectedDateChange(object sender, SelectedDatesEventArgs e)
     {
-        string strDate = e.SelectedDates[e.SelectedDates.Count - 1].Date.ToShortDateString();
-        Response.Redirect(string.Format("~/Customers/SMSCalendar.aspx?dt={0}&dt1={1}", strDate.Replace("/", ""), strDate));
+        var strDate = e.SelectedDates[e.SelectedDates.Count - 1].Date.ToShortDateString();
+        SelectedDate.Value = strDate.Replace("/", "");
     }
 
     protected void RadPanelBar1_ItemClick(object sender, Telerik.Web.UI.RadPanelBarEventArgs e)
@@ -80,4 +78,6 @@ public partial class Customers_CustomerMaster : System.Web.UI.MasterPage
             }
         }
     }
+
+    
 }

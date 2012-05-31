@@ -11,34 +11,57 @@ public partial class Customers_SMSCalendar : System.Web.UI.Page
     SMSObjRepository FRepo = new SMSObjRepository();
     string dt = DateTime.Now.ToShortDateString().Replace("/", "");
 
+    protected override void OnPreRender(EventArgs e)
+    {
+        var selectedDate = this.Form.Parent.FindControl("SelectedDate") as HiddenField;
+        if (selectedDate != null)
+        {
+            dt = selectedDate.Value;
+            if(string.IsNullOrEmpty(dt))
+                dt = DateTime.Now.ToShortDateString().Replace("/", "");
+        }
+
+        Utility.SetCurrentMenu("mSms");
+        ObjLogin cust = (ObjLogin)Session["objLogin"];
+        if (cust != null)
+        {
+            RadGrid1.EnableAjaxSkinRendering = true;
+            RadGrid1.DataSource = FRepo.GetInboxSMSByDate(cust.Phone, dt);
+            RadGrid1.DataBind();
+        }
+        else
+        {
+            Response.Redirect("~/Default.aspx");
+        }
+        base.OnPreRender(e);
+    }
+    
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Request.QueryString["dt"] != null)
-        {
-            try
-            {
-                dt = Request.QueryString["dt"];
-            }
-            catch
-            {
+        //dt = Request.QueryString["dt"] ?? DateTime.Now.ToShortDateString().Replace("/", "");
 
-            }
-        }
-        if (!IsPostBack)
-        {
-            Utility.SetCurrentMenu("mSms");
-            ObjLogin cust = (ObjLogin)Session["objLogin"];
-            if (cust != null)
-            {
-                RadGrid1.EnableAjaxSkinRendering = true;
-                RadGrid1.DataSource = FRepo.GetInboxSMSByDate(cust.Phone, dt);
-                RadGrid1.DataBind();
-            }
-            else
-            {
-                Response.Redirect("~/Default.aspx");
-            }
-        }
+        //var selectedDate = this.Form.Parent.FindControl("SelectedDate") as HiddenField;
+        //if(selectedDate != null)
+        //{
+        //    dt = selectedDate.Value;
+        //}
+        
+        
+        //if (!IsPostBack)
+        //{
+        //    Utility.SetCurrentMenu("mSms");
+        //    ObjLogin cust = (ObjLogin)Session["objLogin"];
+        //    if (cust != null)
+        //    {
+        //        RadGrid1.EnableAjaxSkinRendering = true;
+        //        RadGrid1.DataSource = FRepo.GetInboxSMSByDate(cust.Phone, dt);
+        //        RadGrid1.DataBind();
+        //    }
+        //    else
+        //    {
+        //        Response.Redirect("~/Default.aspx");
+        //    }
+        //}
     }
 
     protected void RadGrid1_NeedDataSource(object source, GridNeedDataSourceEventArgs e)

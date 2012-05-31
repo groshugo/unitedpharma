@@ -58,7 +58,11 @@
                                 <telerik:RadPanelItem>
                                     <ItemTemplate>
                                         <telerik:RadCalendar runat="server" ID="Calendar1" AutoPostBack="true" OnSelectionChanged="SelectedDateChange"
-                                            Style="margin: 6px auto 0" />
+                                            Style="margin: 6px auto 0" EnableMultiSelect="false">
+                                            <SpecialDays>
+                                                <telerik:RadCalendarDay Repeatable="Today" Date="" ItemStyle-CssClass="rcToday" IsSelected="true" />
+                                            </SpecialDays>
+                                           </telerik:RadCalendar>
                                     </ItemTemplate>
                                 </telerik:RadPanelItem>
                             </Items>
@@ -71,6 +75,7 @@
                         </telerik:RadPanelItem>
                     </Items>
                 </telerik:RadPanelBar>
+                <asp:HiddenField runat="server" ID="SelectedDate" />
             </div>
             <div class="sms_right">
                 <div class="sms_header">
