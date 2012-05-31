@@ -24,6 +24,7 @@
     {
         // Code that runs when a new session is started
         Session["objLogin"] = null;
+        Response.Redirect("/default.aspx");
     }
 
     void Session_End(object sender, EventArgs e) 

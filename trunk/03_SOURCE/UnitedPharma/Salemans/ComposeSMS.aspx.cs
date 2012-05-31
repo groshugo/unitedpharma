@@ -88,27 +88,27 @@ public partial class Salemans_ComposeSMS : System.Web.UI.Page
         bool flag = false;
         string PhoneNotExist = string.Empty;
 
-        
-
         foreach (string phone in phoneList)
         {
             if (SRepo.CheckSalemenByPhoneNumber(phone))
             {
-                smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, phone, Constant.SalemenType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue));
+                smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.SalemenType, phone, Constant.SalemenType, DateTime.Now, subject, 
+                    txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue));
                 flag = true;
             }
             else
             {
                 if (CRepo.IsExistedCustomerByPhone(phone))
                 {
-                    smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, phone, Constant.CustomerType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue));
+                    smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.SalemenType, phone, Constant.CustomerType, DateTime.Now, subject, 
+                        txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue));
                     flag = true;
                 }
                 else
                 {
                     if (ARepo.GetAdminByPhoneNumber(phone))
                     {
-                        smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.AdminType, phone, Constant.AdminType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue));
+                        smsobjRepo.InsertSMS(SMSCode, 0, adm.Phone, Constant.SalemenType, phone, Constant.AdminType, DateTime.Now, subject, txtContent.Text, true, false, false, 1, int.Parse(ddlPromotion.SelectedValue));
                         flag = true;
                     }
                 }

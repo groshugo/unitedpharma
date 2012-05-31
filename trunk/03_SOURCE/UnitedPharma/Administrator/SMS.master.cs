@@ -35,9 +35,8 @@ public partial class Administrator_SMSMaster : System.Web.UI.MasterPage
 
     protected void SelectedDateChange(object sender, SelectedDatesEventArgs e)
     {
-        //Application["SelectedDate"] = e.SelectedDates[e.SelectedDates.Count - 1].Date.ToShortDateString();
-        string strDate = e.SelectedDates[e.SelectedDates.Count - 1].Date.ToShortDateString().Replace("/", "");
-        Response.Redirect("~/Administrator/SMSCalendar.aspx?dt=" + strDate);
+        var strDate = e.SelectedDates[e.SelectedDates.Count - 1].Date.ToShortDateString();
+        SelectedDate.Value = strDate.Replace("/", "");
     }
 
     protected void RadPanelBar1_ItemClick(object sender, Telerik.Web.UI.RadPanelBarEventArgs e)
