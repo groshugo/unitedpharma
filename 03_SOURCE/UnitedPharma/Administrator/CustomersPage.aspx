@@ -29,7 +29,11 @@
                     var keyValues = row.getDataKeyValue("Id");
                     var oWnd = radopen("CustomerLog.aspx?Id=" + keyValues, "RadWindow2");
                     $("#<%= hdfID.ClientID %>").val(keyValues);
+                    oWnd.add_close(OnClientCloseViewLogWin); 
                 }
+            }
+            function OnClientCloseViewLogWin(oWnd, args) {
+                window.location.href = window.location.href;
             }
             var tableView = null;
             function pageLoad(sender, args) {

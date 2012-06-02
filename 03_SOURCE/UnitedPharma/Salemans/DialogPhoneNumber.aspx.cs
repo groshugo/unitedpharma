@@ -66,6 +66,8 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
                 {
                     DeterminePocPos(salesmen);
                 }
+
+                //GetFilterData();
             }
         }
     }
@@ -110,23 +112,84 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
     }
     private string GetLocalBySaleId(int saleId)
     {
-        var GroupList = localRepo.GetLocalBySaleId(saleId);
-        string output = "";
-        foreach (var item in GroupList)
-        {
-            output += item.LocalId + ",";
-        }
-        if (output != "")
-            return output.Substring(0, output.Length - 1);
-        else
-            return "0";
+        var localList = localRepo.GetLocalBySaleId(saleId);
+        var output = localList.Aggregate("", (current, item) => current + (item.LocalId + ","));
+        return output != "" ? output.Substring(0, output.Length - 1) : "0";
     }
 
-
-    private void AllCustomers()
+    private string GetLocalIdStringByArea(int areaId)
     {
-        CustomerList.DataSource = CustomerRepo.GetAllViewCustomers();
+        var sql =
+            string.Format("select id from local where AreaId={0}", areaId);
+        var dt = U.GetList(sql);
+
+        var sb = new StringBuilder();
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            foreach (DataRow row in dt.Rows)
+            {
+                sb.AppendFormat("{0},", row["Id"]);
+            }
+
+            if (sb.Length > 0)
+            {
+                var output = sb.ToString();
+                return output.Substring(0, output.Length - 1);
+            }
+        }
+
+        return string.Empty;
     }
+
+    private string GetLocalIdStringByRegion(int regionId)
+    {
+        var sql =
+            string.Format("select id from local where AreaId in (select Distinct Id from Area where RegionId={0})", regionId);
+        var dt = U.GetList(sql);
+
+        var sb = new StringBuilder();
+        if(dt != null && dt.Rows.Count > 0)
+        {
+            foreach (DataRow row in dt.Rows)
+            {
+                sb.AppendFormat("{0},", row["Id"]);
+            }
+
+            if(sb.Length > 0)
+            {
+                var output = sb.ToString();
+                return output.Substring(0, output.Length - 1);
+            }
+        }
+
+        return string.Empty;
+    }
+
+    private string GetLocalIdStringByGroup(int groupId)
+    {
+        var sql =
+            string.Format("select id from local where AreaId in (select distinct Id from Area " +
+                          "where RegionId in (select distinct id from Region where GroupId={0}))", groupId);
+        var dt = U.GetList(sql);
+
+        var sb = new StringBuilder();
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            foreach (DataRow row in dt.Rows)
+            {
+                sb.AppendFormat("{0},", row["Id"]);
+            }
+
+            if (sb.Length > 0)
+            {
+                var output = sb.ToString();
+                return output.Substring(0, output.Length - 1);
+            }
+        }
+
+        return string.Empty;
+    }
+
     protected void CustomerList_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
         GetFilterData();
@@ -257,6 +320,7 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
             sql1 += " and a.Id=" + AreaId;
         if (LocalId > 0)
             sql1 += " and l.Id=" + LocalId;
+
         Utility U = new Utility();
         DataTable dt = U.GetList(sql1);
         string result = string.Empty;
@@ -266,8 +330,7 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
         }
         if (result == "")
             return result;
-        else
-            return result.Substring(0, result.Length - 1);
+        return result.Substring(0, result.Length - 1);
     }
 
     private void GetDataToGrid(int salemenId)
@@ -331,7 +394,6 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
 
     public void GetFilterData()
     {
-        DataTable dt = new DataTable();
         int selectType = int.Parse(ddlSelect.SelectedValue);
         int customerTypeId = int.Parse(ddlCustomerType.SelectedValue);
         int channelId = int.Parse(ddlChannel.SelectedValue);
@@ -340,42 +402,91 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
         int AreaId = (ddlArea.Items.Count > 0) ? int.Parse(ddlArea.SelectedValue) : 0;
         int LocalId = (ddlLocal.Items.Count > 0) ? int.Parse(ddlLocal.SelectedValue) : 0;
 
-        string sql = string.Empty;
+        var customerTypeIdFilter = string.Empty;
+        var channelIdFilter = string.Empty;
+        var localIdFilter = string.Empty;
+
         if (selectType == 1)//customer
         {
             DataTable dtFilterCustomers = new DataTable();
             if (customerTypeId > 0)
-                dtFilterCustomers.Merge(GetCustomerTypeById(customerTypeId));
+            {
+                customerTypeIdFilter += string.Format(" and CustomerTypeId={0}", customerTypeId);
+                //dtFilterCustomers.Merge(GetCustomerTypeById(customerTypeId));
+            }
+
             if (channelId > 0)
-                dtFilterCustomers.Merge(GetChannelById(channelId));
+            {
+                channelIdFilter += string.Format(" and ChannelId={0}", channelId);
+                //dtFilterCustomers.Merge(GetChannelById(channelId));
+            }
+
+            var sqlFullnameFilterString = string.Empty;
+            var fullName = txtFilterName.Text.Trim();
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                sqlFullnameFilterString += string.Format(" and FullName like '%{0}%'", fullName);
+            }
 
             if(LocalId > 0)
             {
-                dtFilterCustomers.Merge(GetLocalById(LocalId));
+                localIdFilter += string.Format(" and LocalId = {0}", LocalId);
+                //dtFilterCustomers.Merge(GetLocalById(LocalId));
             }
             else
             {
                 if(AreaId > 0)
                 {
-                    dtFilterCustomers.Merge(GetAreaById(AreaId));
+                    var strLocalIdList = GetLocalIdStringByArea(AreaId);
+                    if (!string.IsNullOrEmpty(strLocalIdList))
+                    {
+                        localIdFilter += string.Format(" and LocalId in ({0})", strLocalIdList);
+                    }
+                    //dtFilterCustomers.Merge(GetAreaById(AreaId));
                 }
                 else
                 {
                     if(RegionId > 0)
                     {
-                        dtFilterCustomers.Merge(GetRegionById(RegionId));
+                        var strLocalIdList = GetLocalIdStringByRegion(RegionId);
+                        if (!string.IsNullOrEmpty(strLocalIdList) && strLocalIdList != "0")
+                        {
+                            localIdFilter += string.Format(" and LocalId in ({0})", strLocalIdList);
+                        }
+                        //dtFilterCustomers.Merge(GetRegionById(RegionId));
                     }
                     else
                     {
                         if(GroupId > 0)
-                            dtFilterCustomers.Merge(getGroupById(GroupId));
+                        {
+                            var strLocalIdList = GetLocalIdStringByGroup(GroupId);
+                            if (!string.IsNullOrEmpty(strLocalIdList) && strLocalIdList != "0")
+                            {
+                                localIdFilter += string.Format(" and LocalId in ({0})", strLocalIdList);
+                            }
+                        }
+                        //dtFilterCustomers.Merge(getGroupById(GroupId));
                     }
                 }
             }
-            
 
-            if (GroupId == 0 && RegionId == 0 && AreaId == 0 && LocalId == 0 && customerTypeId == 0 && channelId == 0)
-                dtFilterCustomers = FilterByName();
+            var customerSqlString =
+                "Select c.*, ct.TypeName as CustomerTypeName, cs.FullName as SupervisorName, " +
+                "p.PositionName as PositionName, cs.Phone as supervisorPhone  " +
+                " from Customer c left join CustomerType ct on c.CustomerTypeId = c.Id " +
+                " left join Channel ch on c.ChannelId = ch.Id " +
+                " left join CustomerSupervisor cs on c.Id=cs.CustomerId " +
+                " left join SupervisorPosition p on cs.PositionId=p.Id" +
+                " where IsEnable=1 " + sqlFullnameFilterString + customerTypeIdFilter + channelIdFilter + localIdFilter;
+
+            dtFilterCustomers = U.GetList(customerSqlString);
+
+            //if (GroupId == 0 && RegionId == 0 && AreaId == 0 && LocalId == 0 && customerTypeId == 0 && channelId == 0)
+            //    dtFilterCustomers = FilterByName();
+            //else
+            //{
+                
+            //}
 
             CustomerList.DataSource = null;
             CustomerList.DataSource = dtFilterCustomers;
