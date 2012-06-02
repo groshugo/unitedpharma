@@ -40,23 +40,25 @@
             }
             function OnClientClose(oWnd, args) {
                 var arg = args.get_argument();
-                var Phone = "";
-                for (var i = 0; i < arg.length; i++) {
-                    if (CheckExistedPhoneNumber(arg[i]) == false) {
-                        Phone += arg[i] + ",";
+                if (arg != null) {
+                    var Phone = "";
+                    for (var i = 0; i < arg.length; i++) {
+                        if (CheckExistedPhoneNumber(arg[i]) == false) {
+                            Phone += arg[i] + ",";
+                        }
                     }
-                }
-                var currentListPhone = $("#<% =txtPhoneNumber.ClientID%>").val();
-                currentListPhone = (currentListPhone != "") ? currentListPhone + "," + Phone : Phone;
-                currentListPhone = currentListPhone.substring(0, currentListPhone.length - 1);
-                $("#<% =txtPhoneNumber.ClientID%>").val(currentListPhone);
-                $("#<% =hdfPhoneNumbers.ClientID%>").val(currentListPhone);
-                InitiateAsyncRequest(currentListPhone);
-                if (currentListPhone != "") {
-                    $("#<%= SchedulePhoneNumbers.ClientID %>").show();
-                }
-                else {
-                    $("#<%= SchedulePhoneNumbers.ClientID %>").hide();
+                    var currentListPhone = $("#<% =txtPhoneNumber.ClientID%>").val();
+                    currentListPhone = (currentListPhone != "") ? currentListPhone + "," + Phone : Phone;
+                    currentListPhone = currentListPhone.substring(0, currentListPhone.length - 1);
+                    $("#<% =txtPhoneNumber.ClientID%>").val(currentListPhone);
+                    $("#<% =hdfPhoneNumbers.ClientID%>").val(currentListPhone);
+                    InitiateAsyncRequest(currentListPhone);
+                    if (currentListPhone != "") {
+                        $("#<%= SchedulePhoneNumbers.ClientID %>").show();
+                    }
+                    else {
+                        $("#<%= SchedulePhoneNumbers.ClientID %>").hide();
+                    } 
                 }
             }
             function CheckExistedPhoneNumber(element) {
@@ -101,7 +103,7 @@
         </Windows>
     </telerik:RadWindowManager>
     <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="RadAjaxLoadingPanel1" OnAjaxRequest="RadAjaxManager1_AjaxRequest">
-        <AjaxSettings>
+        <%--<AjaxSettings>
             <telerik:AjaxSetting AjaxControlID="rdbPhoneNumber">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="RadPanel1" LoadingPanelID="RadAjaxLoadingPanel1" />
@@ -191,7 +193,7 @@
                     <telerik:AjaxUpdatedControl ControlID="RadPanel1" LoadingPanelID="RadAjaxLoadingPanel1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
-        </AjaxSettings>
+        </AjaxSettings>--%>
     </telerik:RadAjaxManager>
     <telerik:RadAjaxLoadingPanel runat="server" Transparency="25" ID="RadAjaxLoadingPanel1" CssClass="RadAjax RadAjax_Vista">
         <div class="raDiv">
