@@ -68,8 +68,9 @@
     <div style="margin: 5px 0; clear: both">
         <telerik:RadGrid runat="server" ID="RadGrid1" AutoGenerateColumns="false" AllowPaging="true"
             OnNeedDataSource="RadGrid1_NeedDataSource" AllowSorting="true" GridLines="Horizontal"
-            BorderWidth="0" PageSize="20" AllowMultiRowSelection="true" 
+            BorderWidth="0" PageSize="10" AllowMultiRowSelection="true" 
             Skin="Office2007" OnItemDataBound="RadGrid1_ItemDataBound">
+            <PagerStyle Mode="NextPrevAndNumeric" />
             <MasterTableView DataKeyNames="Id" CommandItemDisplay="None" ItemStyle-Height="30"
                 HeaderStyle-Height="35">
                 <Columns>                    
@@ -92,7 +93,6 @@
             <ClientSettings EnableRowHoverStyle="true">
                 <Selecting AllowRowSelect="True" />
             </ClientSettings>
-            <PagerStyle Mode="NextPrevAndNumeric" />
         </telerik:RadGrid>
         <asp:Literal runat="server" ID="litSmsStatus"></asp:Literal>
     </div>

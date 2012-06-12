@@ -161,4 +161,16 @@ name="Administrator_Default_RadGrid1_UpdateCommand_Can_not_update__please_provid
   <data name="can_not_save__try_again_later_or_contact_administrator">
     <value xml:space="preserve">can not save, try again later or contact administrator</value>
   </data>
+  <data name="You_don_t_have_permission_to_approve">
+    <value xml:space="preserve">You don't have permission to approve</value>
+  </data>
+  <data name="You_don_t_have_permission_to_delete">
+    <value xml:space="preserve">You don't have permission to delete</value>
+  </data>
+  <data name="Delete">
+    <value xml:space="preserve">Delete</value>
+  </data>
+  <data name="Approve">
+    <value xml:space="preserve">Approve</value>
+  </data>
 </root>

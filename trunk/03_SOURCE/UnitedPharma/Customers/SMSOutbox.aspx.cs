@@ -40,7 +40,7 @@ public partial class Customers_SMSOutbox : System.Web.UI.Page
     {
         ObjLogin cust = (ObjLogin)Session["objLogin"];
         int typeFilter = Convert.ToInt32(cbFilterType.SelectedValue);
-        RadGrid1.DataSource = FRepo.FilterOutboxSMS(typeFilter, txtFilterValue.Text.Trim(), cust.Phone);
+        RadGrid1.DataSource = FRepo.FilterOutboxSms(typeFilter, txtFilterValue.Text.Trim(), cust.Phone);
         RadGrid1.DataBind();
     }
 

@@ -69,6 +69,7 @@
         <telerik:radgrid runat="server" id="RadGrid1" autogeneratecolumns="false" allowpaging="true"
             onneeddatasource="RadGrid1_NeedDataSource" allowsorting="true" gridlines="Horizontal"
             borderwidth="0" pagesize="20" allowmultirowselection="true" skin="Office2007">
+            <PagerStyle Mode="NextPrevAndNumeric" />
             <MasterTableView DataKeyNames="Id" CommandItemDisplay="None" ItemStyle-Height="30"
                 HeaderStyle-Height="35">
                 <Columns>                    
@@ -78,7 +79,7 @@
                     <telerik:GridHyperLinkColumn DataTextField="Subject" SortExpression="Subject" HeaderText="Subject"
                         DataNavigateUrlFormatString="~/Customers/ViewDetailSMS.aspx?ID={0}&T=0" DataNavigateUrlFields="Id" />
                     <telerik:GridBoundColumn DataFormatString="{0:d}" DataField="Date" DataType="System.DateTime"
-                        HeaderText="Received" SortExpression="Date" UniqueName="Date" />                    
+                        HeaderText="Sent" SortExpression="Date" UniqueName="Date" />                    
                 </Columns>
                 <EditFormSettings>
                     <EditColumn ButtonType="ImageButton" />

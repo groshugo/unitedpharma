@@ -74,7 +74,7 @@
                     <telerik:GridHyperLinkColumn DataTextField="Subject" SortExpression="Subject" HeaderText="Subject"
                         DataNavigateUrlFormatString="~/Salemans/ViewDetailSMS.aspx?ID={0}&T=0" DataNavigateUrlFields="Id" />
                     <telerik:GridBoundColumn DataFormatString="{0:d}" DataField="Date" DataType="System.DateTime"
-                        HeaderText="Received" SortExpression="Date" UniqueName="Date" />                    
+                        HeaderText="Sent" SortExpression="Date" UniqueName="Date" />                    
                 </Columns>
                 <EditFormSettings>
                     <EditColumn ButtonType="ImageButton" />

@@ -65,12 +65,17 @@
                     <ItemTemplate>
                         <asp:Label ID="lblEndDate" runat="server" Text='<%# string.Format("{0:d}",Eval("EndDate")) %>'></asp:Label>
                     </ItemTemplate>
-                </telerik:GridTemplateColumn>                
+                </telerik:GridTemplateColumn>
+                <telerik:GridTemplateColumn HeaderText="Approved">
+                    <ItemTemplate>
+                        <asp:Label ID="lblApproved" runat="server" Text='<%# Eval("IsApprove") != null && Eval("IsApprove").ToString() == "True" ? "Yes" : "No"  %>'></asp:Label>
+                    </ItemTemplate>
+                </telerik:GridTemplateColumn>           
                 <%--<telerik:GridButtonColumn UniqueName="SelectColumn" Text="Detail" CommandName="Select">
                 </telerik:GridButtonColumn>--%>
-                <telerik:GridTemplateColumn HeaderText="Detail">
+                <telerik:GridTemplateColumn>
                     <ItemTemplate>
-                        <a href="javascript:void(0);" onclick="openWin(<%# Eval("Id")%>);return false;">Detail</a>
+                        <a href="javascript:void(0);" onclick="openWin(<%# Eval("Id")%>);return false;">View Details</a>
                     </ItemTemplate>
                 </telerik:GridTemplateColumn>
             </Columns>

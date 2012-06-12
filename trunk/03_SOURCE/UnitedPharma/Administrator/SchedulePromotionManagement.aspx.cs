@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Resources;
 using Telerik.Web.UI;
 using System.Collections;
 using System.Data;
@@ -24,23 +25,23 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
                 if (adm.AllowApprove == true)
                 {
                     btnApproveAll.Enabled = true;
-                    btnApproveAll.Text = "Approve";
+                    btnApproveAll.Text = Pharma.Approve;
                     btnDeleteSchedule.Enabled = true;
-                    btnDeleteSchedule.Text = "Delete";
+                    btnDeleteSchedule.Text = Pharma.Delete;
                 }
                 else
                 {
                     btnApproveAll.Enabled = false;
-                    btnApproveAll.Text = "You don't have permission to approve";
+                    btnApproveAll.Text = Pharma.You_don_t_have_permission_to_approve;
                     btnDeleteSchedule.Enabled = false;
-                    btnDeleteSchedule.Text = "You don't have permission to delete";
+                    btnDeleteSchedule.Text = Pharma.You_don_t_have_permission_to_delete;
                 }
             }
         }
     }
     protected void gridSchedulePromotion_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-            gridSchedulePromotion.DataSource = ScheduleRepo.GetAllViewSchedulePromotion();
+        gridSchedulePromotion.DataSource = ScheduleRepo.GetAllViewSchedulePromotion();
     }
     protected void gridSchedulePromotion_ItemCreated(object sender, Telerik.Web.UI.GridItemEventArgs e)
     {
@@ -250,11 +251,7 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
     }
     protected void btnClear_Click(object sender, EventArgs e)
     {
-        txtStartDate.SelectedDate = null;
-        txtEndtDate.SelectedDate = null;
-        ddlFilters.SelectedIndex = 0;
-
-        gridSchedulePromotion.DataSource = ScheduleRepo.GetAllViewSchedulePromotion();
+        Response.Redirect("/Administrator/SchedulePromotionManagement.aspx", true);
     }
 
     protected void btnApproveAll_Click(object sender, EventArgs e)

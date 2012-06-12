@@ -55,7 +55,7 @@ public partial class Salemans_Default : System.Web.UI.Page
     {
         ObjLogin sale = (ObjLogin)Session["objLogin"];
         int typeFilter = Convert.ToInt32(cbFilterType.SelectedValue);
-        RadGrid1.DataSource = FRepo.FilterInboxSMS(typeFilter, txtFilterValue.Text.Trim(), sale.Phone);
+        RadGrid1.DataSource = FRepo.FilterInboxSms(typeFilter, txtFilterValue.Text.Trim(), sale.Phone);
         RadGrid1.DataBind();
     }
 

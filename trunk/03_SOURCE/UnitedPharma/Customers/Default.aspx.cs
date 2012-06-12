@@ -17,9 +17,10 @@ public partial class Customers_Default : System.Web.UI.Page
             ObjLogin cust = (ObjLogin)Session["objLogin"];
             if (cust != null)
             {
-                var listVwSMS = FRepo.GetInboxSMS(cust.Phone);
+                var typeFilter = Convert.ToInt32(cbFilterType.SelectedValue);
+                var listVwSms = FRepo.FilterInboxSms(typeFilter, txtFilterValue.Text.Trim(), cust.Phone);// FRepo.GetInboxSMS(cust.Phone);
                 RadGrid1.EnableAjaxSkinRendering = true;
-                RadGrid1.DataSource = listVwSMS;
+                RadGrid1.DataSource = listVwSms;
                 RadGrid1.DataBind();
 
                 // Count SMS per day, get OutSms to count
@@ -48,8 +49,9 @@ public partial class Customers_Default : System.Web.UI.Page
         ObjLogin cust = (ObjLogin)Session["objLogin"];
 
         int typeFilter = Convert.ToInt32(cbFilterType.SelectedValue);
+        int promotionId = int.Parse(ddlPromotion.SelectedValue);
 
-        RadGrid1.DataSource = FRepo.FilterInboxSMS(typeFilter, txtFilterValue.Text.Trim(), cust.Phone);// FRepo.GetInboxSMS(cust.Phone);
+        RadGrid1.DataSource = FRepo.FilterInboxSmsWithPromo(typeFilter, txtFilterValue.Text.Trim(), cust.Phone, promotionId);// FRepo.GetInboxSMS(cust.Phone);
     }
 
     protected void RadGrid1_ItemDataBound(object sender, GridItemEventArgs e)
@@ -68,7 +70,7 @@ public partial class Customers_Default : System.Web.UI.Page
     {
         ObjLogin cust = (ObjLogin)Session["objLogin"];
         int typeFilter = Convert.ToInt32(cbFilterType.SelectedValue);
-        RadGrid1.DataSource = FRepo.FilterInboxSMS(typeFilter, txtFilterValue.Text.Trim(), cust.Phone);
+        RadGrid1.DataSource = FRepo.FilterInboxSms(typeFilter, txtFilterValue.Text.Trim(), cust.Phone);
         RadGrid1.DataBind();
     }
 
@@ -95,15 +97,21 @@ public partial class Customers_Default : System.Web.UI.Page
     protected void ddlPromotion_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
         ObjLogin cust = (ObjLogin)Session["objLogin"];
+
+        int typeFilter = Convert.ToInt32(cbFilterType.SelectedValue);
         int promotionId = int.Parse(ddlPromotion.SelectedValue);
-        if (promotionId > 0)
-        {
-            RadGrid1.DataSource = FRepo.GetSMSByPromotionId(cust.Phone, promotionId);
-        }
-        else
-        {
-            RadGrid1.DataSource = FRepo.GetInboxSMS(cust.Phone);
-        }
+
+        RadGrid1.DataSource = FRepo.FilterInboxSmsWithPromo(typeFilter, txtFilterValue.Text.Trim(), cust.Phone, promotionId);// FRepo.GetInboxSMS(cust.Phone);
+        //ObjLogin cust = (ObjLogin)Session["objLogin"];
+        //int promotionId = int.Parse(ddlPromotion.SelectedValue);
+        //if (promotionId > 0)
+        //{
+        //    RadGrid1.DataSource = FRepo.GetSMSByPromotionId(cust.Phone, promotionId);
+        //}
+        //else
+        //{
+        //    RadGrid1.DataSource = FRepo.GetInboxSMS(cust.Phone);
+        //}
         RadGrid1.DataBind();
     }
 }

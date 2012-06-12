@@ -133,15 +133,7 @@ Inherits="Administrator_SchedulePromotionManagement" %>
                     <telerik:AjaxUpdatedControl ControlID="RadWindowManager1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
-        </AjaxSettings>
-        <AjaxSettings>
-            <telerik:AjaxSetting AjaxControlID="btnFilter">
-                <UpdatedControls>
-                    <telerik:AjaxUpdatedControl ControlID="gridSchedulePromotion" LoadingPanelID="RadAjaxLoadingPanel1" />
-                    <telerik:AjaxUpdatedControl ControlID="RadWindowManager1" />
-                </UpdatedControls>
-            </telerik:AjaxSetting>
-        </AjaxSettings>
+        </AjaxSettings>        
     </telerik:RadAjaxManager>
     <telerik:RadAjaxLoadingPanel runat="server" ID="RadAjaxLoadingPanel1" CssClass="RadAjax RadAjax_Vista" Transparency="25">
         <div class="raDiv">
@@ -186,33 +178,10 @@ Inherits="Administrator_SchedulePromotionManagement" %>
     <asp:Panel ID="RadPanel1" runat="server">
         <telerik:RadGrid ID="gridSchedulePromotion" runat="server" AutoGenerateColumns="false" AllowPaging="true" OnItemDataBound="gridSchedulePromotion_ItemDataBound"
         OnNeedDataSource="gridSchedulePromotion_NeedDataSource" OnUpdateCommand="gridSchedulePromotion_UpdateCommand" AllowMultiRowSelection="true" 
-        OnDeleteCommand="gridSchedulePromotion_DeleteCommand" OnInsertCommand="gridSchedulePromotion_InsertCommand" PageSize="50"
+        OnDeleteCommand="gridSchedulePromotion_DeleteCommand" OnInsertCommand="gridSchedulePromotion_InsertCommand" PageSize="20"
         Skin="Office2007"  OnCreateColumnEditor="gridSchedulePromotion_CreateColumnEditor" OnItemCommand="gridSchedulePromotion_ItemCommand">
+            <PagerStyle Mode="NextPrevAndNumeric" />
             <MasterTableView DataKeyNames="Id" ClientDataKeyNames="Id" CommandItemDisplay="Top" InsertItemPageIndexAction="ShowItemOnCurrentPage" EditMode="EditForms">
-                <PagerTemplate>
-                    <asp:Panel ID="PagerPanel" Style="padding: 6px; height: 20px" runat="server">
-                        <div style="float: left">
-                            <span style="margin-right: 3px;">Page size:</span>
-                            <telerik:RadComboBox ID="RadComboBox1" DataSource="<%# new object[]{10, 20, 50, 200, 500, 1000} %>"
-                                Style="margin-right: 20px;" Width="70px" SelectedValue='<%# DataBinder.Eval(Container, "Paging.PageSize") %>'
-                                runat="server" OnClientSelectedIndexChanged="RadComboBox1_SelectedIndexChanged">
-                            </telerik:RadComboBox>
-                        </div>
-                        <div style="margin: 0px; float: right;">
-                            Displaying page
-                            <%# (int)DataBinder.Eval(Container, "Paging.CurrentPageIndex") + 1 %>
-                            of
-                            <%# DataBinder.Eval(Container, "Paging.PageCount")%>
-                            , items
-                            <%# (int)DataBinder.Eval(Container, "Paging.FirstIndexInPage") + 1 %>
-                            to
-                            <%# (int)DataBinder.Eval(Container, "Paging.LastIndexInPage") + 1 %>
-                            of
-                            <%# DataBinder.Eval(Container, "Paging.DataSourceCount")%>
-                        </div>
-                        <asp:Panel runat="server" ID="NumericPagerPlaceHolder" />
-                    </asp:Panel>
-                </PagerTemplate>
                 <Columns>
                     <telerik:GridClientSelectColumn UniqueName="CheckboxSelectColumn" FooterText="CheckBoxSelect footer" />
                     <telerik:GridEditCommandColumn ButtonType="ImageButton" />
