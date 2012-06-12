@@ -43,7 +43,7 @@ public partial class Salemans_SMSOutbox : System.Web.UI.Page
     {
         ObjLogin sale = (ObjLogin)Session["objLogin"];
         int typeFilter = Convert.ToInt32(cbFilterType.SelectedValue);
-        RadGrid1.DataSource = FRepo.FilterOutboxSMS(typeFilter, txtFilterValue.Text.Trim(), sale.Phone);
+        RadGrid1.DataSource = FRepo.FilterOutboxSms(typeFilter, txtFilterValue.Text.Trim(), sale.Phone);
         RadGrid1.DataBind();
     }
 

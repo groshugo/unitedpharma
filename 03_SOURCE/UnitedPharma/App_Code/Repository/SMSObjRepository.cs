@@ -76,6 +76,37 @@ public class SMSObjRepository
                 }).ToList();
     }
 
+    public List<vwSMS> GetInboxSmsWithPhoneAndPromo(string phone, int promoId)
+    {
+        return (from e in db.SmsObjs
+                where e.ReceiverNumber.Contains(phone) && (promoId < 1 || e.PromotionId == promoId) && 
+                e.IsDeleted == false && e.IsSendSuccess
+                orderby e.Id descending
+                select new vwSMS
+                {
+                    Id = e.Id,
+                    SMSCode = e.SMSCode,
+                    SmsParentId = e.ParentSmsId,
+                    SenderPhone = e.SenderNumber,
+                    SenderType = e.SenderType,
+                    ReceiverPhone = e.ReceiverNumber,
+                    ReceiverType = e.ReceiverType,
+                    Date = e.Date,
+                    CountParentSMS = CountParentSMS1(e.Id),
+                    Subject = CountParentSMS1WithSubject(e.Id, e.Subject),
+                    Content = e.Content,
+                    IsSendSuccess = e.IsSendSuccess,
+                    IsDelete = e.IsDeleted,
+                    IsRead = e.IsRead,
+                    SmsTypeId = e.SmsTypeId,
+                    PromotionId = e.PromotionId,
+                    SenderId = GetId(e.SenderType, e.SenderNumber),
+                    SenderName = GetName(e.SenderType, e.SenderNumber),
+                    ReceiverId = GetId(e.ReceiverType, e.ReceiverNumber),
+                    ReceiverName = GetName(e.ReceiverType, e.ReceiverNumber)
+                }).ToList();
+    }
+
     public List<vwSMS> GetInboxSMSByDate(string Phone, string dt)
     {
         var lst = GetInboxSMS(Phone);
@@ -318,23 +349,37 @@ public class SMSObjRepository
         return true;
     }
 
-    public List<vwSMS> FilterInboxSMS(int typeFilter, string value, string Phone)
+    public List<vwSMS> FilterInboxSms(int typeFilter, string value, string phone)
     {
-        var lstSMS = GetInboxSMS(Phone);
+        var lstSms = GetInboxSMS(phone);
         switch (typeFilter)
         {
             case 0:
-                return (from sms in lstSMS where sms.SenderName != null && sms.SenderName.ToLower().Contains(value.ToLower()) select sms).ToList();
+                return (from sms in lstSms where sms.SenderName != null && sms.SenderName.ToLower().Contains(value.ToLower()) select sms).ToList();
             case 1:
-                return (from sms in lstSMS where sms.SenderPhone != null && sms.SenderPhone.ToLower().Contains(value.ToLower()) select sms).ToList();
+                return (from sms in lstSms where sms.SenderPhone != null && sms.SenderPhone.ToLower().Contains(value.ToLower()) select sms).ToList();
             default:
-                return (from sms in lstSMS where sms.Subject != null && sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
+                return (from sms in lstSms where sms.Subject != null && sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
         }
     }
 
-    public List<vwSMS> FilterOutboxSMS(int typeFilter, string value, string Phone)
+    public List<vwSMS> FilterInboxSmsWithPromo(int typeFilter, string value, string phone, int promotionId)
     {
-        var lstSms = GetOutboxSMS(Phone);
+        var lstSms = GetInboxSmsWithPhoneAndPromo(phone, promotionId);
+        switch (typeFilter)
+        {
+            case 0:
+                return (from sms in lstSms where sms.SenderName != null && sms.SenderName.ToLower().Contains(value.ToLower()) select sms).ToList();
+            case 1:
+                return (from sms in lstSms where sms.SenderPhone != null && sms.SenderPhone.ToLower().Contains(value.ToLower()) select sms).ToList();
+            default:
+                return (from sms in lstSms where sms.Subject != null && sms.Subject.ToLower().Contains(value.ToLower()) select sms).ToList();
+        }
+    }
+
+    public List<vwSMS> FilterOutboxSms(int typeFilter, string value, string phone)
+    {
+        var lstSms = GetOutboxSMS(phone);
         switch (typeFilter)
         {
             case 0:

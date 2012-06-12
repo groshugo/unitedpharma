@@ -41,7 +41,9 @@ public class AdministratorRepository
 
     public ObjLogin CheckLoginSerialize(string phone, string password)
     {
-        return (from e in db.Administrators where String.Equals(phone, e.Phone) && String.Equals(password, e.Password) select new ObjLogin { Id = e.Id, Fullname = e.Fullname, Phone = e.Phone,AllowApprove=e.AllowApprove }).SingleOrDefault();
+        return (from e in db.Administrators
+                where String.Equals(phone, e.Phone) && String.Equals(password, e.Password)
+                select new ObjLogin { Id = e.Id, Fullname = e.Fullname, Phone = e.Phone, AllowApprove = e.AllowApprove }).SingleOrDefault();
     }
 
     public bool Add(string upiCode, string fullname, string password, string phone)

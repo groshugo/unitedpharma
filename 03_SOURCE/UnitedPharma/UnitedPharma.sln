@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "UnitedPharma", ".", "{262848DB-8E9B-4E82-9736-5B8301376FE2}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "UnitedPharma", "..\UnitedPharma", "{262848DB-8E9B-4E82-9736-5B8301376FE2}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/UnitedPharma"
@@ -18,7 +18,12 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "UnitedPharma", ".", "{26284
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "22352"
+		VWDPort = "4559"
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B7CD0750-2B6D-4092-A7EC-FD77B77A2DB5}"
+	ProjectSection(SolutionItems) = preProject
+		Performance1.psess = Performance1.psess
 	EndProjectSection
 EndProject
 Global

@@ -110,7 +110,7 @@
                     <telerik:GridHyperLinkColumn DataTextField="Subject" SortExpression="Subject" HeaderText="Subject"
                         DataNavigateUrlFormatString="~/Administrator/ViewDetailSMS.aspx?ID={0}" DataNavigateUrlFields="Id" />
                     <telerik:GridBoundColumn DataFormatString="{0:d}" DataField="Date" DataType="System.DateTime"
-                        HeaderText="Received" SortExpression="Date" UniqueName="Date" />
+                        HeaderText="Sent" SortExpression="Date" UniqueName="Date" />
                     <telerik:GridButtonColumn ConfirmText="Delete this SMS?" ConfirmDialogType="RadWindow"
                         ConfirmTitle="Delete" ButtonType="ImageButton" CommandName="Delete" />
                 </Columns>

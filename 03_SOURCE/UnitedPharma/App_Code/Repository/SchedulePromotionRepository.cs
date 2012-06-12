@@ -19,9 +19,9 @@ public class SchedulePromotionRepository
         return (from e in db.SchedulePromotions select e).ToList();
     }
 
-    public List<SchedulePromotion> GetAllApprovedPromotions()
+    public List<SchedulePromotion> GetPromotions()
     {
-        return (db.SchedulePromotions.Where(e => e.IsApprove.HasValue && e.IsApprove.Value == true)).ToList();
+        return (db.SchedulePromotions.Where(e => e.IsApprove.HasValue)).ToList();
     }
 
     public List<vwSchedulePromotion> GetAllViewSchedulePromotion()
