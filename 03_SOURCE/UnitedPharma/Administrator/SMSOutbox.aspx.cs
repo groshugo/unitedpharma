@@ -62,7 +62,7 @@ public partial class Administrator_SMSOutbox : System.Web.UI.Page
 
     protected void btnClearFilter_Click(object sender, EventArgs e)
     {
-        RadGrid1.Rebind();
+        Response.Redirect("/Administrator/SMSOutbox.aspx");
     }
 
     private void ShowMessage(string message)

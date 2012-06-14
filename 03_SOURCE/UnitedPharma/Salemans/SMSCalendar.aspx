@@ -10,24 +10,42 @@
         </telerik:radbutton>
     </div>
     <div style="margin-right: 5px; float: right; height: 35px;">
-        <telerik:radbutton runat="server" id="btnFilter" text="Filter" tooltip="Filter" onclick="btnFilter_Click">
-        </telerik:radbutton>
-        <telerik:radbutton runat="server" id="btnClearFilter" text="Clear Filter" tooltip="Clear Filter"
-            onclick="btnClearFilter_Click">
-        </telerik:radbutton>
+        <table>
+            <tr>
+                <td>
+                    <telerik:RadButton runat="server" ID="btnFilter" Text="Filter" ToolTip="Filter" OnClick="btnFilter_Click">
+                    </telerik:RadButton>
+                </td>
+                <td>
+                    <telerik:RadButton runat="server" ID="btnClearFilter" Text="Clear Filter" ToolTip="Clear Filter"
+                        OnClick="btnClearFilter_Click">
+                    </telerik:RadButton>
+                </td>
+            </tr>
+        </table>
     </div>
     <div style="float: right; height: 35px; width: 358px;">
-        Filter:
-        <telerik:radcombobox runat="server" id="cbFilterType" skin="Office2007">
-            <Items>
-                <telerik:RadComboBoxItem Value="0" Text="By From" />
-                <telerik:RadComboBoxItem Value="1" Text="By Phone" />
-                <telerik:RadComboBoxItem Value="2" Text="By Subject" />
-            </Items>
-        </telerik:radcombobox>
-        <telerik:radtextbox runat="server" id="txtFilterValue" height="18px" width="150"
-            skin="Office2007">
-        </telerik:radtextbox>
+        <table>
+            <tr>
+                <td>
+                    Filter:
+                </td>
+                <td>
+                    <telerik:RadComboBox runat="server" ID="cbFilterType" Skin="Office2007">
+                        <Items>
+                            <telerik:RadComboBoxItem Value="0" Text="By From" />
+                            <telerik:RadComboBoxItem Value="1" Text="By Phone" />
+                            <telerik:RadComboBoxItem Value="2" Text="By Subject" />
+                        </Items>
+                    </telerik:RadComboBox>
+                </td>
+                <td>
+                    <telerik:RadTextBox runat="server" ID="txtFilterValue" Height="18px" Width="150"
+                        Skin="Office2007">
+                    </telerik:RadTextBox>
+                </td>
+            </tr>
+        </table>
     </div>
     <div class="clear">
     </div>
@@ -50,6 +68,8 @@
             <telerik:AjaxSetting AjaxControlID="btnClearFilter">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="RadGrid1" />
+                    <telerik:AjaxUpdatedControl ControlID="cbFilterType" />
+                    <telerik:AjaxUpdatedControl ControlID="txtFilterValue" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
         </AjaxSettings>

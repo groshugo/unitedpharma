@@ -56,21 +56,5 @@
             </MasterTableView>
             <PagerStyle Mode="NextPrevAndNumeric" />
         </telerik:RadGrid>
-        <div style="height:13px"></div>
-        <telerik:RadGrid runat="server" ID="RadGrid1" AutoGenerateColumns="false" AllowPaging="true"
-            OnNeedDataSource="RadGrid1_NeedDataSource" AllowSorting="true" Skin="Office2007"
-            PageSize="10" AllowMultiRowSelection="true">
-            <MasterTableView DataKeyNames="Id" CommandItemDisplay="None">
-                <Columns>
-                    <telerik:GridBoundColumn DataField="FullName" SortExpression="FullName" HeaderText="Name" HeaderStyle-Width="60%" />
-                    <telerik:GridBoundColumn DataField="Phone" SortExpression="Phone" HeaderText="Phone" HeaderStyle-Width="25%" />
-                    <telerik:GridBoundColumn DataField="RoleName" SortExpression="RoleName" HeaderText="Role" HeaderStyle-Width="15%" />
-                </Columns>
-                <EditFormSettings>
-                    <EditColumn ButtonType="ImageButton" />
-                </EditFormSettings>
-            </MasterTableView>
-            <PagerStyle Mode="NextPrevAndNumeric" />
-        </telerik:RadGrid>
     </div>
 </asp:Content>

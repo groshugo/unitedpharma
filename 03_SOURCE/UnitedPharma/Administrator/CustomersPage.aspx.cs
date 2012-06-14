@@ -125,6 +125,18 @@ public partial class Administrator_CustomersPage : System.Web.UI.Page
         CustomerList.DataSource = CustomerRepo.FilterCustomers(upiCode, fullname);
         CustomerList.DataBind();
 
+        if (!string.IsNullOrEmpty(upiCode) || !string.IsNullOrEmpty(fullname))
+        {
+            gridCustomerLog.DataSource = Clog.FilterCustomers(upiCode, fullname);
+            gridCustomerLog.DataBind();
+        }
+        else
+        {
+            var supervisorId = GetSupervisorOfPOC_POS();
+            gridCustomerLog.DataSource = GetCustomerLog(supervisorId);
+            gridCustomerLog.DataBind();
+        }
+
         Session["IsFilterClickedAdminCustomer"] = "1";
     }
 

@@ -62,7 +62,7 @@ public partial class Administrator_SMSDeletedItem : System.Web.UI.Page
 
     protected void btnClearFilter_Click(object sender, EventArgs e)
     {
-        RadGrid1.Rebind();
+        Response.Redirect("/Administrator/SMSDeletedItem.aspx");
     }
 
     private void ShowMessage(string message)

@@ -74,7 +74,7 @@ public partial class Administrator_Default : System.Web.UI.Page
 
     protected void btnClearFilter_Click(object sender, EventArgs e)
     {
-        RadGrid1.Rebind();
+        Response.Redirect("/Administrator/");
     }
 
     private void ShowMessage(string message)

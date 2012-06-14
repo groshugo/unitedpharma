@@ -125,15 +125,15 @@ Inherits="Administrator_SchedulePromotionManagement" %>
             </telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>
-    <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="RadAjaxLoadingPanel1">
-        <AjaxSettings>
+    <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="RadAjaxLoadingPanel1" >
+        <%--<AjaxSettings>
             <telerik:AjaxSetting AjaxControlID="gridSchedulePromotion">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="gridSchedulePromotion" LoadingPanelID="RadAjaxLoadingPanel1" />
                     <telerik:AjaxUpdatedControl ControlID="RadWindowManager1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
-        </AjaxSettings>        
+        </AjaxSettings>--%>        
     </telerik:RadAjaxManager>
     <telerik:RadAjaxLoadingPanel runat="server" ID="RadAjaxLoadingPanel1" CssClass="RadAjax RadAjax_Vista" Transparency="25">
         <div class="raDiv">
