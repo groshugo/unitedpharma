@@ -113,10 +113,44 @@ public class SMSObjRepository
         return (from sms in lst where ((DateTime)sms.Date).ToShortDateString().Replace("/", "") == dt select sms).ToList();
     }
 
+    public List<vwSMS> GetInboxSmsByDateAndFilter(string phone, string dt, int filterType, string filterValue)
+    {
+        var lst = GetInboxSMS(phone);
+
+        var results = new List<vwSMS>();
+
+        switch (filterType)
+        {
+            case 0: // from
+                results = (lst.Where(
+                    sms =>
+                    sms.Date != null &&
+                    (sms.SenderName != null && (((DateTime) sms.Date).ToShortDateString().Replace("/", "") == dt
+                                                && sms.SenderName.ToLower().Contains(filterValue.ToLower()))))).ToList();
+                break;
+            case 1: // phone
+                results = (lst.Where(
+                    sms =>
+                    sms.Date != null &&
+                    (sms.SenderPhone != null && (((DateTime) sms.Date).ToShortDateString().Replace("/", "") == dt
+                                                 && sms.SenderPhone.Contains(filterValue))))).ToList();
+                break;
+            default:
+                results = (lst.Where(
+                    sms =>
+                    sms.Date != null &&
+                    (sms.Subject != null && (((DateTime) sms.Date).ToShortDateString().Replace("/", "") == dt
+                                             && sms.Subject.ToLower().Contains(filterValue.ToLower()))))).ToList();
+                break;
+        }
+
+        return results;
+    }
+
     public List<vwSMS> GetOutboxSMS(string Phone)
     {
         return (from e in db.SmsObjs
-                where String.Equals(e.SenderNumber, Phone) && e.IsDeleted == false && e.IsSendSuccess == true
+                where String.Equals(e.SenderNumber, Phone) && !e.IsDeleted && e.IsSendSuccess
                 orderby e.Date descending
                 select new vwSMS
                 {
@@ -145,7 +179,7 @@ public class SMSObjRepository
     public List<vwSMS> GetDeletedSMS(string Phone)
     {
         return (from e in db.SmsObjs
-                where e.SenderNumber==Phone || e.ReceiverNumber.Contains(Phone) && e.IsDeleted == true && e.IsSendSuccess == true
+                where (e.SenderNumber==Phone || e.ReceiverNumber.Contains(Phone)) && e.IsDeleted && e.IsSendSuccess
                 orderby e.Date descending
                 select new vwSMS
                 {

@@ -9,24 +9,27 @@ using Telerik.Web.UI;
 public partial class Administrator_SMSCalendar : System.Web.UI.Page
 {
     SMSObjRepository FRepo = new SMSObjRepository();
-    string dt = DateTime.Now.ToShortDateString().Replace("/", "");
+    private string _dt = string.Empty;
 
     protected override void OnPreRender(EventArgs e)
     {
         var selectedDate = this.Form.Parent.FindControl("SelectedDate") as HiddenField;
         if (selectedDate != null)
         {
-            dt = selectedDate.Value;
-            if (string.IsNullOrEmpty(dt))
-                dt = DateTime.Now.ToShortDateString().Replace("/", "");
+            _dt = selectedDate.Value;
+            if (string.IsNullOrEmpty(_dt))
+                _dt = DateTime.Now.ToShortDateString().Replace("/", "");
         }
+        
+        var filterType = int.Parse(cbFilterType.SelectedValue);
+        var filterValue = txtFilterValue.Text.Trim();
 
         Utility.SetCurrentMenu("mSms");
-        ObjLogin adm = (ObjLogin)Session["objLogin"];
+        var adm = (ObjLogin)Session["objLogin"];
         if (adm != null)
         {
             RadGrid1.EnableAjaxSkinRendering = true;
-            RadGrid1.DataSource = FRepo.GetInboxSMSByDate(adm.Phone, dt);
+            RadGrid1.DataSource = FRepo.GetInboxSmsByDateAndFilter(adm.Phone, _dt, filterType, filterValue);  //FRepo.GetInboxSMSByDate(adm.Phone, _dt);
             RadGrid1.DataBind();
         }
         else
@@ -70,7 +73,7 @@ public partial class Administrator_SMSCalendar : System.Web.UI.Page
     protected void RadGrid1_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
         ObjLogin adm = (ObjLogin)Session["objLogin"];
-        RadGrid1.DataSource = FRepo.GetInboxSMSByDate(adm.Phone, dt);
+        RadGrid1.DataSource = FRepo.GetInboxSMSByDate(adm.Phone, _dt);
     }
 
     protected void btnCompose_Click(object sender, EventArgs e)
@@ -93,15 +96,16 @@ public partial class Administrator_SMSCalendar : System.Web.UI.Page
 
     protected void btnFilter_Click(object sender, EventArgs e)
     {
-        ObjLogin adm = (ObjLogin)Session["objLogin"];
-        int typeFilter = Convert.ToInt32(cbFilterType.SelectedValue);
-        RadGrid1.DataSource = FRepo.FilterInboxSMSByDate(typeFilter, txtFilterValue.Text.Trim(), adm.Phone);
-        RadGrid1.DataBind();
+        //ObjLogin adm = (ObjLogin)Session["objLogin"];
+        //int typeFilter = Convert.ToInt32(cbFilterType.SelectedValue);
+        //RadGrid1.DataSource = FRepo.FilterInboxSMSByDate(typeFilter, txtFilterValue.Text.Trim(), adm.Phone);
+        //RadGrid1.DataBind();
     }
 
     protected void btnClearFilter_Click(object sender, EventArgs e)
     {
-        RadGrid1.Rebind();
+        cbFilterType.SelectedIndex = 0;
+        txtFilterValue.Text = string.Empty;
     }
 
     private void ShowMessage(string message)

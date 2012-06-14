@@ -21,7 +21,7 @@
             });
             $("#salemen").click(function () {
                 $("#hdfLoginType").val("2");
-                $("#lblLoginTitle").html("Salemens");
+                $("#lblLoginTitle").html("Salesmen");
                 $("#light_bg").fadeIn("slow");
                 $("#login_box").fadeIn("slow");
                 $("#input_login").val("0987435325");

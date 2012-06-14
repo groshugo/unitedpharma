@@ -30,8 +30,11 @@ public partial class Customers_CustomerMaster : System.Web.UI.MasterPage
 
     protected void SelectedDateChange(object sender, SelectedDatesEventArgs e)
     {
-        var strDate = e.SelectedDates[e.SelectedDates.Count - 1].Date.ToShortDateString();
-        SelectedDate.Value = strDate.Replace("/", "");
+        if (e != null && e.SelectedDates != null && e.SelectedDates.Count > 0)
+        {
+            var strDate = e.SelectedDates[e.SelectedDates.Count - 1].Date.ToShortDateString();
+            SelectedDate.Value = strDate.Replace("/", "");
+        }
     }
 
     protected void RadPanelBar1_ItemClick(object sender, Telerik.Web.UI.RadPanelBarEventArgs e)
