@@ -46,25 +46,24 @@
                 return oWindow;
             }
             function returnToParent() {
-                var oArg = new Object();
                 var selectOption = document.getElementById("<%= ddlSelect.ClientID %>").value;
                 var RadGrid1 = (selectOption == "Customers") ? $find("<%=CustomerList.ClientID %>") : $find("<%=GridSalemen.ClientID %>");
-                var myJSONObject = new Array();
+                var phoneNumbers = '';
                 for (var i = 0; i < RadGrid1.get_masterTableView().get_selectedItems().length; i++) 
                 {
                     var MasterTable = RadGrid1.get_masterTableView();
                     var row = MasterTable.get_selectedItems()[i];
                     var cell = MasterTable.getCellByColumnUniqueName(row, "Phone");
                     if (cell.innerHTML != "&nbsp;") {
-                        myJSONObject[i] = cell.innerHTML;
+                        phoneNumbers += cell.innerHTML + ',';
                     }
                     else {
                         continue;
                     }
                 }
                 var oWnd = GetRadWindow();
-                if (myJSONObject) {
-                    oWnd.close(myJSONObject);
+                if (oWnd && phoneNumbers) {
+                    oWnd.close(phoneNumbers.slice(0, -1));
                 }
             }
             -->
