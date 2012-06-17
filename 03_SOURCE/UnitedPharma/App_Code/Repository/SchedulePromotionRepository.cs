@@ -106,7 +106,8 @@ public class SchedulePromotionRepository
         return (from a in db.Administrators where a.Id==adminId select a.Fullname).SingleOrDefault();
     }
 
-    public bool InsertSchedulePromotion(string UpiCode, string Title, string SMSContent,string WebContent, DateTime StartDate, DateTime EndDate, int AdministratorId, bool IsApprove, string PhoneNumbers)
+    public bool InsertSchedulePromotion(string UpiCode, string Title, string SMSContent,string WebContent, DateTime StartDate, 
+        DateTime EndDate, int AdministratorId, bool IsApprove, string PhoneNumbers)
     {
         try
         {

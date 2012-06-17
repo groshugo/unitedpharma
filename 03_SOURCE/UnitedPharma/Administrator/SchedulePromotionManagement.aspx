@@ -6,9 +6,9 @@ Inherits="Administrator_SchedulePromotionManagement" %>
     <title>Promotion Management</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-    <style>
+    <%--<style>
         #ctl00_ContentPlaceHolder1_gridSchedulePromotion_ctl00_ctl07_ctl02,#ctl00_ContentPlaceHolder1_gridSchedulePromotion_ctl00_ctl07_ctl03{width:680px}
-    </style>
+    </style>--%>
     <telerik:RadCodeBlock ID="RadCodeBlock1" runat="server">
         <script type="text/javascript">
             <!--
@@ -37,19 +37,23 @@ Inherits="Administrator_SchedulePromotionManagement" %>
             function OnClientClose(oWnd, args) {
                 var arg = args.get_argument();
                 if (arg) {
-                    var Phone = "";
-                    for (var i = 0; i < arg.length; i++) {
-                        Phone += arg[i] + ",";
-                    }
-                    Phone = Phone.substring(0, Phone.length - 1);
+//                    var Phone = "";
+//                    for (var i = 0; i < arg.length; i++) {
+//                        Phone += arg[i] + ",";
+//                    }
+//                    Phone = Phone.substring(0, Phone.length - 1);
 
                     var txtPhoneNumber = $("input[name*='txtPhoneNumber']");
-                    if (txtPhoneNumber != null) {
-                        txtPhoneNumber.val(Phone);
+                    if (txtPhoneNumber) {
+                        txtPhoneNumber.val(arg);
                     }
-                    var hdfPhoneNumbers = $("input[name*='hdfPhoneNumbers']");
-                    if (hdfPhoneNumbers)
-                        hdfPhoneNumbers.val(Phone);
+
+                    //$("#ctl00_ContentPlaceHolder1_gridSchedulePromotion_ctl00_ctl02_ctl03_txtPhoneNumber_text").val(arg);
+                    //document.getElementById("ctl00$ContentPlaceHolder1$hdfPhoneNumbers").value = arg;
+                    
+//                    var hdfPhoneNumbers = $("input[name*='hdfPhoneNumbers']");
+//                    if (hdfPhoneNumbers)
+//                        hdfPhoneNumbers.val(arg);
                     
                 }
             }
@@ -192,7 +196,7 @@ Inherits="Administrator_SchedulePromotionManagement" %>
                             <a href="javascript:void(0);" onclick="OpenPhoneList(<%# Eval("Id")%>);return false;">Phone numbers (<%# Eval("TotalPhoneNumber")%>)</a>
                         </ItemTemplate>
                         <EditItemTemplate>
-                            <telerik:RadTextBox ID="txtPhoneNumber" runat="server" ReadOnly="true" Width="608px"></telerik:RadTextBox>
+                            <asp:TextBox ID="txtPhoneNumber" runat="server" ReadOnly="false" Width="608px"></asp:TextBox>
                             <asp:HiddenField ID="hdfPhoneList" runat="server" Value='<%# Eval("PhoneNumbers")%>' />
                             <button onclick="openWin(); return false;">Browse</button>
                         </EditItemTemplate>

@@ -121,58 +121,68 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
 
     protected void gridSchedulePromotion_InsertCommand(object source, GridCommandEventArgs e)
     {
-        //GridEditFormItem gdItem = (e.Item as GridEditFormItem);
-        //var editableItem = ((GridEditableItem)e.Item);
-        //Hashtable values = new Hashtable();
-        //editableItem.ExtractValues(values);
-        //try
-        //{
-        //    //DateTime StartDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtStartDate")).SelectedDate.Value.Date);
-        //    //DateTime EndDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtEndDate")).SelectedDate.Value.Date);
+        GridEditFormItem gdItem = (e.Item as GridEditFormItem);
+        var editableItem = ((GridEditableItem)e.Item);
+        Hashtable values = new Hashtable();
+        editableItem.ExtractValues(values);
+        try
+        {
+            string SMSContent = ((TextBox)gdItem.FindControl("txtSMSContent")).Text;
+            string webcontent = ((RadEditor)editableItem.FindControl("RadEditor1")).Text;
+            string phoneNumbers = ((TextBox)gdItem.FindControl("txtPhoneNumber")).Text; // hdfPhoneNumbers.Value;
+            var upiCode = values["UpiCode"] == null ? string.Empty : values["UpiCode"].ToString();
+            var title = values["Title"] == null ? string.Empty : values["Title"].ToString(); 
 
-        //    DateTime StartDate = DateTime.Now;
-        //    var StartDateControl = gdItem.FindControl("txtStartDate") as RadDatePicker;
-        //    if (StartDateControl != null && StartDateControl.SelectedDate.HasValue)
-        //    {
-        //        StartDate = StartDateControl.SelectedDate.Value;
-        //    }
+            if (string.IsNullOrEmpty(upiCode) || string.IsNullOrEmpty(title) || string.IsNullOrEmpty(SMSContent)
+                || string.IsNullOrEmpty(webcontent) || string.IsNullOrEmpty(phoneNumbers))
+            {
+                ShowErrorMessage("Upi Code, Title, Phone numbers, SMS Content, Web Content are required fields");
+                e.Canceled = true;
+            }
+            else
+            {
+                DateTime StartDate = DateTime.Now;
+                var StartDateControl = gdItem.FindControl("txtStartDate") as RadDatePicker;
+                if (StartDateControl != null && StartDateControl.SelectedDate.HasValue)
+                {
+                    StartDate = StartDateControl.SelectedDate.Value;
+                }
 
-        //    DateTime EndDate = DateTime.Now;
-        //    var EndDateControl = gdItem.FindControl("txtEndDate") as RadDatePicker;
-        //    if (EndDateControl != null && EndDateControl.SelectedDate.HasValue)
-        //    {
-        //        EndDate = EndDateControl.SelectedDate.Value;
-        //    }
+                DateTime EndDate = DateTime.Now;
+                var EndDateControl = gdItem.FindControl("txtEndDate") as RadDatePicker;
+                if (EndDateControl != null && EndDateControl.SelectedDate.HasValue)
+                {
+                    EndDate = EndDateControl.SelectedDate.Value;
+                }
 
-        //    double startdate = Utility.ConvertToUnixTimestamp(StartDate);
-        //    double endDate = Utility.ConvertToUnixTimestamp(EndDate);
-        //    if (endDate >= startdate)
-        //    {
-        //        ObjLogin adm = (ObjLogin)Session["objLogin"];
-        //        int administratorId = adm.Id;
-        //        string SMSContent = ((TextBox)gdItem.FindControl("txtSMSContent")).Text;
-        //        string webcontent = ((RadEditor)editableItem.FindControl("RadEditor1")).Text;
-        //        string PhoneNumbers = hdfPhoneNumbers.Value;
-        //        var result =  ScheduleRepo.InsertSchedulePromotion((string)values["UpiCode"], (string)values["Title"], SMSContent,
-        //             webcontent, StartDate, EndDate, administratorId, false, PhoneNumbers);
-        //        if(!result)
-        //        {
-        //            ShowErrorMessage("Can not add, please try again or contact administrator");
-        //            e.Canceled = true;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        ShowErrorMessage("End date must be >= start date");
-        //        e.Canceled = true;
-        //    }
-                
-        //}
-        //catch (Exception ex)
-        //{
-        //    ShowErrorMessage(ex.Message);
-        //    e.Canceled = true;
-        //}
+                if (DateTime.Compare(StartDate, EndDate) <= 0)
+                {
+                    ObjLogin adm = (ObjLogin)Session["objLogin"];
+                    int administratorId = adm.Id;
+
+                    var result = ScheduleRepo.InsertSchedulePromotion((string)values["UpiCode"], (string)values["Title"], SMSContent,
+                         webcontent, StartDate, EndDate, administratorId, false, phoneNumbers);
+                    if (!result)
+                    {
+                        ShowErrorMessage("Can not add, please try again or contact administrator");
+                        e.Canceled = true;
+                    }
+                }
+                else
+                {
+                    ShowErrorMessage("End date must be >= start date");
+                    e.Canceled = true;
+                }
+            }
+
+            
+
+        }
+        catch (Exception ex)
+        {
+            ShowErrorMessage(ex.Message);
+            e.Canceled = true;
+        }
     }
 
     protected void gridSchedulePromotion_CreateColumnEditor(object sender, GridCreateColumnEditorEventArgs e)
@@ -222,9 +232,14 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
                 TextBox txtSMSContent = ((TextBox)edititem.FindControl("txtSMSContent"));
                 txtSMSContent.Text = smscontent;
 
-                string PhoneNumber = string.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfPhoneList")).Value) ? string.Empty : ((HiddenField)edititem.FindControl("hdfPhoneList")).Value;
-                RadTextBox txtPhoneNumber = edititem.FindControl("txtPhoneNumber") as RadTextBox;
-                txtPhoneNumber.Text = PhoneNumber;
+                var PhoneNumber = string.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfPhoneList")).Value) ? 
+                    string.Empty : ((HiddenField)edititem.FindControl("hdfPhoneList")).Value;
+                var txtPhoneNumber = edititem.FindControl("txtPhoneNumber") as TextBox;
+                if (txtPhoneNumber != null)
+                {
+                    txtPhoneNumber.Text = PhoneNumber;
+                }
+                
             }
         }
     }
