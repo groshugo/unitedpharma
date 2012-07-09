@@ -1,7 +1,7 @@
-USE [UPI]
+--USE [UPI]
 GO
 
-/****** Object:  Table [dbo].[PromotionSearchHistory]    Script Date: 07/07/2012 19:31:36 ******/
+/****** Object:  Table [dbo].[PromotionSearchHistory]    Script Date: 07/08/2012 23:11:09 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[PromotionSearchHistory](
 	[SearchCriteria] [nvarchar](4000) NOT NULL,
 	[SearchCriteriaLiteral] [nvarchar](4000) NOT NULL,
 	[SearchResults] [nvarchar](4000) NULL,
+	[CreatedDate] [dbo].[udtCreatedDateTime] NULL,
  CONSTRAINT [PK_PromotionSearchHistory] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
