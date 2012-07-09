@@ -23,3 +23,17 @@ public enum SalesChannel
     Erom2,
     Trom
 }
+
+public enum AjaxServiceStatus
+{
+    Success,
+    Fail,
+    LimitationFail
+}
+
+public enum PromotionHistoryFilterOption
+{
+    Customer = 1,
+    Sales = 2
+}
+

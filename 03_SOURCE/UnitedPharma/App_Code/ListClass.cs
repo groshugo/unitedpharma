@@ -263,6 +263,7 @@ public class vwSalemen
     public int? SmsQuota { get; set; }
     public int? SmsUsed { get; set; }
     public DateTime? ExpiredDate { get; set; }
+    public int SalesmenManagerId { get; set; }
 }
 
 public class vwSupervisorManageCustomer

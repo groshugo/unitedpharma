@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Telerik.Web.UI;
 using System.Data;
+using System.Text;
 
 public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
 {
@@ -47,22 +48,16 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
             ListCustomerType();
             ListChannel();
             ListGroup();
-            //ListRegion();
-            //ListArea();
-            //ListLocal();
         }
     }
 
     protected void CustomerList_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        //GetFilterData();
-
-        CustomerList.DataSource = FilterCustomers();// CustomerRepo.GetAllViewCustomers();
+        this.GetFilterData();
     }
     protected void GridSalemen_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
-        //GetFilterData();
-        GridSalemen.DataSource = FilterSalesmen();
+        this.GetFilterData();
     }
 
     #region Load data to comboboxes
@@ -130,58 +125,93 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
     }
     public void GetFilterData()
     {
-        DataTable dt = new DataTable();
-        int selectType = int.Parse(ddlSelect.SelectedValue);
-        int customerTypeId = int.Parse(ddlCustomerType.SelectedValue);
-        int channelId = int.Parse(ddlChannel.SelectedValue);
-        int GroupId = int.Parse(ddlGroup.SelectedValue);
-        int RegionId = (ddlRegion.Items.Count > 0) ? int.Parse(ddlRegion.SelectedValue) : 0;
-        int AreaId = (ddlArea.Items.Count > 0) ? int.Parse(ddlArea.SelectedValue) : 0;
-        int LocalId = (ddlLocal.Items.Count > 0) ? int.Parse(ddlLocal.SelectedValue) : 0;
-
-        string sql = string.Empty;
-        if (selectType == 1)//customer
+        int num = int.Parse(this.ddlSelect.SelectedValue);
+        int num2 = int.Parse(this.ddlCustomerType.SelectedValue);
+        int num3 = int.Parse(this.ddlChannel.SelectedValue);
+        int groupId = int.Parse(this.ddlGroup.SelectedValue);
+        int regionId = (this.ddlRegion.Items.Count > 0) ? int.Parse(this.ddlRegion.SelectedValue) : 0;
+        int areaId = (this.ddlArea.Items.Count > 0) ? int.Parse(this.ddlArea.SelectedValue) : 0;
+        int num7 = (this.ddlLocal.Items.Count > 0) ? int.Parse(this.ddlLocal.SelectedValue) : 0;
+        string str = string.Empty;
+        string str2 = string.Empty;
+        string str3 = string.Empty;
+        if (num == 1)
         {
-            DataTable dtFilterCustomers = new DataTable();
-            if (customerTypeId > 0)
-                dtFilterCustomers.Merge(GetCustomerTypeById(customerTypeId));
-            if (channelId > 0)
-                dtFilterCustomers.Merge(GetChannelById(channelId));
-            if (GroupId > 0)
-                dtFilterCustomers.Merge(getGroupById(GroupId));
-            if (RegionId > 0)
-                dtFilterCustomers.Merge(GetRegionById(RegionId));
-            if (AreaId > 0)
-                dtFilterCustomers.Merge(GetAreaById(AreaId));
-            if (LocalId > 0)
-                dtFilterCustomers.Merge(GetLocalById(LocalId));
-            if (GroupId == 0 && RegionId == 0 && AreaId == 0 && LocalId == 0 && customerTypeId == 0 && channelId == 0)
-                dtFilterCustomers=FilterByName();
-
-            CustomerList.DataSource = null;
-            CustomerList.DataSource = dtFilterCustomers;
+            DataTable list = new DataTable();
+            if (num2 > 0)
+            {
+                str = str + string.Format(" and CustomerTypeId={0}", num2);
+            }
+            if (num3 > 0)
+            {
+                str2 = str2 + string.Format(" and ChannelId={0}", num3);
+            }
+            string str4 = string.Empty;
+            string str5 = this.txtFilterName.Text.Trim();
+            if (!string.IsNullOrEmpty(str5))
+            {
+                str4 = str4 + string.Format(" and FullName like '%{0}%'", str5);
+            }
+            if (num7 > 0)
+            {
+                str3 = str3 + string.Format(" and LocalId = {0}", num7);
+            }
+            else if (areaId > 0)
+            {
+                string localIdStringByArea = this.GetLocalIdStringByArea(areaId);
+                if (!string.IsNullOrEmpty(localIdStringByArea))
+                {
+                    str3 = str3 + string.Format(" and LocalId in ({0})", localIdStringByArea);
+                }
+            }
+            else if (regionId > 0)
+            {
+                string localIdStringByRegion = this.GetLocalIdStringByRegion(regionId);
+                if (!string.IsNullOrEmpty(localIdStringByRegion) && (localIdStringByRegion != "0"))
+                {
+                    str3 = str3 + string.Format(" and LocalId in ({0})", localIdStringByRegion);
+                }
+            }
+            else if (groupId > 0)
+            {
+                string localIdStringByGroup = this.GetLocalIdStringByGroup(groupId);
+                if (!string.IsNullOrEmpty(localIdStringByGroup) && (localIdStringByGroup != "0"))
+                {
+                    str3 = str3 + string.Format(" and LocalId in ({0})", localIdStringByGroup);
+                }
+            }
+            string sql = "Select c.*, ct.TypeName as CustomerTypeName, cs.FullName as SupervisorName, p.PositionName as PositionName, cs.Phone as supervisorPhone   from Customer c left join CustomerType ct on c.CustomerTypeId = c.Id  left join Channel ch on c.ChannelId = ch.Id  left join CustomerSupervisor cs on c.Id=cs.CustomerId  left join SupervisorPosition p on cs.PositionId=p.Id where IsEnable=1 " + str4 + str + str2 + str3;
+            list = this.U.GetList(sql);
+            this.CustomerList.DataSource = null;
+            this.CustomerList.DataSource = list;
         }
-        else//sale
+        else
         {
-            DataTable dtSaleFilter = new DataTable();
-            if (GroupId > 0)
+            DataTable table2 = new DataTable();
+            if (groupId > 0)
             {
-                dtSaleFilter.Merge(getGroupById(GroupId));
+                table2.Merge(this.getGroupById(groupId));
             }
-            if (RegionId > 0)
+            if (regionId > 0)
             {
-                dtSaleFilter.Merge(GetRegionById(RegionId));
+                table2.Merge(this.GetRegionById(regionId));
             }
-            if (AreaId > 0)
-                dtSaleFilter.Merge(GetAreaById(AreaId));
-            if (LocalId > 0)
-                dtSaleFilter.Merge(GetLocalById(LocalId));
-            if (GroupId == 0 && RegionId == 0 && AreaId == 0 && LocalId == 0)
-                dtSaleFilter = FilterByName();
-
-            GridSalemen.DataSource = null;
-            GridSalemen.DataSource = dtSaleFilter;
+            if (areaId > 0)
+            {
+                table2.Merge(this.GetAreaById(areaId));
+            }
+            if (num7 > 0)
+            {
+                table2.Merge(this.GetLocalById(num7));
+            }
+            if (((groupId == 0) && (regionId == 0)) && ((areaId == 0) && (num7 == 0)))
+            {
+                table2 = this.FilterByName();
+            }
+            this.GridSalemen.DataSource = null;
+            this.GridSalemen.DataSource = table2;
         }
+
     }
     // Get info for Customers
     private DataTable GetCustomerTypeById(int customerTypeId)
@@ -365,57 +395,64 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
 
     private void ddlGroup_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        var region = regionRepo.GetRegionByGroupId(int.Parse(e.Value));
-        if (region != null)
+        this.GetFilterData();
+        this.rebindGrid();
+        object regionByGroupId = this.regionRepo.GetRegionByGroupId(int.Parse(e.Value));
+        if (regionByGroupId != null)
         {
-            ddlRegion.DataSource = region;
-            ddlRegion.DataTextField = "RegionName";
-            ddlRegion.DataValueField = "Id";
-            ddlRegion.DataBind();
+            this.ddlRegion.DataSource = regionByGroupId;
+            this.ddlRegion.DataTextField = "RegionName";
+            this.ddlRegion.DataValueField = "Id";
+            this.ddlRegion.DataBind();
 
-            var item = new RadComboBoxItem("Select a region", "0");
-            ddlRegion.Items.Insert(0, item);
-
-            ddlArea.Items.Clear();
-            ddlLocal.Items.Clear();
+            RadComboBoxItem item = new RadComboBoxItem("Select a region", "0");
+            this.ddlRegion.Items.Insert(0, item);
+            this.ddlArea.Items.Clear();
+            this.ddlLocal.Items.Clear();
         }
+
     }
 
     private void ddlRegion_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        var area = areaRepo.GetAreaByRegionId(int.Parse(e.Value));
-        if (area != null)
+        this.GetFilterData();
+        this.rebindGrid();
+        object areaByRegionId = this.areaRepo.GetAreaByRegionId(int.Parse(e.Value));
+        if (areaByRegionId != null)
         {
-            ddlArea.DataSource = area;
-            ddlArea.DataTextField = "AreaName";
-            ddlArea.DataValueField = "Id";
-            ddlArea.DataBind();
+            this.ddlArea.DataSource = areaByRegionId;
+            this.ddlArea.DataTextField = "AreaName";
+            this.ddlArea.DataValueField = "Id";
+            this.ddlArea.DataBind();
 
-            var item = new RadComboBoxItem("Select a area", "0");
-            ddlArea.Items.Insert(0, item);
-
-            ddlLocal.Items.Clear();
+            RadComboBoxItem item = new RadComboBoxItem("Select a area", "0");
+            this.ddlArea.Items.Insert(0, item);
+            this.ddlLocal.Items.Clear();
         }
+
     }
 
     private void ddlArea_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        var local = localRepo.GetLocalByAreaId(int.Parse(e.Value));
-        if (local != null)
+        this.GetFilterData();
+        this.rebindGrid();
+        object localByAreaId = this.localRepo.GetLocalByAreaId(int.Parse(e.Value));
+        if (localByAreaId != null)
         {
-            ddlLocal.DataSource = local;
-            ddlLocal.DataTextField = "LocalName";
-            ddlLocal.DataValueField = "Id";
-            ddlLocal.DataBind();
-
-            var item = new RadComboBoxItem("Select a local", "0");
-            ddlLocal.Items.Insert(0, item);
+            this.ddlLocal.DataSource = localByAreaId;
+            this.ddlLocal.DataTextField = "LocalName";
+            this.ddlLocal.DataValueField = "Id";
+            this.ddlLocal.DataBind();
+            RadComboBoxItem item = new RadComboBoxItem("Select a local", "0");
+            this.ddlLocal.Items.Insert(0, item);
         }
+
     }
 
     private void ddlLocal_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
-        FilterDateOnForm();
+        this.GetFilterData();
+        this.rebindGrid();
     }
 
     private void btnFilterName_Click(object sender, EventArgs e)
@@ -508,4 +545,66 @@ public partial class Administrator_DialogPhoneNumber : System.Web.UI.Page
 
         return false;
     }
+
+    private string GetLocalIdStringByArea(int areaId)
+    {
+        string sql = string.Format("select id from local where AreaId={0}", areaId);
+        DataTable list = this.U.GetList(sql);
+        StringBuilder builder = new StringBuilder();
+        if ((list != null) && (list.Rows.Count > 0))
+        {
+            foreach (DataRow row in list.Rows)
+            {
+                builder.AppendFormat("{0},", row["Id"]);
+            }
+            if (builder.Length > 0)
+            {
+                string str2 = builder.ToString();
+                return str2.Substring(0, str2.Length - 1);
+            }
+        }
+        return string.Empty;
+    }
+
+    private string GetLocalIdStringByGroup(int groupId)
+    {
+        string sql = string.Format("select id from local where AreaId in (select distinct Id from Area where RegionId in (select distinct id from Region where GroupId={0}))", groupId);
+        DataTable list = this.U.GetList(sql);
+        StringBuilder builder = new StringBuilder();
+        if ((list != null) && (list.Rows.Count > 0))
+        {
+            foreach (DataRow row in list.Rows)
+            {
+                builder.AppendFormat("{0},", row["Id"]);
+            }
+            if (builder.Length > 0)
+            {
+                string str2 = builder.ToString();
+                return str2.Substring(0, str2.Length - 1);
+            }
+        }
+        return string.Empty;
+    }
+
+    private string GetLocalIdStringByRegion(int regionId)
+    {
+        string sql = string.Format("select id from local where AreaId in (select Distinct Id from Area where RegionId={0})", regionId);
+        DataTable list = this.U.GetList(sql);
+        StringBuilder builder = new StringBuilder();
+        if ((list != null) && (list.Rows.Count > 0))
+        {
+            foreach (DataRow row in list.Rows)
+            {
+                builder.AppendFormat("{0},", row["Id"]);
+            }
+            if (builder.Length > 0)
+            {
+                string str2 = builder.ToString();
+                return str2.Substring(0, str2.Length - 1);
+            }
+        }
+        return string.Empty;
+    }
+
+
 }

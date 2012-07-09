@@ -363,28 +363,22 @@ public class CustomersRepository
 
     public List<vwSalemen> GetManagerOfCustomer(int customerId)
     {
-        var o = (from e in db.Customers where e.Id == customerId select e).SingleOrDefault();
-        if (o != null)
+        Customer customer = (from e in this.db.Customers
+                             where e.Id == customerId
+                             select e).SingleOrDefault<Customer>();
+        if ((customer != null) && customer.LocalId.HasValue)
         {
-            List<vwSalemen> lst = new List<vwSalemen>();
-            List<vwSalemen> lstSaleLocal = (from e in db.SalesLocals
-                                            join r in db.Roles on e.Salesmen.RoleId equals r.Id
-                                            where e.LocalId == (int)o.LocalId
-                                            select new vwSalemen
-                                            {
-                                                FullName = e.Salesmen.FullName,
-                                                Phone = e.Salesmen.Phone,
-                                                RoleName = r.RoleName
-                                            }).ToList();
-            if (lstSaleLocal != null)
-            {
-                lst.AddRange(lstSaleLocal);
-            }
-            return lst;
+            return this.GetManagerOfCustomerByLocal(customer.LocalId.Value);
         }
-        else
-            return null;
+        return null;
+
     }
+
+    public List<vwSalemen> GetManagerOfCustomerByLocal(int localId)
+    {
+        return this.GetListRomSubRep(localId);
+    }
+
     public List<vwSalemen> GetCustomerContact(int customerId)
     {
         var o = (from e in db.Customers where e.Id == customerId select e).SingleOrDefault();
@@ -619,4 +613,43 @@ public class CustomersRepository
         }
 
     }
+
+    public List<vwSalemen> GetListRomSubRep(int localId)
+    {
+        List<vwSalemen> list = new List<vwSalemen>();
+
+        List<vwSalemen> salesmens = (from e in this.db.SalesLocals
+                                     join r in db.Roles on e.Salesmen.RoleId equals r.Id
+                                     where e.LocalId == localId
+                                     select new vwSalemen { FullName = e.Salesmen.FullName, Phone = e.Salesmen.Phone, 
+                                         RoleName = r.RoleName, SalesmenManagerId = e.Salesmen.SalesmenManagerId.Value, 
+                                         UpiCode = e.Salesmen.UpiCode }).ToList<vwSalemen>();
+        if ((salesmens != null) && (salesmens.Count > 0))
+        {
+            list.Add(salesmens[0]);
+            vwSalemen subPerson = (from e in this.db.Salesmens
+                                   join r in this.db.Roles on e.RoleId equals r.Id
+                                   where e.Id == salesmens[0].SalesmenManagerId
+                                   select new vwSalemen { FullName = e.FullName, Phone = e.Phone, RoleName = r.RoleName, 
+                                       SalesmenManagerId = e.SalesmenManagerId.Value, UpiCode = e.UpiCode }).SingleOrDefault<vwSalemen>();
+            if (subPerson != null)
+            {
+                list.Add(subPerson);
+                vwSalemen item = (from e in this.db.Salesmens
+                                  join r in this.db.Roles on e.RoleId equals r.Id
+                                  where e.Id == subPerson.SalesmenManagerId
+                                  select new vwSalemen { FullName = e.FullName, Phone = e.Phone, RoleName = r.RoleName,
+                                                         SalesmenManagerId = e.SalesmenManagerId.Value,
+                                                         UpiCode = e.UpiCode
+                                  }).SingleOrDefault<vwSalemen>();
+                if (item != null)
+                {
+                    list.Add(item);
+                }
+            }
+        }
+        return list;
+    }
+
+
 }

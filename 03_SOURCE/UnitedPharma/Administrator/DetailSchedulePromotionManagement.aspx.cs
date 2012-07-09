@@ -27,6 +27,8 @@ public partial class Administrator_DetailSchedulePromotionManagement : System.We
                 lblAdmin.Text = SRepo.GetAdministratorName(Sdetail.AdministratorId);
 
                 string phoneList = SRepo.GetSchedulePromotionById(ID).PhoneNumbers;
+                phoneList = string.Format("'{0}'", phoneList);
+                phoneList = phoneList.Replace(",", "','");
                 string sql = "SELECT a.FullName as CustomerName,a.UpiCode, a.Phone, b.FullName,s.PositionName FROM [Customer] as a LEFT JOIN [CustomerSupervisor] as b on a.Id=b.CustomerId left join [SupervisorPosition] as s on b.PositionId=s.Id where a.Phone in (" + phoneList + ")";
                 Utility utility = new Utility();
                 SchedulePhoneNumbers.DataSource = utility.GetList(sql);
