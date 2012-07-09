@@ -19,56 +19,19 @@
             font: normal 11px Arial, Verdana, Sans-serif;
         }
         
-        /*fieldset
-        {
-            height: 150px;
-        }
-        
-        * + html fieldset
-        {
-            height: 154px;
-            width: 268px;
-        }*/
     </style>
 </head>
 <body>
     <form id="form1" runat="server" method="post">
+
     <telerik:RadScriptManager ID="RadScriptManager1" runat="server">
-    </telerik:RadScriptManager>
+        <Services>
+            <asp:ServiceReference Path="~/UnitedPharmaService.svc" />
+        </Services>
+    </telerik:RadScriptManager>    
+
     <telerik:RadFormDecorator ID="RadFormDecorator1" DecoratedControls="All" runat="server" Skin="Office2007" />
-    <telerik:RadCodeBlock ID="RadCodeBlock1" runat="server">
-        <script type="text/javascript">
-            <!--
-            function GetRadWindow() {
-                var oWindow = null;
-                if (window.radWindow) oWindow = window.radWindow;
-                else if (window.frameElement.radWindow) oWindow = window.frameElement.radWindow;
-                return oWindow;
-            }
-            function returnToParent() {
-                var selectOption = document.getElementById("<%= ddlSelect.ClientID %>").value;
-                var RadGrid1 = (selectOption == "Customers") ? $find("<%=CustomerList.ClientID %>") : $find("<%=GridSalemen.ClientID %>");
-                var phoneNumbers = '';
-                for (var i = 0; i < RadGrid1.get_masterTableView().get_selectedItems().length; i++) 
-                {
-                    var MasterTable = RadGrid1.get_masterTableView();
-                    var row = MasterTable.get_selectedItems()[i];
-                    var cell = MasterTable.getCellByColumnUniqueName(row, "Phone");
-                    if (cell.innerHTML != "&nbsp;") {
-                        phoneNumbers += cell.innerHTML + ',';
-                    }
-                    else {
-                        continue;
-                    }
-                }
-                var oWnd = GetRadWindow();
-                if (oWnd && phoneNumbers) {
-                    oWnd.close(phoneNumbers.slice(0, -1));
-                }
-            }
-            -->
-        </script>
-    </telerik:RadCodeBlock>
+    
     <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="RadAjaxLoadingPanel1" >
         <AjaxSettings>
             <telerik:AjaxSetting AjaxControlID="CustomerList">
@@ -178,6 +141,126 @@
     <%--<script type="text/javascript">
         document.getElementById("GridSalemen_GridData").removeAttribute('style');
     </script>--%>
+
+    <telerik:RadCodeBlock ID="RadCodeBlock1" runat="server">
+        <script type="text/javascript">
+            <!--
+            function GetRadWindow() {
+                var oWindow = null;
+                if (window.radWindow) oWindow = window.radWindow;
+                else if (window.frameElement.radWindow) oWindow = window.frameElement.radWindow;
+                return oWindow;
+            }
+            function returnToParent() {
+                var selectOption = document.getElementById("<%= ddlSelect.ClientID %>").value;
+                var RadGrid1 = (selectOption == "Customers") ? $find("<%=CustomerList.ClientID %>") : $find("<%=GridSalemen.ClientID %>");
+                var phoneNumbers = '';
+                for (var i = 0; i < RadGrid1.get_masterTableView().get_selectedItems().length; i++) {
+                    var MasterTable = RadGrid1.get_masterTableView();
+                    var row = MasterTable.get_selectedItems()[i];
+                    var cell = MasterTable.getCellByColumnUniqueName(row, "Phone");
+                    if (cell.innerHTML != "&nbsp;") {
+                        phoneNumbers += cell.innerHTML + ',';
+                    }
+                    else {
+                        continue;
+                    }
+                }
+                var oWnd = GetRadWindow();
+                if (oWnd && phoneNumbers) {
+                    var selectedPhone = phoneNumbers.slice(0, -1);
+
+                    var searchOptionValue = (selectOption == "Customers") ? 1 : 2;
+
+                    var fullName = document.getElementById("<%= txtFilterName.ClientID %>").value;
+
+                    var customerTypeId = 0;
+                    var customerTypeObject = $find("<%= ddlCustomerType.ClientID %>");
+                    if (customerTypeObject) {
+                        customerTypeId = parseInt(customerTypeObject.get_value());
+                        if (!customerTypeId)
+                            customerTypeId = 0;
+                    }
+
+                    var channelId = 0;
+                    var channelObject = $find("<%= ddlChannel.ClientID %>");
+                    if (channelObject) {
+                        channelId = parseInt(channelObject.get_value());
+                        if (!channelId)
+                            channelId = 0;
+                    }
+
+                    var groupId = 0;
+                    var groupObject = $find("<%= ddlGroup.ClientID %>");
+                    if (groupObject) {
+                        groupId = parseInt(groupObject.get_value());
+                        if (!groupId)
+                            groupId = 0;
+                    }
+
+                    var regionId = 0;
+                    var regionObject = $find("<%= ddlRegion.ClientID %>");
+                    if (regionObject) {
+                        regionId = parseInt(regionObject.get_value());
+                        if (!regionId)
+                            regionId = 0;
+                    }
+
+                    var areaId = 0;
+                    var areaObject = $find("<%= ddlArea.ClientID %>");
+                    if (areaObject) {
+                        areaId = parseInt(areaObject.get_value());
+                        if (!areaId)
+                            areaId = 0;
+                    }
+
+                    var localId = 0;
+                    var localObject = $find("<%= ddlLocal.ClientID %>");
+                    if (localObject) {
+                        localId = parseInt(localObject.get_value());
+                        if (!localId)
+                            localId = 0;
+                    }
+
+                    var promoId = parseInt(getParameterByName("promoId"));
+
+                    // Save to
+//                    UnitedPharmaService.AddPromotionBrowseHistory(searchOptionValue, fullName, customerTypeId,
+//                        channelId, groupId, regionId, areaId, localId, promoId, selectedPhone, onSuccess, onFail, null)
+
+                    UnitedPharmaService.AddPromotionBrowseHistory(searchOptionValue, fullName, customerTypeId,
+                        channelId, groupId, regionId, areaId, localId, promoId, selectedPhone, onSuccess, onFail, null)
+
+                    var listArgs = new Array();
+                    listArgs[0] = selectedPhone;
+                    listArgs[1] = promoId;
+                    oWnd.close(listArgs);
+                }
+            }
+
+            function onSuccess(result) {
+            }
+
+            function onFail(result) {
+                alert("Can not update search history");
+            }
+
+            function getParameterByName(name) {
+                name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+                var regexS = "[\\?&]" + name + "=([^&#]*)";
+                var regex = new RegExp(regexS);
+                var results = regex.exec(window.location.search);
+                if (results == null)
+                    return "";
+                else
+                    return decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+
+            -->
+        </script>
+    </telerik:RadCodeBlock>
+    
+
     </form>
 </body>
 </html>

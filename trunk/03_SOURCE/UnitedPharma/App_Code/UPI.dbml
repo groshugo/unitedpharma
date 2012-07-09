@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="UPI" Class="UPIDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=lcaoserver;Initial Catalog=UPI;User ID=sa" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="UPIConnectionString1" Provider="System.Data.SqlClient" />
+  <Connection Mode="WebSettings" ConnectionString="Data Source=dell\sqlexpress;Initial Catalog=UPI;User ID=sa" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="UPIConnectionString1" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Administrator" Member="Administrators">
     <Type Name="Administrator">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -220,6 +220,7 @@
       <Column Name="IsApprove" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="PhoneNumbers" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="SMSIdList" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Association Name="SchedulePromotion_PromotionSearchHistory" Member="PromotionSearchHistories" ThisKey="Id" OtherKey="PromotionId" Type="PromotionSearchHistory" />
     </Type>
   </Table>
   <Table Name="dbo.Promotion" Member="Promotions">
@@ -345,6 +346,17 @@
       <Association Name="Salesmen_SalesRegion" Member="SalesRegions" ThisKey="Id" OtherKey="SalesmenId" Type="SalesRegion" />
       <Association Name="Salesmen_CustomerLog" Member="CustomerLogs" ThisKey="Id" OtherKey="ChangeBy" Type="CustomerLog" />
       <Association Name="Role_Salesmen" Member="Role" ThisKey="RoleId" OtherKey="Id" Type="Role" IsForeignKey="true" DeleteRule="SET NULL" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PromotionSearchHistory" Member="PromotionSearchHistories">
+    <Type Name="PromotionSearchHistory">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PromotionId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SearchCriteria" Type="System.String" DbType="NVarChar(4000) NOT NULL" CanBeNull="false" />
+      <Column Name="SearchCriteriaLiteral" Type="System.String" DbType="NVarChar(4000) NOT NULL" CanBeNull="false" />
+      <Column Name="SearchResults" Type="System.String" DbType="NVarChar(4000)" CanBeNull="true" />
+      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="SchedulePromotion_PromotionSearchHistory" Member="SchedulePromotion" ThisKey="PromotionId" OtherKey="Id" Type="SchedulePromotion" IsForeignKey="true" />
     </Type>
   </Table>
   <Function Name="dbo.SP_SchedulePromotion" Method="SP_SchedulePromotion">

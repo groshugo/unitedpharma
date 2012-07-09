@@ -39,25 +39,10 @@ public partial class Salemans_CustomerDetail : System.Web.UI.Page
     {
         Response.Redirect("CustomersManagement.aspx");
     }
-    private void LoadSaleManager(int LocalId)
+    private void LoadSaleManager(int localId)
     {
-        AreasRepository Arepo = new AreasRepository();
-        RegionsRepository RRepo = new RegionsRepository();
-        string sqlarea = GetAreaByLocalId(LocalId);
-        string SqlRegion = GetRegionByAreaId(sqlarea);
-        string SqlGroup = GetGroupByRegionId(SqlRegion);
-        string SalesmenIdList = "";
-        if (SalesGroupList(SqlGroup) != "")
-            SalesmenIdList += SalesGroupList(SqlGroup) + ",";
-        if (SalesRegionList(SqlRegion) != "")
-            SalesmenIdList += SalesRegionList(SqlRegion) + ",";
-        if (SalesAreaList(sqlarea) != "")
-            SalesmenIdList += SalesAreaList(sqlarea) + ",";
-        if (SalesLocalList(LocalId) != "")
-            SalesmenIdList += SalesLocalList(LocalId);
-        string sql = "Select s.*, r.RoleName from salesmen s left join role r on s.RoleId=r.Id where s.id in (" + SalesmenIdList + ")";
-        SalesManager.DataSource = U.GetList(sql);
-        SalesManager.Rebind();
+        this.SalesManager.DataSource = this.CRepo.GetManagerOfCustomerByLocal(localId);
+        this.SalesManager.Rebind();
     }
     private string GetAreaByLocalId(int LocalId)
     {

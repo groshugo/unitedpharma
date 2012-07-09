@@ -123,6 +123,24 @@ public class SchedulePromotionRepository
             SP.PhoneNumbers = PhoneNumbers;
             db.SchedulePromotions.InsertOnSubmit(SP);
             db.SubmitChanges();
+
+            int schedulePromotionId = SP.Id;
+            var session = HttpContext.Current.Session;
+            var listPromoHis = session[Constant.PromotionHistorySessionName] as List<PromotionHistoryResult>;
+            if (listPromoHis != null)
+            {
+                var list = new List<PromotionSearchHistory>();
+                foreach (PromotionHistoryResult hisResult in listPromoHis)
+                {
+                    list.Add(ConvertFromPromotionHistoryResultToPromotionSearchHistory(hisResult, schedulePromotionId));
+                }
+
+                db.PromotionSearchHistories.InsertAllOnSubmit(list);
+                db.SubmitChanges();
+            }
+
+            
+
             return true;
         }
         catch
@@ -271,5 +289,16 @@ public class SchedulePromotionRepository
         {
             return false;
         }
+    }
+
+    private static PromotionSearchHistory ConvertFromPromotionHistoryResultToPromotionSearchHistory(PromotionHistoryResult hisResult, int promoId)
+    {
+        PromotionSearchHistory history = new PromotionSearchHistory();
+        history.Id = new Guid(hisResult.Id);
+        history.PromotionId = promoId;
+        history.SearchCriteria = hisResult.SearchCriteria;
+        history.SearchCriteriaLiteral = hisResult.SearchCriteriaLiteral;
+        history.SearchResults = hisResult.SearchResutls;
+        return history;
     }
 }

@@ -45,23 +45,25 @@ public partial class Customers_ViewInfo : System.Web.UI.Page
 
     private void LoadSaleManager(int LocalId, bool bindFalg = true)
     {
-        AreasRepository Arepo = new AreasRepository();
-        RegionsRepository RRepo = new RegionsRepository();
-        string sqlarea = GetAreaByLocalId(LocalId);
-        string SqlRegion = GetRegionByAreaId(sqlarea);
-        string SqlGroup = GetGroupByRegionId(SqlRegion);
-        string SalesmenIdList = "";
-        if (SalesGroupList(SqlGroup) != "")
-            SalesmenIdList += SalesGroupList(SqlGroup) + ",";
-        if (SalesRegionList(SqlRegion) != "")
-            SalesmenIdList += SalesRegionList(SqlRegion) + ",";
-        if (SalesAreaList(sqlarea) != "")
-            SalesmenIdList += SalesAreaList(sqlarea) + ",";
-        if (SalesLocalList(LocalId) != "")
-            SalesmenIdList += SalesLocalList(LocalId);
-        string sql = "Select s.*, r.RoleName from salesmen s left join role r on s.RoleId=r.Id where s.id in (" + SalesmenIdList + ")";
-        SalesManager.DataSource = U.GetList(sql);
-        
+        //AreasRepository Arepo = new AreasRepository();
+        //RegionsRepository RRepo = new RegionsRepository();
+        //string sqlarea = GetAreaByLocalId(LocalId);
+        //string SqlRegion = GetRegionByAreaId(sqlarea);
+        //string SqlGroup = GetGroupByRegionId(SqlRegion);
+        //string SalesmenIdList = "";
+        //if (SalesGroupList(SqlGroup) != "")
+        //    SalesmenIdList += SalesGroupList(SqlGroup) + ",";
+        //if (SalesRegionList(SqlRegion) != "")
+        //    SalesmenIdList += SalesRegionList(SqlRegion) + ",";
+        //if (SalesAreaList(sqlarea) != "")
+        //    SalesmenIdList += SalesAreaList(sqlarea) + ",";
+        //if (SalesLocalList(LocalId) != "")
+        //    SalesmenIdList += SalesLocalList(LocalId);
+        //string sql = "Select s.*, r.RoleName from salesmen s left join role r on s.RoleId=r.Id where s.id in (" + SalesmenIdList + ")";
+        //SalesManager.DataSource = U.GetList(sql);
+
+        this.SalesManager.DataSource = this.CRepo.GetManagerOfCustomerByLocal(LocalId);
+
         if (bindFalg)
             SalesManager.Rebind();
     }

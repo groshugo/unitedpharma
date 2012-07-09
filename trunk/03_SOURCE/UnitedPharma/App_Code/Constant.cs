@@ -26,4 +26,9 @@ public class Constant
     public static int outbox = 2;
     public static int failure = 3;
     public static int deleted = 4;
+
+    public static string PromotionHistoryTemplateString = @"<?xml version=""1.0""?><PromotionHistory><Type>{0}</Type><FullName>{1}</FullName><CustomerType>{2}</CustomerType><Channel>{3}</Channel><Group>{4}</Group><Region>{5}</Region><Area>{6}</Area><Local>{7}</Local></PromotionHistory>";
+
+    public const string PromotionHistorySessionName = "PromotionHistorySessionName";
+    public const string UpdateStatusSessionName = "UpdateStatusSessionName";
 }

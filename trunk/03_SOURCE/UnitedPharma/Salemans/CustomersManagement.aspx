@@ -201,7 +201,7 @@
                         <asp:Label runat="server" ID="lblFullName" Text='<%# Eval("FullName") %>'></asp:Label>
                     </ItemTemplate>
                     <EditItemTemplate>
-                        <asp:TextBox ID="txtFullName" runat="server" Text='<%# Eval("FullName") %>'></asp:TextBox>
+                        <asp:TextBox ID="txtFullName" runat="server" Text='<%# Eval("FullName") %>' Width="500px"></asp:TextBox>
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>
                
@@ -263,7 +263,7 @@
                 <telerik:GridTemplateColumn HeaderText="Note Of Salesmen" DataField="NoteOfSalesmen">
                     <EditItemTemplate>
                         <asp:TextBox runat="server" ID="txtNoteOfSalesmen" TextMode="MultiLine" Rows="4"
-                            Columns="50" ></asp:TextBox>
+                            Columns="50" Width="500px" ></asp:TextBox>
                     </EditItemTemplate>
                 </telerik:GridTemplateColumn>
                 <telerik:GridTemplateColumn HeaderText="View detail">

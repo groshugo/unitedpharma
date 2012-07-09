@@ -37,8 +37,23 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
                     btnDeleteSchedule.Text = Pharma.You_don_t_have_permission_to_delete;
                 }
             }
+
+            // register Script Manager
+            AddScriptService("RadScriptManager1", "~/UnitedPharmaService.svc");
         }
     }
+
+    public void AddScriptService(string scriptManagerId, string servicePath)
+    {
+        var sm = Page.Master.FindControl(scriptManagerId) as RadScriptManager;
+        if (sm != null)
+        {
+            var sr = new ServiceReference();
+            sr.Path = servicePath;
+            sm.Services.Add(sr);
+        }
+    }
+
     protected void gridSchedulePromotion_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
     {
         gridSchedulePromotion.DataSource = ScheduleRepo.GetAllViewSchedulePromotion();
@@ -60,51 +75,76 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
         Hashtable values = new Hashtable();
         editableItem.ExtractValues(values);
         var PromotionId = (int)editableItem.GetDataKeyValue("Id");
+        var updateStatus = true;
         try
         {
+            string smsContent = ((TextBox)gdItem.FindControl("txtSMSContent")).Text;
+            string webcontent = ((RadEditor)editableItem.FindControl("RadEditor1")).Text;
+            string phoneNumbers = ((TextBox)gdItem.FindControl("txtPhoneNumber")).Text; // hdfPhoneNumbers.Value;
+            var upiCode = values["UpiCode"] == null ? string.Empty : values["UpiCode"].ToString();
+            var title = ((TextBox)gdItem.FindControl("txtTitle")).Text;
+
             DateTime StartDate = DateTime.Now;
             var StartDateControl = gdItem.FindControl("txtStartDate") as RadDatePicker;
-            if(StartDateControl != null && StartDateControl.SelectedDate.HasValue)
-            {
-                StartDate = StartDateControl.SelectedDate.Value;
-            }
 
             DateTime EndDate = DateTime.Now;
             var EndDateControl = gdItem.FindControl("txtEndDate") as RadDatePicker;
-            if (EndDateControl != null && EndDateControl.SelectedDate.HasValue)
-            {
-                EndDate = EndDateControl.SelectedDate.Value;
-            }
-            //DateTime StartDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtStartDate")).SelectedDate.Value.Date);
-            //DateTime EndDate = Convert.ToDateTime(((RadDatePicker)gdItem.FindControl("txtEndDate")).SelectedDate.Value.Date);
-            double startdate = Utility.ConvertToUnixTimestamp(StartDate);
-            double endDate = Utility.ConvertToUnixTimestamp(EndDate);
 
-            if (endDate >= startdate)
+            HttpContext.Current.Session[Constant.UpdateStatusSessionName] = true;
+
+            if (string.IsNullOrEmpty(upiCode) || string.IsNullOrEmpty(title) || string.IsNullOrEmpty(smsContent)
+                || string.IsNullOrEmpty(phoneNumbers)
+                || (StartDateControl == null || !StartDateControl.SelectedDate.HasValue)
+                || (EndDateControl == null || !EndDateControl.SelectedDate.HasValue))
             {
-                ObjLogin adm = (ObjLogin)Session["objLogin"];
-                int administratorId = adm.Id;
-                string webcontent = ((RadEditor)editableItem.FindControl("RadEditor1")).Text;
-                string SMSContent = ((TextBox)gdItem.FindControl("txtSMSContent")).Text;
-                var result =  ScheduleRepo.UpdateSchedulePromotion(PromotionId, (string)values["UpiCode"], (string)values["Title"], SMSContent,
-                     webcontent, StartDate, EndDate, administratorId, false);
-                if(!result)
-                {
-                    ShowErrorMessage("Can not add, please try again later or contact administrator.");
-                    e.Canceled = true;
-                }
+                ShowErrorMessage("Upi Code, Title, Phone numbers, SMS Content, Start Date and End Date are required fields");
+                e.Canceled = true;
+                updateStatus = false;
             }
             else
             {
-                ShowErrorMessage("End date must be >= start date");
-                e.Canceled = true;
+                if (StartDateControl != null && StartDateControl.SelectedDate.HasValue)
+                {
+                    StartDate = StartDateControl.SelectedDate.Value;
+                }
+
+                if (EndDateControl != null && EndDateControl.SelectedDate.HasValue)
+                {
+                    EndDate = EndDateControl.SelectedDate.Value;
+                }
+
+                if (DateTime.Compare(StartDate, EndDate) <= 0)
+                {
+                    ObjLogin adm = (ObjLogin)Session["objLogin"];
+                    int administratorId = adm.Id;
+                    var result = ScheduleRepo.UpdateSchedulePromotion(PromotionId, upiCode, title, smsContent,
+                         webcontent, StartDate, EndDate, administratorId, false);
+                    if (!result)
+                    {
+                        ShowErrorMessage("Can not add, please try again later or contact administrator.");
+                        e.Canceled = true;
+                        updateStatus = false;
+                    }
+                }
+                else
+                {
+                    ShowErrorMessage("End date must be >= start date");
+                    e.Canceled = true;
+                    updateStatus = false;
+                }
             }
-                
         }
         catch (Exception ex)
         {
             ShowErrorMessage(ex.Message);
             e.Canceled = true;
+            updateStatus = false;
+        }
+
+        if (!updateStatus)
+        {
+            string clientScriptString = string.Format("BindPromotionHistory({0});", PromotionId);
+            Page.ClientScript.RegisterStartupScript(GetType(), "gridSchedulePromotion", clientScriptString, true);
         }
     }
 
@@ -125,31 +165,42 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
         var editableItem = ((GridEditableItem)e.Item);
         Hashtable values = new Hashtable();
         editableItem.ExtractValues(values);
+
+        var updateStatus = true;
+
         try
         {
-            string SMSContent = ((TextBox)gdItem.FindControl("txtSMSContent")).Text;
+            string smsContent = ((TextBox)gdItem.FindControl("txtSMSContent")).Text;
             string webcontent = ((RadEditor)editableItem.FindControl("RadEditor1")).Text;
             string phoneNumbers = ((TextBox)gdItem.FindControl("txtPhoneNumber")).Text; // hdfPhoneNumbers.Value;
             var upiCode = values["UpiCode"] == null ? string.Empty : values["UpiCode"].ToString();
-            var title = values["Title"] == null ? string.Empty : values["Title"].ToString(); 
+            var title = ((TextBox)gdItem.FindControl("txtTitle")).Text;
 
-            if (string.IsNullOrEmpty(upiCode) || string.IsNullOrEmpty(title) || string.IsNullOrEmpty(SMSContent)
-                || string.IsNullOrEmpty(webcontent) || string.IsNullOrEmpty(phoneNumbers))
+            DateTime StartDate = DateTime.Now;
+            var StartDateControl = gdItem.FindControl("txtStartDate") as RadDatePicker;
+
+            DateTime EndDate = DateTime.Now;
+            var EndDateControl = gdItem.FindControl("txtEndDate") as RadDatePicker;
+
+            
+
+            if (string.IsNullOrEmpty(upiCode) || string.IsNullOrEmpty(title) || string.IsNullOrEmpty(smsContent)
+                || string.IsNullOrEmpty(phoneNumbers)
+                || (StartDateControl == null || !StartDateControl.SelectedDate.HasValue)
+                || (EndDateControl == null || !EndDateControl.SelectedDate.HasValue))
             {
-                ShowErrorMessage("Upi Code, Title, Phone numbers, SMS Content, Web Content are required fields");
+                ShowErrorMessage("Upi Code, Title, Phone numbers, SMS Content, Start Date and End Date are required fields");
                 e.Canceled = true;
+                updateStatus = false;
             }
             else
             {
-                DateTime StartDate = DateTime.Now;
-                var StartDateControl = gdItem.FindControl("txtStartDate") as RadDatePicker;
+
                 if (StartDateControl != null && StartDateControl.SelectedDate.HasValue)
                 {
                     StartDate = StartDateControl.SelectedDate.Value;
                 }
 
-                DateTime EndDate = DateTime.Now;
-                var EndDateControl = gdItem.FindControl("txtEndDate") as RadDatePicker;
                 if (EndDateControl != null && EndDateControl.SelectedDate.HasValue)
                 {
                     EndDate = EndDateControl.SelectedDate.Value;
@@ -160,29 +211,35 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
                     ObjLogin adm = (ObjLogin)Session["objLogin"];
                     int administratorId = adm.Id;
 
-                    var result = ScheduleRepo.InsertSchedulePromotion((string)values["UpiCode"], (string)values["Title"], SMSContent,
+                    var result = ScheduleRepo.InsertSchedulePromotion(upiCode, title, smsContent,
                          webcontent, StartDate, EndDate, administratorId, false, phoneNumbers);
                     if (!result)
                     {
                         ShowErrorMessage("Can not add, please try again or contact administrator");
                         e.Canceled = true;
+                        updateStatus = false;
                     }
                 }
                 else
                 {
                     ShowErrorMessage("End date must be >= start date");
                     e.Canceled = true;
+                    updateStatus = false;
                 }
             }
-
-            
-
         }
         catch (Exception ex)
         {
             ShowErrorMessage(ex.Message);
             e.Canceled = true;
+            updateStatus = false;
         }
+
+        if (!updateStatus)
+        {
+            string clientScriptString = "BindPromotionHistory(-1);";
+            Page.ClientScript.RegisterStartupScript(GetType(), "gridSchedulePromotion", clientScriptString, true);
+        }        
     }
 
     protected void gridSchedulePromotion_CreateColumnEditor(object sender, GridCreateColumnEditorEventArgs e)
@@ -214,11 +271,29 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
         if ((e.Item is GridEditableItem) && (e.Item.IsInEditMode))
         {
             GridEditableItem edititem = (GridEditableItem)e.Item;
+
+            string promoId = "-1";
+            if (e.Item.OwnerTableView.IsItemInserted)
+            {
+                // remove session
+                var session = HttpContext.Current.Session;
+                bool? updateStatus = session[Constant.UpdateStatusSessionName] as bool?;
+
+                if(updateStatus == null || (updateStatus.HasValue && updateStatus.Value))
+                {
+                    session.Remove(Constant.PromotionHistorySessionName);
+                }
+            }
+            else
+            {
+                promoId = edititem.GetDataKeyValue("Id").ToString();
+            }
+
             Hashtable values = new Hashtable();
             edititem.ExtractValues(values);
             using (UPIDataContext db = new UPIDataContext())
             {
-                RadDatePicker txtStartDate=((RadDatePicker)edititem.FindControl("txtStartDate"));
+                RadDatePicker txtStartDate = ((RadDatePicker)edititem.FindControl("txtStartDate"));
                 string StartDate = String.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfStartDate")).Value) ? string.Empty : ((HiddenField)edititem.FindControl("hdfStartDate")).Value;
                 txtStartDate.DbSelectedDate = StartDate;
                 string EndDate = String.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfEndDate")).Value) ? string.Empty : ((HiddenField)edititem.FindControl("hdfEndDate")).Value;
@@ -232,14 +307,16 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
                 TextBox txtSMSContent = ((TextBox)edititem.FindControl("txtSMSContent"));
                 txtSMSContent.Text = smscontent;
 
-                var PhoneNumber = string.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfPhoneList")).Value) ? 
+                var PhoneNumber = string.IsNullOrEmpty(((HiddenField)edititem.FindControl("hdfPhoneList")).Value) ?
                     string.Empty : ((HiddenField)edititem.FindControl("hdfPhoneList")).Value;
                 var txtPhoneNumber = edititem.FindControl("txtPhoneNumber") as TextBox;
                 if (txtPhoneNumber != null)
                 {
                     txtPhoneNumber.Text = PhoneNumber;
                 }
-                
+
+                string clientScriptString = string.Format("BindPromotionHistory({0});", promoId);
+                Page.ClientScript.RegisterStartupScript(GetType(), "gridSchedulePromotion", clientScriptString, true);
             }
         }
     }
@@ -255,7 +332,7 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
 
         var endDate = txtEndtDate.SelectedDate == null ? Convert.ToDateTime("12/31/9999") : txtEndtDate.SelectedDate.Value;
 
-        if(startDate > endDate)
+        if (startDate > endDate)
         {
             ShowErrorMessage("From date must less than to date");
             return;
@@ -295,7 +372,7 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
         }
     }
     Utility U = new Utility();
-    public string TotalFailPhone(string ScheduleId,bool isSuccess)
+    public string TotalFailPhone(string ScheduleId, bool isSuccess)
     {
         string sql = "select s.SMSIdList from SchedulePromotion s where Id=" + int.Parse(ScheduleId);
         DataTable dt = U.GetList(sql);
