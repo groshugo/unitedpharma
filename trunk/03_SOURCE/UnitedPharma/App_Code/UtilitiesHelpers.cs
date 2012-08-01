@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using Telerik.Web.UI;
@@ -134,9 +136,7 @@ public class UtilitiesHelpers
 
         return result == "" ? result : result.Substring(0, result.Length - 1);
     }
-
     
-
     public string SalesLocalList(string strAreaIdList, int salemenId)
     {
         var u = new Utility();
@@ -153,6 +153,50 @@ public class UtilitiesHelpers
             result += sqlRegionId;
 
         return result == "" ? result : result.Substring(0, result.Length - 1);
+    }
+
+    
+
+    public List<int> GetLocalIdsStringByGroupId(int groupId)
+    {
+        var u = new Utility();
+        var sql = string.Format("select Id from Local where AreaId in (select Id from Area where RegionId in (select Id from Region where GroupId = {0}))", groupId);
+        var dt = u.GetList(sql);
+
+        return GetListByDatatableResult(dt);
+    }
+
+    public List<int> GetLocalIdsStringByRegionId(int regionId)
+    {
+        var u = new Utility();
+        var sql = string.Format("select Id from Local where AreaId in (select Id from Area where RegionId = {0})", regionId);
+        var dt = u.GetList(sql);
+
+        return GetListByDatatableResult(dt);
+    }
+
+    public List<int> GetLocalIdsStringByAreaId(int areaId)
+    {
+        var u = new Utility();
+        var sql = string.Format("select Id from Local where AreaId in (select Id from Area where RegionId = {0})", areaId);
+        var dt = u.GetList(sql);
+
+        return GetListByDatatableResult(dt);
+    }
+
+    #region private
+
+    private static List<int> GetListByDatatableResult(DataTable dt)
+    {
+        if (dt == null || dt.Rows.Count == 0) return new List<int>();
+
+        var result = new List<int>();
+        for (var i = 0; i < dt.Rows.Count; i++)
+        {
+            result.Add(int.Parse(dt.Rows[i][0].ToString()));
+        }
+
+        return result;
     }
 
     private string GetRegionBySalemenId(int salemenId)
@@ -196,4 +240,6 @@ public class UtilitiesHelpers
 
         return result;
     }
+
+    #endregion
 }
