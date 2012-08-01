@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="UnitedPharmaService" CodeBehind="~/App_Code/UnitedPharmaService.cs" %>
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="UnitedPharma.UnitedPharmaService" CodeBehind="~/App_Code/UnitedPharmaService.cs" %>

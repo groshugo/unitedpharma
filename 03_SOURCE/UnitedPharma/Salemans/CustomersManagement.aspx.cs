@@ -405,7 +405,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         string strLocalIdList = UtilitiesHelpers.Instance.SalesLocalList(strAreaIdList, salemenId);
         if (string.IsNullOrEmpty(strLocalIdList)) return null;
 
-        string sql = "select c.*, t.TypeName as CustomerTypeName, ch.ChannelName as ChannelName,d.DistrictName as DistrictName, " +
+        string sql = "select distinct c.*, t.TypeName as CustomerTypeName, ch.ChannelName as ChannelName,d.DistrictName as DistrictName, " +
                      "l.LocalName as LocalName,s.FullName as SupervisorName,p.PositionName,s.Phone as supervisorPhone,dis.ProvinceId,pro.SectionId ";
         sql += "from Customer c left join CustomerType t on c.CustomerTypeId=t.Id";
         sql += " left join Channel ch on c.ChannelId=ch.Id left join District d on c.DistrictId=d.Id";
@@ -445,7 +445,7 @@ public partial class Salemans_CustomersManagement : System.Web.UI.Page
         //string strRegionIdList = SalesRegionList(strGroupIdList, salemenId);
         //string strAreaIdList = SalesAreaList(strRegionIdList, salemenId);
         //string strLocalIdList = SalesLocalList(strAreaIdList, salemenId);
-        string sql = "select c.*, t.TypeName as CustomerTypeName, ch.ChannelName as ChannelName,d.DistrictName as DistrictName, l.LocalName as LocalName,s.FullName as SupervisorName,p.PositionName,s.Phone as supervisorPhone ";
+        string sql = "select distinct c.*, t.TypeName as CustomerTypeName, ch.ChannelName as ChannelName,d.DistrictName as DistrictName, l.LocalName as LocalName,s.FullName as SupervisorName,p.PositionName,s.Phone as supervisorPhone ";
         sql += "from Customer c left join CustomerType t on c.CustomerTypeId=t.Id";
         sql += " left join Channel ch on c.ChannelId=ch.Id left join District d on c.DistrictId=d.Id";
         sql += " left join Local l on c.LocalId=l.Id left join CustomerSupervisor s on c.Id=s.CustomerId left join SupervisorPosition p on s.PositionId=p.Id ";

@@ -5,9 +5,105 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <title>Promotion Management</title>
 </asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
-    <telerik:RadFormDecorator ID="FormDecorator1" runat="server" DecoratedControls="all"
-        Skin="Office2007"></telerik:RadFormDecorator>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+    <%--<style>
+        #ctl00_ContentPlaceHolder1_gridSchedulePromotion_ctl00_ctl07_ctl02,#ctl00_ContentPlaceHolder1_gridSchedulePromotion_ctl00_ctl07_ctl03{width:680px}
+    </style>--%>
+    <telerik:RadCodeBlock ID="RadCodeBlock1" runat="server">
+        <script type="text/javascript">
+            <!--
+            $(document).ready(function () {
+                var txtSMSContent = $("input[name*='txtSMSContent']"); //$("#ctl00_ContentPlaceHolder1_gridSchedulePromotion_ctl00_ctl07_txtSMSContent");
+                if (txtSMSContent != null && txtSMSContent.val() != null) {
+                    var len = txtSMSContent.val().length;
+                    if (len > 150) {
+                        val.value = val.value.substring(0, 150);
+                    } else {
+                        $('#charaterleft').text(150 - len);
+                    }    
+                }
+            });
+            function countChar(val) {
+                var len = val.value.length;
+                if (len > 150) {
+                    val.value = val.value.substring(0, 150);
+                } else {
+                    $('#charaterleft').text(150 - len);
+                }
+            };
+            function openWin() {
+                var oWnd = radopen("DialogPhoneNumber.aspx", "RadWindow1");
+            }
+            function OnClientClose(oWnd, args) {
+                var arg = args.get_argument();
+                if (arg) {
+                    var txtPhoneNumber = $("input[name*='txtPhoneNumber']");
+                    if (txtPhoneNumber) {
+                        txtPhoneNumber.val(arg);
+                    }
+                }
+            }
+            function OpenPhoneList(Id) {
+                var oWnd2 = radopen("PhoneSchedulePromotion.aspx?ID="+Id, "RadWindow2");
+            }
+            var fireConfirm = true;
+            function ConfirmApprove(button, args) {
+                if ($find("<%= gridSchedulePromotion.MasterTableView.ClientID %>").get_selectedItems().length > 0) {
+                    var callBackFunction = Function.createDelegate(button, function (argument) {
+                        if (fireConfirm && argument) {
+                            this.set_autoPostBack(true);
+                            fireConfirm = false;
+                            this.click();
+                        }
+                    });
+                    if (fireConfirm) {
+                        button.set_autoPostBack(false);
+                        var text = "Are you sure to approve?";
+                        var result = radconfirm(text, callBackFunction, 300, 100, null, "Confirm");
+                    }
+                }
+                else {
+                    alert("Please choose promotion to approve");
+                    button.set_autoPostBack(false);
+                }
+            }
+            var Confirm = true;
+            function ConfirmDelete(button, args) {
+                if ($find("<%= gridSchedulePromotion.MasterTableView.ClientID %>").get_selectedItems().length > 0) {
+                    var callBackFunction = Function.createDelegate(button, function (argument) {
+                        if (fireConfirm && argument) {
+                            this.set_autoPostBack(true);
+                            Confirm = false;
+                            this.click();
+                        }
+                    });
+                    if (Confirm) {
+                        button.set_autoPostBack(false);
+                        var text = "Are you sure to delete?";
+                        var result = radconfirm(text, callBackFunction, 300, 100, null, "Confirm");
+                    }
+                }
+                else {
+                    alert("Please choose promotion to delete");
+                    button.set_autoPostBack(false);
+                }
+            }
+            var tableView = null;
+            function pageLoad(sender, args) {
+                tableView = $find("<%= gridSchedulePromotion.ClientID %>").get_masterTableView();
+            }
+
+            function RadComboBox1_SelectedIndexChanged(sender, args) {
+                tableView.set_pageSize(sender.get_value());
+            }
+
+            function changePage(argument) {
+                tableView.page(argument);
+            }
+            -->
+        </script>
+    </telerik:RadCodeBlock>
+    <telerik:RadFormDecorator ID="FormDecorator1" runat="server" DecoratedControls="all" Skin="Office2007"></telerik:RadFormDecorator>
     <telerik:RadWindowManager ID="RadWindowManager1" ShowContentDuringLoad="false" VisibleStatusbar="false"
         ReloadOnShow="true" runat="server" Skin="Office2007" EnableShadow="true">
         <Windows>
@@ -97,6 +193,14 @@
                         </ItemTemplate>
                         <EditItemTemplate>
                             <asp:TextBox ID="txtTitle" runat="server" Width="680px" Text='<%# Eval("Title")%>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </telerik:GridTemplateColumn>
+                    <telerik:GridTemplateColumn HeaderText="Title">
+                        <ItemTemplate>
+                            <asp:Literal runat="server" ID="litTitle" Text='<%# Eval("Title")%>'></asp:Literal>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="txtTitle" runat="server" ReadOnly="false" Width="680px"></asp:TextBox>
                         </EditItemTemplate>
                     </telerik:GridTemplateColumn>
                     <telerik:GridTemplateColumn HeaderText="Phone Numbers">

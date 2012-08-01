@@ -1,12 +1,14 @@
-﻿using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.ServiceModel.Activation;
-using System.ServiceModel.Web;
-using System.Text;
+﻿using System.ServiceModel;
 
-
-public interface IUnitedPharmaService
+namespace UnitedPharma
 {
-    [OperationContract]
-    double CostOfSandwiches(int quantity);
+    [ServiceContract(Namespace = "UnitedPharma")]
+    public interface IUnitedPharmaService
+    {
+        [OperationContract]
+        AjaxServiceResult<string> AddPromotionBrowseHistoryForCustomer(string fullName, string customerType,
+                                                                       string channel, int groupId, int regionId,
+                                                                       int areaId, int localId, int promoId,
+                                                                       string searchResults);
+    }
 }

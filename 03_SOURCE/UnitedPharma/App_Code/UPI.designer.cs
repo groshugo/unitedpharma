@@ -4928,6 +4928,8 @@ public partial class Promotion : INotifyPropertyChanging, INotifyPropertyChanged
 	
 	private System.Nullable<int> _AdministratorId;
 	
+	private EntitySet<PromotionSearchHistory> _PromotionSearchHistories;
+	
 	private EntityRef<Administrator> _Administrator;
 	
     #region Extensibility Method Definitions
@@ -4952,6 +4954,7 @@ public partial class Promotion : INotifyPropertyChanging, INotifyPropertyChanged
 	
 	public Promotion()
 	{
+		this._PromotionSearchHistories = new EntitySet<PromotionSearchHistory>(new Action<PromotionSearchHistory>(this.attach_PromotionSearchHistories), new Action<PromotionSearchHistory>(this.detach_PromotionSearchHistories));
 		this._Administrator = default(EntityRef<Administrator>);
 		OnCreated();
 	}
@@ -5100,6 +5103,19 @@ public partial class Promotion : INotifyPropertyChanging, INotifyPropertyChanged
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Promotion_PromotionSearchHistory", Storage="_PromotionSearchHistories", ThisKey="Id", OtherKey="PromotionId")]
+	public EntitySet<PromotionSearchHistory> PromotionSearchHistories
+	{
+		get
+		{
+			return this._PromotionSearchHistories;
+		}
+		set
+		{
+			this._PromotionSearchHistories.Assign(value);
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Administrator_Promotion", Storage="_Administrator", ThisKey="AdministratorId", OtherKey="Id", IsForeignKey=true, DeleteRule="SET NULL")]
 	public Administrator Administrator
 	{
@@ -5152,6 +5168,18 @@ public partial class Promotion : INotifyPropertyChanging, INotifyPropertyChanged
 		{
 			this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
+	}
+	
+	private void attach_PromotionSearchHistories(PromotionSearchHistory entity)
+	{
+		this.SendPropertyChanging();
+		entity.Promotion = this;
+	}
+	
+	private void detach_PromotionSearchHistories(PromotionSearchHistory entity)
+	{
+		this.SendPropertyChanging();
+		entity.Promotion = null;
 	}
 }
 
@@ -7810,6 +7838,181 @@ public partial class Salesmen : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		this.SendPropertyChanging();
 		entity.Salesmen = null;
+	}
+}
+
+[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PromotionSearchHistory")]
+public partial class PromotionSearchHistory : INotifyPropertyChanging, INotifyPropertyChanged
+{
+	
+	private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+	
+	private int _Id;
+	
+	private int _PromotionId;
+	
+	private string _SearchCriteria;
+	
+	private string _SearchResults;
+	
+	private EntityRef<Promotion> _Promotion;
+	
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnPromotionIdChanging(int value);
+    partial void OnPromotionIdChanged();
+    partial void OnSearchCriteriaChanging(string value);
+    partial void OnSearchCriteriaChanged();
+    partial void OnSearchResultsChanging(string value);
+    partial void OnSearchResultsChanged();
+    #endregion
+	
+	public PromotionSearchHistory()
+	{
+		this._Promotion = default(EntityRef<Promotion>);
+		OnCreated();
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+	public int Id
+	{
+		get
+		{
+			return this._Id;
+		}
+		set
+		{
+			if ((this._Id != value))
+			{
+				this.OnIdChanging(value);
+				this.SendPropertyChanging();
+				this._Id = value;
+				this.SendPropertyChanged("Id");
+				this.OnIdChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PromotionId", DbType="Int NOT NULL")]
+	public int PromotionId
+	{
+		get
+		{
+			return this._PromotionId;
+		}
+		set
+		{
+			if ((this._PromotionId != value))
+			{
+				if (this._Promotion.HasLoadedOrAssignedValue)
+				{
+					throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+				}
+				this.OnPromotionIdChanging(value);
+				this.SendPropertyChanging();
+				this._PromotionId = value;
+				this.SendPropertyChanged("PromotionId");
+				this.OnPromotionIdChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SearchCriteria", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+	public string SearchCriteria
+	{
+		get
+		{
+			return this._SearchCriteria;
+		}
+		set
+		{
+			if ((this._SearchCriteria != value))
+			{
+				this.OnSearchCriteriaChanging(value);
+				this.SendPropertyChanging();
+				this._SearchCriteria = value;
+				this.SendPropertyChanged("SearchCriteria");
+				this.OnSearchCriteriaChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SearchResults", DbType="NVarChar(4000)")]
+	public string SearchResults
+	{
+		get
+		{
+			return this._SearchResults;
+		}
+		set
+		{
+			if ((this._SearchResults != value))
+			{
+				this.OnSearchResultsChanging(value);
+				this.SendPropertyChanging();
+				this._SearchResults = value;
+				this.SendPropertyChanged("SearchResults");
+				this.OnSearchResultsChanged();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Promotion_PromotionSearchHistory", Storage="_Promotion", ThisKey="PromotionId", OtherKey="Id", IsForeignKey=true)]
+	public Promotion Promotion
+	{
+		get
+		{
+			return this._Promotion.Entity;
+		}
+		set
+		{
+			Promotion previousValue = this._Promotion.Entity;
+			if (((previousValue != value) 
+						|| (this._Promotion.HasLoadedOrAssignedValue == false)))
+			{
+				this.SendPropertyChanging();
+				if ((previousValue != null))
+				{
+					this._Promotion.Entity = null;
+					previousValue.PromotionSearchHistories.Remove(this);
+				}
+				this._Promotion.Entity = value;
+				if ((value != null))
+				{
+					value.PromotionSearchHistories.Add(this);
+					this._PromotionId = value.Id;
+				}
+				else
+				{
+					this._PromotionId = default(int);
+				}
+				this.SendPropertyChanged("Promotion");
+			}
+		}
+	}
+	
+	public event PropertyChangingEventHandler PropertyChanging;
+	
+	public event PropertyChangedEventHandler PropertyChanged;
+	
+	protected virtual void SendPropertyChanging()
+	{
+		if ((this.PropertyChanging != null))
+		{
+			this.PropertyChanging(this, emptyChangingEventArgs);
+		}
+	}
+	
+	protected virtual void SendPropertyChanged(String propertyName)
+	{
+		if ((this.PropertyChanged != null))
+		{
+			this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+		}
 	}
 }
 

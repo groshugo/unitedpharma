@@ -30,9 +30,12 @@
         </Services>
     </telerik:RadScriptManager>    
 
+
     <telerik:RadFormDecorator ID="RadFormDecorator1" DecoratedControls="All" runat="server" Skin="Office2007" />
     
-    <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="RadAjaxLoadingPanel1" >
+    
+    <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="RadAjaxLoadingPanel1">
+        
         <AjaxSettings>
             <telerik:AjaxSetting AjaxControlID="CustomerList">
                 <UpdatedControls>
@@ -46,7 +49,7 @@
                     <telerik:AjaxUpdatedControl ControlID="GridSalemen" LoadingPanelID="RadAjaxLoadingPanel1" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
-        </AjaxSettings>
+        </AjaxSettings>        
     </telerik:RadAjaxManager>
     <telerik:RadAjaxLoadingPanel runat="server" Transparency="25" ID="RadAjaxLoadingPanel1" CssClass="RadAjax RadAjax_Vista">
         <div class="raDiv">

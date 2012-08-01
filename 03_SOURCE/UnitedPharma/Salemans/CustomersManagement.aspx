@@ -210,18 +210,40 @@
                         <asp:Literal runat="server" ID="litCustomerType" Text='<%# Eval("CustomerTypeName") %>'></asp:Literal>
                     </ItemTemplate>
                     <EditItemTemplate>
-                        <asp:HiddenField ID="hdfCustomerTypeId" runat="server" Value='<%# Eval("CustomerTypeId") %>' />
+                        <asp:HiddenField ID="hdfCustomerTypeId" runat="server" Value='<%# Eval("CustomerTypeId") %>'  />
                         <telerik:RadComboBox ID="dropdownCustomerType" runat="server"></telerik:RadComboBox>
                     </EditItemTemplate>                
                 </telerik:GridTemplateColumn>
-                <telerik:GridTemplateColumn HeaderText="Phone" UniqueName="PhoneNumber">
+                <telerik:GridTemplateColumn HeaderText="Phone" UniqueName="PhoneNumber" >
                     <ItemTemplate>
                         <asp:Label runat="server" ID="lblPhone" Text='<%# Eval("Phone") %>'></asp:Label>
                     </ItemTemplate>                    
                 </telerik:GridTemplateColumn>
-                <telerik:GridBoundColumn DataField="Address" HeaderText="Address" Visible="false" />
-                <telerik:GridBoundColumn DataField="Street" HeaderText="Street" Visible="false" />
+                <telerik:GridTemplateColumn HeaderText="Address" UniqueName="AddressColumn">
+                    <ItemTemplate>
+                        <asp:Label runat="server" ID="lblAddress" Text='<%# Eval("Address") %>'></asp:Label>
+                    </ItemTemplate>
+                    <EditItemTemplate>
+                        <asp:TextBox ID="txtAddress" runat="server" Text='<%# Eval("Address") %>' Width="400px"></asp:TextBox>
+                    </EditItemTemplate>
+                </telerik:GridTemplateColumn>
+                <telerik:GridTemplateColumn HeaderText="Street">
+                    <ItemTemplate>
+                        <asp:Label runat="server" ID="lblStreet" Text='<%# Eval("Street") %>'></asp:Label>
+                    </ItemTemplate>
+                    <EditItemTemplate>
+                        <asp:TextBox ID="txtStreet" runat="server" Text='<%# Eval("Street") %>' Width="400px"></asp:TextBox>
+                    </EditItemTemplate>
+                </telerik:GridTemplateColumn>
                 <telerik:GridBoundColumn DataField="Ward" HeaderText="Ward" Visible="false" />
+                <telerik:GridTemplateColumn HeaderText="Ward" UniqueName="WardColumn">
+                    <ItemTemplate>
+                        <asp:Label runat="server" ID="lblWard" Text='<%# Eval("Ward") %>'></asp:Label>
+                    </ItemTemplate>
+                    <EditItemTemplate>
+                        <asp:TextBox ID="txtWard" runat="server" Text='<%# Eval("Ward") %>' Width="400px"></asp:TextBox>
+                    </EditItemTemplate>
+                </telerik:GridTemplateColumn>
                 <telerik:GridTemplateColumn HeaderText="District" UniqueName="DistrictColumn" Visible="false">
                     <ItemTemplate>
                         <asp:Label runat="server" ID="lblDistrict" Text='<%# Eval("DistrictName") %>'></asp:Label>

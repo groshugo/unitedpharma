@@ -874,12 +874,12 @@ public class SalesmanRepository
                 }).ToList();
     }
 
-    public List<vwSalemen> FilterSalesmenForBrowsePhoneNumber(string fullname, int localId)
+    public List<vwSalemen> FilterSalesmenForBrowsePhoneNumber(string fullname, List<int> localId)
     {
         return (from a in db.Salesmens
                 where (fullname == string.Empty || a.FullName.Contains(fullname))
-                    && (localId == 0 || (from sl in db.SalesLocals
-                                         where sl.LocalId == localId
+                    && (localId == null || localId.Count == 0 || (from sl in db.SalesLocals
+                                         where localId.Contains(sl.LocalId)
                                          select new
                                          {
                                              sl.SalesmenId

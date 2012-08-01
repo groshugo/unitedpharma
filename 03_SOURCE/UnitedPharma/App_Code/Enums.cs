@@ -36,4 +36,3 @@ public enum PromotionHistoryFilterOption
     Customer = 1,
     Sales = 2
 }
-

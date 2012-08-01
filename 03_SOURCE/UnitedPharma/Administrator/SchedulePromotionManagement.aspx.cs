@@ -70,22 +70,26 @@ public partial class Administrator_SchedulePromotionManagement : System.Web.UI.P
     }
     protected void gridSchedulePromotion_UpdateCommand(object source, GridCommandEventArgs e)
     {
-        GridEditFormItem gdItem = (e.Item as GridEditFormItem);
+        var gdItem = (e.Item as GridEditFormItem);
         var editableItem = ((GridEditableItem)e.Item);
-        Hashtable values = new Hashtable();
+        var values = new Hashtable();
         editableItem.ExtractValues(values);
-        var PromotionId = (int)editableItem.GetDataKeyValue("Id");
+
+        var promotionId = (int)editableItem.GetDataKeyValue("Id");
+
         var updateStatus = true;
         try
         {
-            string smsContent = ((TextBox)gdItem.FindControl("txtSMSContent")).Text;
-            string webcontent = ((RadEditor)editableItem.FindControl("RadEditor1")).Text;
-            string phoneNumbers = ((TextBox)gdItem.FindControl("txtPhoneNumber")).Text; // hdfPhoneNumbers.Value;
+            var smsContent = ((TextBox)gdItem.FindControl("txtSMSContent")).Text;
+            var webcontent = ((RadEditor)editableItem.FindControl("RadEditor1")).Text;
+            var phoneNumbers = ((TextBox)gdItem.FindControl("txtPhoneNumber")).Text; // hdfPhoneNumbers.Value;
             var upiCode = values["UpiCode"] == null ? string.Empty : values["UpiCode"].ToString();
-            var title = ((TextBox)gdItem.FindControl("txtTitle")).Text;
-
-            DateTime StartDate = DateTime.Now;
-            var StartDateControl = gdItem.FindControl("txtStartDate") as RadDatePicker;
+            var title = string.Empty;
+            var txtTitle = gdItem.FindControl("txtTitle") as TextBox;
+            if (txtTitle != null)
+            {
+                title = txtTitle.Text.Trim();
+            }
 
             DateTime EndDate = DateTime.Now;
             var EndDateControl = gdItem.FindControl("txtEndDate") as RadDatePicker;
